@@ -1,0 +1,14 @@
+MEDHEALTH APP WITH FLUTTER
+https://www.youtube.com/playlist?list=PLOki8IqmfyeWRh8xEZVW7OmTniOqTwK7l
+
+
+Hospital management System Platform with Spring Boot and Flutter
+https://www.youtube.com/watch?v=66Mf1jswldg
+
+
+Flutter - Hospital Health Management Firebase App OPD, IPD, Pathology WebMD Rx Patient Appointments
+https://www.youtube.com/playlist?list=PLp0TENYyY8lHcc8mZiYG83sbsCea2xd3r
+
+
+Medical Healthcare App UI Design in Flutter - Flutter UI Design
+https://www.youtube.com/watch?v=cE1d7iLu8-8
