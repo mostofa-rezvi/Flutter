@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:test_flutter/page/RegistrationPage.dart';
 
 class LoginPage extends StatelessWidget {
   // const LoginPage({super.key});
@@ -13,31 +14,34 @@ class LoginPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(16.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+
             TextField(
               controller: email,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'Email',
                 border: OutlineInputBorder(),
                 prefixIcon: Icon(Icons.email),
               ),
             ),
-            const SizedBox(
+
+            SizedBox(
               height: 20,
             ),
+
             TextField(
               controller: password,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'Password',
                 border: OutlineInputBorder(),
                 prefixIcon: Icon(Icons.lock),
               ),
               obscureText: true,
             ),
-            const SizedBox(
+            SizedBox(
               height: 20,
             ),
             ElevatedButton(
@@ -57,6 +61,26 @@ class LoginPage extends StatelessWidget {
                   fontFamily: GoogleFonts.lato().fontFamily,
                 ),
               ),
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            TextButton(
+                onPressed: (){
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => RegistrationPage(),
+                      ),
+                  );
+                },
+                child: Text(
+                  'Registration',
+                  style: TextStyle(
+                    color: Colors.blue,
+                    decoration: TextDecoration.underline,
+                  ),
+                ),
             ),
           ],
         ),

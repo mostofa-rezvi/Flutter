@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:test_flutter/page/RegistrationPage.dart';
 import 'package:test_flutter/page/loginpage.dart';
 
 void main() {
@@ -12,6 +13,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+        // home: LoginPage()
         home: LoginPage()
 
 
@@ -33,6 +35,9 @@ class MyApp extends StatelessWidget {
     //     child: const Icon(Icons.thumb_up, color: Colors.blueAccent),
     //   ),
     // )
+
+
+
     );
   }
 }
