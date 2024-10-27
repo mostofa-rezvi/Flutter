@@ -2,6 +2,9 @@ import 'package:date_field/date_field.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:demo_flutter/pages/LoginPage.dart';
 
 class RegistrationPage extends StatefulWidget {
   @override
@@ -16,19 +19,60 @@ class _RegistrationPageState extends State<RegistrationPage> {
   final TextEditingController confirmPassword = TextEditingController();
   final TextEditingController cell = TextEditingController();
   final TextEditingController address = TextEditingController();
-  final TextEditingController dob = TextEditingController();
+  final DateTimeFieldPickerPlatform dob = DateTimeFieldPickerPlatform.material;
 
   String? selectedGender;
+  DateTime? selectedDOB;
   final _formKey = GlobalKey<FormState>();
 
-  void _register() {
+  void _register() async {
     if (_formKey.currentState!.validate()) {
       String uName = name.text;
       String uEmail = email.text;
       String uPassword = password.text;
+      String uCell = cell.text;
+      String uAddress = address.text;
+      String uGender = selectedGender ?? 'Others';
+      String uDob = selectedDOB != null ? selectedDOB!.toIso8601String(): '';
 
-      print('Name: $uName, Email: $uEmail, Password: $uPassword');
+      final response = await _sendDataToBackend(uName, uEmail, uPassword, uCell, uAddress, uGender, uDob);
+
+      if (response.statusCode == 201 || response.statusCode == 200) {
+        print('Registration Successful.');
+      }
+      else if (response.statusCode == 409) {
+        print('User already exists.');
+      }
+      else {
+        print('Registration falied with status: ${response.statusCode}');
+      }
     }
+  }
+
+  Future<http.Response> _sendDataToBackend(
+      String name,
+      String email,
+      String password,
+      String cell,
+      String address,
+      String gender,
+      String dob,
+      ) async {
+    const String url = '';
+    final response = await http.post(
+      Uri.parse(url),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'name': name,
+        'email': email,
+        'password': password,
+        'cell': cell,
+        'address': address,
+        'gender': gender,
+        'dob': dob,
+      }),
+    );
+    return response;
   }
 
   @override
@@ -52,12 +96,22 @@ class _RegistrationPageState extends State<RegistrationPage> {
                 ),
                 SizedBox(height: 25,),
                 TextField(
+                  controller: email,
+                  decoration: InputDecoration(
+                    labelText: 'Email',
+                    border: OutlineInputBorder(),
+                    prefixIcon: Icon(Icons.email),
+                  ),
+                ),
+                SizedBox(height: 25,),
+                TextField(
                   controller: password,
                   decoration: InputDecoration(
                     labelText: 'Password',
                     border: OutlineInputBorder(),
                     prefixIcon: Icon(Icons.lock),
                   ),
+                  obscureText: true,
                 ),
                 SizedBox(height: 25,),
                 TextField(
@@ -85,6 +139,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                     border: OutlineInputBorder(),
                     prefixIcon: Icon(Icons.lock),
                   ),
+                  obscureText: true,
                 ),
                 SizedBox(height: 25,),
                 DateTimeFormField(
@@ -94,13 +149,15 @@ class _RegistrationPageState extends State<RegistrationPage> {
                   mode: DateTimeFieldPickerMode.date,
                   pickerPlatform: dob,
                   onChanged: (DateTime? value) {
-                    print(value);
+                    setState(() {
+                      selectedDOB = value;
+                    });
                   },
                 ),
-                SizedBox(height: 25,)
+                SizedBox(height: 25,),
                 Row(
                   children: [
-                    Text('Gender: '),
+                    Text('Gender:'),
                     Expanded(
                       child: Row(
                         children: [
@@ -141,7 +198,8 @@ class _RegistrationPageState extends State<RegistrationPage> {
                                 setState(() {
                                   selectedGender = value;
                                 });
-                              }),
+                              },
+                          ),
                           Text('Others'),
                         ],
                       ),
@@ -152,6 +210,10 @@ class _RegistrationPageState extends State<RegistrationPage> {
                   onPressed: () {
                     _register();
                   },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blueAccent,
+                    foregroundColor: Colors.white,
+                  ),
                   child: Text(
                     "Registration",
                     style: TextStyle(
@@ -161,10 +223,24 @@ class _RegistrationPageState extends State<RegistrationPage> {
                           .fontFamily,
                     ),
                   ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blueAccent,
-                    foregroundColor: Colors.white,
-                  ),
+                ),
+                SizedBox(height: 25,),
+                TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => LoginPage()
+                          ),
+                      );
+                    },
+                    child: Text(
+                      'Login',
+                      style: TextStyle(
+                        color: Colors.blue,
+                        decoration: TextDecoration.underline,
+                      ),
+                    ),
                 ),
               ],
             ),
