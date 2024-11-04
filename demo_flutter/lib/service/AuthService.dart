@@ -1,0 +1,3 @@
+class AuthService {
+  final String 
+}
