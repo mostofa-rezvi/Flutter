@@ -1,7 +1,11 @@
 import 'dart:convert';
 
+import 'package:demo_flutter/pages/AdminPage.dart';
+import 'package:demo_flutter/pages/AllHotelViewPage.dart';
 import 'package:demo_flutter/pages/HomePage.dart';
+import 'package:demo_flutter/pages/HotelProfilePage.dart';
 import 'package:demo_flutter/pages/RegistrationPage.dart';
+import 'package:demo_flutter/service/AuthService.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -13,37 +17,41 @@ class LoginPage extends StatelessWidget {
   final TextEditingController email = TextEditingController();
   final TextEditingController password = TextEditingController();
   final storage = new FlutterSecureStorage();
+  AuthService authService = AuthService();
 
   Future<void> loginUser(BuildContext context) async {
-    final url = Uri.parse('');
-    final response = await http.post(
-      url,
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'email': email.text, 'password': password.text}),
-    );
+    try {
+      final response = await authService.login(email.text, password.text);
+      final role = await authService.getUserRole();
 
-    if (response.statusCode == 200) {
-      final responseDate = jsonDecode(response.body);
-      final token = responseDate['token'];
-
-      Map<String, dynamic> payload = Jwt.parseJwt(token);
-
-      String subject = payload['subject'];
-      String role = payload['role'];
-
-      await storage.write(key: 'token', value: token);
-      await storage.write(key: 'subject', value: subject);
-      await storage.write(key: 'role', value: role);
-
-      print('Login Successful, Subject: $subject, Role: $role');
-
-      Navigator.push(
+      if (role == 'ADMIN') {
+        Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => Homepage()),
-      );
-    }
-    else {
-      print('Login failed with status: ${response.statusCode}');
+          MaterialPageRoute(builder: (context) => AdminPage()),
+        );
+      } else if (role == 'HOTEL') {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => HotelProfilePage(
+                      hotelName: 'Grand Plaza',
+                      hotelImageUrl:
+                          'http://localhost:8080/images/hotel/The Hotel One_a39545ad-787f-42cc-8bf3-ff352f25a520',
+                      address: 'Coxs Bazar',
+                      rating: '3',
+                      minPrice: 5000,
+                      maxPrice: 23000,
+                    )));
+      } else if (role == 'USER') {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => AllHotelViewPage()),
+        );
+      } else {
+        print('Unknown role: $role');
+      }
+    } catch (error) {
+      print('Login Falied: $error');
     }
   }
 
@@ -80,10 +88,7 @@ class LoginPage extends StatelessWidget {
             ),
             ElevatedButton(
               onPressed: () {
-                String uEmail = email.text;
-                String uPassword = password.text;
-
-                print('Email: $uEmail, Password: $uPassword');
+                loginUser(context);
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.blueAccent,
@@ -97,22 +102,23 @@ class LoginPage extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(height: 25,),
+            SizedBox(
+              height: 25,
+            ),
             TextButton(
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => RegistrationPage()
-                      ),
-                  );
-                },
-                child: Text(
-                  'Registration',
-                  style: TextStyle(
-                    color: Colors.blue,
-                    decoration: TextDecoration.underline,
-                  ),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => RegistrationPage()),
+                );
+              },
+              child: Text(
+                'Registration',
+                style: TextStyle(
+                  color: Colors.blue,
+                  decoration: TextDecoration.underline,
                 ),
+              ),
             ),
           ],
         ),

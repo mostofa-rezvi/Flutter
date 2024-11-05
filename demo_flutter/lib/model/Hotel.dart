@@ -5,8 +5,8 @@ class Hotel {
   final String name;
   final String address;
   final String rating;
-  final int minPrice;
-  final int maxPrice;
+  final double minPrice;
+  final double maxPrice;
   final String image;
   final Location location;
 

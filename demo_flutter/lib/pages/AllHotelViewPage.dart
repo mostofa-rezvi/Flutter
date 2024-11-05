@@ -1,3 +1,4 @@
+import 'package:demo_flutter/pages/RoomDetailsPage.dart';
 import 'package:demo_flutter/service/HotelService.dart';
 import 'package:flutter/material.dart';
 
@@ -58,8 +59,22 @@ class _AllHotelViewPageState extends State<AllHotelViewPage> {
                           padding: const EdgeInsets.all(8.0),
                           child: ElevatedButton(
                             onPressed: () {
-                              print(
-                                  'Book now clicked for hotel: ${hotel.name}');
+                              if (hotel.id != null) {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context)
+                                    => RoomDetailsPage(hotel: hotel),
+                                    ),
+                                );
+                              }
+                              else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                      content: Text('Hotel ID is missing. Cannot load rooms.'),
+                                  ),
+                                );
+                              }
                             },
                             style: ElevatedButton.styleFrom(),
                             child: Text('View Room'),

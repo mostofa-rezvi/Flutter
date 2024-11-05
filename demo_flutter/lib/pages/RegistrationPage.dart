@@ -58,7 +58,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
       String gender,
       String dob,
       ) async {
-    const String url = '';
+    const String url = 'http://localhost:8080/register';
     final response = await http.post(
       Uri.parse(url),
       headers: {'Content-Type': 'application/json'},
@@ -84,7 +84,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
           child: Form(
             key: _formKey,
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 TextField(
                   controller: name,
