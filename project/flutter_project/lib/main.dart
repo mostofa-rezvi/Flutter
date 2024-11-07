@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_project/pages/LoginPage.dart';
-import 'package:flutter_project/security/auth/service/AuthService.dart';
+import 'package:flutter_project/service/AuthService.dart';
 import 'package:provider/provider.dart';
 
 void main() {

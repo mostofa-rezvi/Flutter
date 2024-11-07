@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_project/pages/ForgetPasswordPage.dart';
+import 'package:flutter_project/pages/MainPage.dart';
 import 'package:flutter_project/pages/RegistrationPage.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_project/security/auth/service/AuthService.dart';
+import 'package:flutter_project/service/AuthService.dart';
+// import 'package:flutter_project/pages/AdminPage.dart'; // Import different role pages
+// import 'package:flutter_project/pages/DoctorPage.dart'; // Import different role pages
 
 class LoginPage extends StatefulWidget {
   @override
@@ -17,7 +20,7 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    // final authService = Provider.of<AuthService>(context, listen: false);
+    final authService = Provider.of<AuthService>(context, listen: false);
 
     return Scaffold(
       body: Center(
@@ -101,9 +104,8 @@ class _LoginPageState extends State<LoginPage> {
                     width: double.infinity,
                     height: 35,
                     child: ElevatedButton(
-                      onPressed: () => loginUser(context),
-                      style:
-                      ElevatedButton.styleFrom(
+                      onPressed: () => loginUser(authService, context),
+                      style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.blueAccent,
                         foregroundColor: Colors.white,
                       ),
@@ -123,12 +125,12 @@ class _LoginPageState extends State<LoginPage> {
                       children: [
                         Text("Don’t have an account? "),
                         GestureDetector(
-                          onTap: ()  {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => RegistrationPage()),
-                              );
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => RegistrationPage()),
+                            );
                           },
                           child: Text(
                             "Register Now",
@@ -150,32 +152,40 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Future<String?> loginUser(BuildContext context) async {
+  Future<void> loginUser(AuthService authService, BuildContext context) async {
     if (_formKey.currentState!.validate()) {
       final email = _emailController.text.trim();
       final password = _passwordController.text.trim();
 
-      // try {
-      //   final success = await authService.login(email, password);
-      //   if (success) {
-      //     Navigator.of(context).pushReplacement(
-      //       MaterialPageRoute(builder: (_) => WelcomeScreen()),
-      //     );
-      //   } else {
-      //     setState(() {
-      //       _errorMessage = 'Invalid login credentials';
-      //     });
-      //   }
-      // } catch (e) {
-      //   setState(() {
-      //     _errorMessage = 'An error occurred during login';
-      //   });
-      // }
+      // Attempt to log in the user
+      bool loginSuccess = await authService.login(email, password);
+
+      if (loginSuccess) {
+        // Get user role to navigate to the appropriate page
+        String? role = await authService.getUserRole();
+
+        if (role == 'ADMIN') {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => MainPage()), // Admin page
+          );
+        } else if (role == 'DOCTOR') {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => MainPage()), // Doctor page
+          );
+        } else {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => MainPage()), // Main page (default)
+          );
+        }
+      } else {
+        setState(() {
+          _errorMessage = 'Login failed. Please check your credentials.';
+        });
+      }
     } else {
       setState(() {
         _errorMessage = 'Please fill in all required fields correctly';
       });
     }
-    return null;
   }
 }

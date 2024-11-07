@@ -24,16 +24,16 @@ public class WebConfig implements WebMvcConfigurer {
         WebMvcConfigurer.super.addResourceHandlers(registry);
     }
 
-//    @Bean
-//    public WebMvcConfigurer corsConfigurer() {
-//        return new WebMvcConfigurer() {
-//            @Override
-//            public void addCorsMappings(CorsRegistry registry) {
-//                registry.addMapping("/api/**")
-//                        .allowedOrigins("http://http://localhost:4200/") // Adjust this
-//                        .allowedMethods("GET", "POST", "PUT", "DELETE")
-//                        .allowCredentials(true);
-//            }
-//        };
-//    }
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/api/**")
+                        .allowedOrigins("http://http://localhost:4200/") // Adjust this
+                        .allowedMethods("GET", "POST", "PUT", "DELETE")
+                        .allowCredentials(true);
+            }
+        };
+    }
 }
