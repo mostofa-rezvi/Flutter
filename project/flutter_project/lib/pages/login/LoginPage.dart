@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_project/pages/ForgetPasswordPage.dart';
+import 'package:flutter_project/pages/login/ForgetPasswordPage.dart';
 import 'package:flutter_project/pages/MainPage.dart';
-import 'package:flutter_project/pages/RegistrationPage.dart';
+import 'package:flutter_project/pages/login/RegistrationPage.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_project/auth/AuthService.dart';
 
-import '../model/UserModel.dart';
-import '../util/ApiResponse.dart';
+import '../../model/UserModel.dart';
+import '../../util/ApiResponse.dart';
 
 class LoginPage extends StatefulWidget {
   @override

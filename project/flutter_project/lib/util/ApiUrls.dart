@@ -2,9 +2,8 @@ class APIUrls {
   static const String baseURL = 'http://localhost:8080/api';
 
   static Uri get login => Uri.parse('$baseURL/auth/login');
+  static Uri get appointments => Uri.parse('$baseURL/appointments');
 
-
-  // static Uri get company => Uri.parse('$baseURL/company');
   // static Uri get user => Uri.parse('$baseURL/user');
   //
   // static Uri get dashboard => Uri.parse('$baseURL/admin/dashboard');
