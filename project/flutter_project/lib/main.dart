@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_project/pages/LoginPage.dart';
-import 'package:flutter_project/service/AuthService.dart';
+import 'package:flutter_project/auth/AuthService.dart';
+import 'package:flutter_project/pages/MainPage.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -25,7 +26,11 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: LoginPage(),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => LoginPage(),
+        '/main': (context) => MainPage(),
+      },
     );
   }
 }
