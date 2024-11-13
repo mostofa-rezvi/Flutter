@@ -1,4 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_project/pages/doctor/DoctorPage.dart';
+import 'package:flutter_project/pages/laboratorist/LaboratoristPage.dart';
+import 'package:flutter_project/pages/nurse/NursePage.dart';
+import 'package:flutter_project/pages/patient/PatientPage.dart';
+import 'package:flutter_project/pages/pharmacist/PharmacistPage.dart';
+import 'package:flutter_project/pages/receptionist/AppointmentCreatePage.dart';
+import 'package:flutter_project/pages/receptionist/ReceptionistPage.dart';
 import 'package:flutter_project/pages/login/ForgetPasswordPage.dart';
 import 'package:flutter_project/pages/MainPage.dart';
 import 'package:flutter_project/pages/login/RegistrationPage.dart';
@@ -172,7 +179,27 @@ class _LoginPageState extends State<LoginPage> {
           );
         } else if (role == Role.DOCTOR) {
           Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => MainPage()), // Doctor page
+            MaterialPageRoute(builder: (context) => DoctorPage()), // Doctor page
+          );
+        } else if (role == Role.NURSE) {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => NursePage()), // Doctor page
+          );
+        } else if (role == Role.PHARMACIST) {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => PharmacistPage()), // Doctor page
+          );
+        } else if (role == Role.RECEPTIONIST) {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => ReceptionistDashboardPage()), // Doctor page
+          );
+        } else if (role == Role.LAB) {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => LaboratoristPage()), // Doctor page
+          );
+        } else if (role == Role.PATIENT) {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => PatientDashboardPage()), // Doctor page
           );
         } else {
           Navigator.of(context).pushReplacement(

@@ -1,7 +1,7 @@
 import 'package:flutter_project/model/UserModel.dart';
 
 class AppointmentModel {
-  int? id;
+  String? id;
   String? name;
   String? email;
   String? phone;
@@ -12,8 +12,8 @@ class AppointmentModel {
   String? time;
   String? notes;
 
-  UserModel requestedBy;
-  UserModel doctor;
+  List<UserModel>? requestedBy;
+  List<UserModel>? doctor;
 
   AppointmentModel({
     required this.id,
@@ -43,8 +43,8 @@ class AppointmentModel {
       date: DateTime.parse(json['date']),
       time: json['time'],
       notes: json['notes'],
-      requestedBy: UserModel.fromJson(json['requestedBy']),
-      doctor: UserModel.fromJson(json['doctor']),
+      requestedBy: json['requestedBy'] != null ? (json['requestedBy']).toList() : [],
+      doctor: json['doctor'] != null ? (json['doctor']).toList() : [],
     );
   }
 
@@ -61,8 +61,8 @@ class AppointmentModel {
       'date': date?.toIso8601String(),
       'time': time,
       'notes': notes,
-      'requestedBy': requestedBy.toJson(),
-      'doctor': doctor.toJson(),
+      'requestedBy': requestedBy?.toList(),
+      'doctor': doctor?.toList(),
     };
   }
 }
