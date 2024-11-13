@@ -5,15 +5,16 @@ import 'package:flutter_project/pages/nurse/NursePage.dart';
 import 'package:flutter_project/pages/patient/PatientPage.dart';
 import 'package:flutter_project/pages/pharmacist/PharmacistPage.dart';
 import 'package:flutter_project/pages/receptionist/AppointmentCreatePage.dart';
+import 'package:flutter_project/pages/receptionist/ReceptionistMainPage.dart';
 import 'package:flutter_project/pages/receptionist/ReceptionistPage.dart';
-import 'package:flutter_project/pages/login/ForgetPasswordPage.dart';
+import 'package:flutter_project/login/ForgetPasswordPage.dart';
 import 'package:flutter_project/pages/MainPage.dart';
-import 'package:flutter_project/pages/login/RegistrationPage.dart';
+import 'package:flutter_project/login/RegistrationPage.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_project/auth/AuthService.dart';
 
-import '../../model/UserModel.dart';
-import '../../util/ApiResponse.dart';
+import '../model/UserModel.dart';
+import '../util/ApiResponse.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -175,7 +176,7 @@ class _LoginPageState extends State<LoginPage> {
         Role role = Role.values.byName(user['role']);
         if (role == Role.ADMIN) {
           Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => MainPage()), // Admin page
+            MaterialPageRoute(builder: (context) => ReceptionistMainPage()), // Admin page
           );
         } else if (role == Role.DOCTOR) {
           Navigator.of(context).pushReplacement(
@@ -191,7 +192,7 @@ class _LoginPageState extends State<LoginPage> {
           );
         } else if (role == Role.RECEPTIONIST) {
           Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => ReceptionistDashboardPage()), // Doctor page
+            MaterialPageRoute(builder: (context) => ReceptionistMainPage()), // Doctor page
           );
         } else if (role == Role.LAB) {
           Navigator.of(context).pushReplacement(

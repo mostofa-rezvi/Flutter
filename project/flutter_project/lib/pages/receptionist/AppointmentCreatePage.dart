@@ -22,8 +22,8 @@ class _AppointmentCreatePageState extends State<AppointmentCreatePage> {
     date: null,
     time: '',
     notes: '',
-    doctor: null, // Set doctor to empty string to prevent null issues
-    requestedBy: null,
+    doctor: [],
+    requestedBy: [],
   );
 
   List<DateTime> availableDates = [];
@@ -88,26 +88,35 @@ class _AppointmentCreatePageState extends State<AppointmentCreatePage> {
 
       final authService = Provider.of<AuthService>(context, listen: false);
       final user = await AuthService.getStoredUser();
+
       if (user != null) {
-        appointmentModel.requestedBy = user as List<UserModel>?;
+        appointmentModel.requestedBy = [user]; // Assuming requestedBy is a list of UserModel
       }
 
       final appointmentService = Provider.of<AppointmentService>(context, listen: false);
       final response = await appointmentService.createAppointment(appointmentModel);
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(response.message ?? 'Error creating appointment')));
+
+      if (response.successful) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Appointment created successfully')));
+        Navigator.pop(context); // Navigate back on success
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(response.message ?? 'Failed to create appointment')));
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Create Appointment'),
+      appBar: AppBar(
+        title: Text('Create Appointment'),
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
             Navigator.pop(context);
           },
-        ),),
+        ),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: SingleChildScrollView(
@@ -220,9 +229,9 @@ class _AppointmentCreatePageState extends State<AppointmentCreatePage> {
                             ),
                             const SizedBox(height: 10),
                             TextFormField(
-                              decoration: InputDecoration(labelText: 'Doctor Name', border: OutlineInputBorder()),
-                              onSaved: (value) => appointmentModel.doctor = (value ?? '') as List<UserModel>?,
-                              validator: (value) => value!.isEmpty ? 'Please enter doctor name' : null,
+                              decoration: InputDecoration(labelText: 'Notes', border: OutlineInputBorder()),
+                              onSaved: (value) => appointmentModel.notes = value ?? '',
+                              validator: (value) => value!.isEmpty ? 'Please enter notes' : null,
                               maxLines: 3,
                             ),
                             const SizedBox(height: 20),
@@ -232,10 +241,10 @@ class _AppointmentCreatePageState extends State<AppointmentCreatePage> {
                               ),
                               onPressed: createAppointment,
                               child: Row(
-                                mainAxisSize: MainAxisSize.min, // Keep the button size compact
+                                mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Text('Submit Appointment', style: TextStyle(fontSize: 16)),
-                                  const SizedBox(width: 8), // Space between text and icon
+                                  const SizedBox(width: 8),
                                   Icon(Icons.send, size: 24),
                                 ],
                               ),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_project/auth/AuthService.dart';
-import 'package:flutter_project/pages/login/LoginPage.dart';
+import 'package:flutter_project/login/LoginPage.dart';
 
 // Profile Info Card Widget
 class ProfileInfoCard extends StatelessWidget {

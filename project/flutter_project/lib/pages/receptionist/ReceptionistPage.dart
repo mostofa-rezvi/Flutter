@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_project/auth/AuthService.dart';
+import 'package:flutter_project/auth/AuthService.dart';  // A new page to show basic profile info
+import 'package:flutter_project/login/LoginPage.dart';
 import 'package:flutter_project/pages/receptionist/AppointmentCreatePage.dart';
-import 'package:flutter_project/pages/login/LoginPage.dart';
 
-class ReceptionistDashboardPage extends StatelessWidget {
-  final Map<String, String> receptionistProfile = {
-    'name': 'Jane Doe',
-    'role': 'Receptionist',
-    'email': 'jane.doe@example.com',
-    'phone': '+123 456 7890',
-  };
+class ReceptionistDashboardPage extends StatefulWidget {
+  @override
+  _ReceptionistDashboardPageState createState() =>
+      _ReceptionistDashboardPageState();
+}
+
+class _ReceptionistDashboardPageState extends State<ReceptionistDashboardPage> {
+  int _selectedIndex = 0;
 
   final List<Map<String, dynamic>> dashboardItems = [
     {'icon': Icons.schedule, 'label': 'Appointments'},
@@ -18,6 +19,17 @@ class ReceptionistDashboardPage extends StatelessWidget {
     {'icon': Icons.payment, 'label': 'Payments'},
     {'icon': Icons.notifications, 'label': 'Notifications'},
     {'icon': Icons.settings, 'label': 'Settings'},
+  ];
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+  List<Widget> _pages() => [
+    ProfilePage(profile: {},),
+    // AppointmentHistoryPage(),
   ];
 
   @override
@@ -32,7 +44,7 @@ class ReceptionistDashboardPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ProfileCard(profile: receptionistProfile),
+            ProfileCard(profile: {}),
             const SizedBox(height: 20),
             Expanded(
               child: GridView.builder(
@@ -52,7 +64,14 @@ class ReceptionistDashboardPage extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => AppointmentCreatePage(),
+                            builder: (context) => AppointmentCreatePage(),  // Navigate to appointment history page
+                          ),
+                        );
+                      } else if (item['label'] == 'Settings') {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ProfilePage(profile: {}),  // Navigate to Profile Page
                           ),
                         );
                       } else {
@@ -68,7 +87,7 @@ class ReceptionistDashboardPage extends StatelessWidget {
                 },
               ),
             ),
-            const SizedBox(height: 20), // Add spacing above the logout button
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () async {
                 await AuthService.logout();
@@ -87,6 +106,27 @@ class ReceptionistDashboardPage extends StatelessWidget {
             ),
           ],
         ),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+        selectedItemColor: Colors.blueAccent,
+        unselectedItemColor: Colors.grey,
+        showUnselectedLabels: true,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.calendar_today),
+            label: 'Appointments',  // Changed to Appointments
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: 'Settings',  // Settings button to show profile info and logout
+          ),
+        ],
       ),
     );
   }
@@ -169,16 +209,84 @@ class FeaturePage extends StatelessWidget {
   }
 }
 
-// class AppointmentCreatePage extends StatelessWidget {
+
+// class AppointmentHistoryPage extends StatelessWidget {
 //   @override
 //   Widget build(BuildContext context) {
 //     return Scaffold(
 //       appBar: AppBar(
-//         title: Text('Create Appointment'),
+//         title: Text("Appointment History"),
 //       ),
-//       body: Center(
-//         child: Text('Here you can create a new appointment!', style: TextStyle(fontSize: 24)),
+//       body: Padding(
+//         padding: const EdgeInsets.all(16.0),
+//         child: Center(
+//           child: Column(
+//             mainAxisAlignment: MainAxisAlignment.center,
+//             children: [
+//               Text(
+//                 'Here is the list of all appointments:',
+//                 style: TextStyle(fontSize: 18),
+//               ),
+//               // You can display the appointment history here
+//               // Example: Displaying some placeholder appointment data
+//               ListView.builder(
+//                 shrinkWrap: true,
+//                 itemCount: 10, // Example number of appointments
+//                 itemBuilder: (context, index) {
+//                   return ListTile(
+//                     title: Text("Appointment #${index + 1}"),
+//                     subtitle: Text("Details of Appointment #${index + 1}"),
+//                     trailing: Icon(Icons.arrow_forward),
+//                     onTap: () {
+//                       // Add navigation logic if needed (e.g., view details of a specific appointment)
+//                     },
+//                   );
+//                 },
+//               ),
+//             ],
+//           ),
+//         ),
 //       ),
 //     );
 //   }
 // }
+
+
+class ProfilePage extends StatelessWidget {
+  final Map<String, String> profile;
+
+  const ProfilePage({required this.profile});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Profile'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Name: ${profile['name']}', style: TextStyle(fontSize: 18)),
+            Text('Role: ${profile['role']}', style: TextStyle(fontSize: 18)),
+            Text('Email: ${profile['email']}', style: TextStyle(fontSize: 18)),
+            Text('Phone: ${profile['phone']}', style: TextStyle(fontSize: 18)),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () async {
+                await AuthService.logout();
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => LoginPage()),
+                      (route) => false,
+                );
+              },
+              child: Text('Logout'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
