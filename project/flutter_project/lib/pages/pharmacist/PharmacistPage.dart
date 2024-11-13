@@ -35,7 +35,7 @@ class PharmacistPage extends StatelessWidget {
                         style: TextStyle(
                             fontSize: 18, fontWeight: FontWeight.bold)),
                     SizedBox(height: 4),
-                    Text('Email: johndoe@example.com',
+                    Text('Email: pha@gmail.com',
                         style: TextStyle(fontSize: 16)),
                     SizedBox(height: 4),
                     Text('Phone: +123 456 7890',

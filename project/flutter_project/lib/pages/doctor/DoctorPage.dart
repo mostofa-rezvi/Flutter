@@ -1,136 +1,218 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_project/auth/AuthService.dart';
+import 'package:flutter_project/model/UserModel.dart';
+import 'package:flutter_project/login/LoginPage.dart';
+import 'package:flutter_project/pages/common/Activities.dart';
+import 'package:flutter_project/pages/common/Notification.dart';
+import 'package:flutter_project/pages/common/Salary.dart';
+import 'package:flutter_project/pages/receptionist/AppointmentCreatePage.dart';
+import 'package:flutter_project/pages/receptionist/AppointmentHistoryPage.dart';
+import 'package:flutter_project/pages/receptionist/ReceptionistMainPage.dart'; // New page for appointment history
 
-class DoctorPage extends StatelessWidget {
-  // Simulate user data from the database for the doctor
-  final Map<String, String> doctorProfile = {
-    'name': 'Dr. John Doe',
-    'role': 'Doctor',
-    'hospital': 'City Hospital',
-    'email': 'john.doe@hospital.com',
-    'phone': '987-654-3210'
-  };
+class DoctorMainPage extends StatefulWidget {
+  @override
+  _DoctorMainPageState createState() => _DoctorMainPageState();
+}
+
+class _DoctorMainPageState extends State<DoctorMainPage> {
+  int _selectedIndex = 0;
+  UserModel? userModel;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUser();
+  }
+
+  Future<void> _loadUser() async {
+    userModel = await AuthService.getStoredUser();
+    setState(() {});
+  }
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+  // Updated _pages to reflect doctor's responsibilities
+  List<Widget> _pages() => [
+    DoctorHomeScreen(userModel: userModel),
+    AppointmentList(),  // Manage appointment history
+    // PrescriptionPage(),  // Manage prescriptions
+    SettingsScreen(userModel: userModel),
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text("Doctor Dashboard"),
-        backgroundColor: Colors.greenAccent,
+        centerTitle: true,
       ),
-      body: SingleChildScrollView(
+      body: _pages()[_selectedIndex],
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+        selectedItemColor: Colors.blueAccent,
+        unselectedItemColor: Colors.grey,
+        showUnselectedLabels: true,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.calendar_today),
+            label: 'Appointments',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: 'Settings',
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class DoctorHomeScreen extends StatefulWidget {
+  final UserModel? userModel;
+
+  DoctorHomeScreen({this.userModel});
+
+  @override
+  _DoctorHomeScreenState createState() => _DoctorHomeScreenState();
+}
+
+class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Center(
         child: Column(
           children: [
-            // Full-width Profile info card section
-            Card(
-              margin: EdgeInsets.all(16),
-              elevation: 5,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15),
+            Text(
+              'Welcome, Dr. ${widget.userModel?.name}!',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Colors.blueAccent,
               ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 106), // Adjust padding
-                child: Card(
-                  margin: EdgeInsets.all(0),  // Remove any margin if needed
-                  elevation: 5,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Doctor",
-                          style: TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        SizedBox(height: 10),
-                        Text("Name: ${doctorProfile['name']}"),
-                        Text("Role: ${doctorProfile['role']}"),
-                        Text("Hospital: ${doctorProfile['hospital']}"),
-                        Text("Email: ${doctorProfile['email']}"),
-                        Text("Phone: ${doctorProfile['phone']}"),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-
-            // Cart/Feature Cards Section
-            GridView.builder(
-              shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10,
-                childAspectRatio: 1.5,
-              ),
-              itemCount: 6,
-              itemBuilder: (context, index) {
-                // Define the feature cards for the doctor role
-                final List<Map<String, dynamic>> doctorFeatures = [
-                  {'name': 'Patient Diagnosis', 'icon': Icons.local_hospital},
-                  {'name': 'Prescription Management', 'icon': Icons.medical_services},
-                  {'name': 'Medical History', 'icon': Icons.history},
-                  {'name': 'Patient Care', 'icon': Icons.healing},
-                  {'name': 'Medical Reports', 'icon': Icons.report},
-                  {'name': 'Emergency Response', 'icon': Icons.warning},
-                ];
-
-                return GestureDetector(
-                  onTap: () {
-                    // Navigate to the specific page on click
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => DetailPage(index: index),
-                      ),
-                    );
-                  },
-                  child: Card(
-                    elevation: 5,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(15),
-                        color: Colors.greenAccent.shade100,
-                      ),
-                      child: Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              doctorFeatures[index]['icon'],
-                              size: 40,
-                              color: Colors.black,
-                            ),
-                            SizedBox(height: 10),
-                            Text(
-                              doctorFeatures[index]['name'],
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.black,  // Changed text color to black
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                );
-              },
+              textAlign: TextAlign.center,
             ),
             SizedBox(height: 20),
-            // Logout Button
+            Text(
+              'Manage your appointments, prescriptions, and patient history.',
+              style: TextStyle(fontSize: 16),
+            ),
+            SizedBox(height: 20),
+            // Create cards for doctor's tasks
+            GridView.count(
+              shrinkWrap: true,
+              crossAxisCount: 2,
+              crossAxisSpacing: 20,
+              mainAxisSpacing: 20,
+              padding: EdgeInsets.all(20),
+              children: [
+                _buildCard('Patient History', Icons.person, () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => BlankPage()),
+                  );
+                }),
+                _buildCard('Schedule Appointment', Icons.calendar_today, () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => AppointmentCreatePage()),
+                  );
+                }),
+                _buildCard('Prescriptions', Icons.assignment, () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => BlankPage()),
+                  );
+                }),
+                _buildCard('Activities', Icons.local_activity, () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ActivitiesPage()),
+                  );
+                }),
+                _buildCard('Notifications', Icons.notifications, () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => NotificationPage()),
+                  );
+                }),
+                _buildCard('Salary Calculator', Icons.calculate, () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => SalarySettingsPage()),
+                  );
+                }),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCard(String title, IconData icon, VoidCallback onTap) {
+    return Card(
+      elevation: 5,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15),
+      ),
+      child: InkWell(
+        onTap: onTap,
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon, size: 40, color: Colors.blueAccent),
+              SizedBox(height: 10),
+              Text(title, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class SettingsScreen extends StatelessWidget {
+  final UserModel? userModel;
+
+  SettingsScreen({this.userModel});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              'Profile',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 20),
+            CircleAvatar(
+              radius: 50,
+            ),
+            SizedBox(height: 20),
+            Text(
+              'Name: ${userModel?.name ?? 'N/A'}',
+              style: TextStyle(fontSize: 16),
+            ),
+            Text(
+              'Email: ${userModel?.email ?? 'N/A'}',
+              style: TextStyle(fontSize: 16),
+            ),
+            SizedBox(height: 30),
             ElevatedButton(
               onPressed: () async {
                 await AuthService.logout();
@@ -141,62 +223,15 @@ class DoctorPage extends StatelessWidget {
                 );
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.greenAccent.shade100,  // Set the background color to black
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
-              child: Text(
-                'Logout',
-                style: TextStyle(
-                  color: Colors.black, // Set text color to white for contrast
-                ),
-              ),
+              child: Text('Logout'),
             ),
           ],
         ),
       ),
-    );
-  }
-}
-
-class DetailPage extends StatelessWidget {
-  final int index;
-
-  const DetailPage({required this.index});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Feature ${index + 1} Details"),
-        backgroundColor: Colors.greenAccent,
-      ),
-      body: Center(
-        child: Text(
-          "Detail page for Feature ${index + 1}",
-          style: TextStyle(fontSize: 22),
-        ),
-      ),
-    );
-  }
-}
-
-void main() {
-  runApp(MaterialApp(
-    home: DoctorPage(),
-    routes: {
-      '/login': (context) => LoginPage(),
-    },
-  ));
-}
-
-class LoginPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text("Login Page")),
-      body: Center(child: Text("Login Here")),
     );
   }
 }

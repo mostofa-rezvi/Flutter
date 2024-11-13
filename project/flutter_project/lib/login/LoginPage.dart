@@ -4,9 +4,7 @@ import 'package:flutter_project/pages/laboratorist/LaboratoristPage.dart';
 import 'package:flutter_project/pages/nurse/NursePage.dart';
 import 'package:flutter_project/pages/patient/PatientPage.dart';
 import 'package:flutter_project/pages/pharmacist/PharmacistPage.dart';
-import 'package:flutter_project/pages/receptionist/AppointmentCreatePage.dart';
 import 'package:flutter_project/pages/receptionist/ReceptionistMainPage.dart';
-import 'package:flutter_project/pages/receptionist/ReceptionistPage.dart';
 import 'package:flutter_project/login/ForgetPasswordPage.dart';
 import 'package:flutter_project/pages/MainPage.dart';
 import 'package:flutter_project/login/RegistrationPage.dart';
@@ -180,7 +178,7 @@ class _LoginPageState extends State<LoginPage> {
           );
         } else if (role == Role.DOCTOR) {
           Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => DoctorPage()), // Doctor page
+            MaterialPageRoute(builder: (context) => DoctorMainPage()), // Doctor page
           );
         } else if (role == Role.NURSE) {
           Navigator.of(context).pushReplacement(
@@ -200,7 +198,7 @@ class _LoginPageState extends State<LoginPage> {
           );
         } else if (role == Role.PATIENT) {
           Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => PatientDashboardPage()), // Doctor page
+            MaterialPageRoute(builder: (context) => PatientMainPage()), // Doctor page
           );
         } else {
           Navigator.of(context).pushReplacement(

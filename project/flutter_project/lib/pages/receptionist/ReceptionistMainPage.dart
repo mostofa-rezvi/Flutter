@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_project/auth/AuthService.dart';
 import 'package:flutter_project/model/UserModel.dart';
 import 'package:flutter_project/login/LoginPage.dart';
+import 'package:flutter_project/pages/common/Activities.dart';
+import 'package:flutter_project/pages/common/Notification.dart';
+import 'package:flutter_project/pages/common/Payroll.dart';
+import 'package:flutter_project/pages/common/Salary.dart';
 import 'package:flutter_project/pages/receptionist/AppointmentCreatePage.dart';
-import 'package:flutter_project/pages/receptionist/AppointmentHistoryPage.dart';
-import 'package:flutter_project/pages/receptionist/ReceptionistPage.dart'; // Import AppointmentHistoryPage
+import 'package:flutter_project/pages/receptionist/AppointmentHistoryPage.dart'; // Import AppointmentHistoryPage
 
 class ReceptionistMainPage extends StatefulWidget {
   @override
@@ -125,32 +128,32 @@ class _ReceptionHomeScreenState extends State<ReceptionHomeScreen> {
                     MaterialPageRoute(builder: (context) => AppointmentCreatePage()),
                   );
                 }),
-                _buildCard('Reports', Icons.report, () {
+                _buildCard('Activities', Icons.local_activity, () {
                   // Navigate to a blank page
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => BlankPage()),
+                    MaterialPageRoute(builder: (context) => ActivitiesPage()),
                   );
                 }),
-                _buildCard('Invoices', Icons.attach_money, () {
+                _buildCard('Payslip', Icons.attach_money, () {
                   // Navigate to a blank page
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => BlankPage()),
+                    MaterialPageRoute(builder: (context) => PayslipPage()),
                   );
                 }),
                 _buildCard('Notifications', Icons.notifications, () {
                   // Navigate to a blank page
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => BlankPage()),
+                    MaterialPageRoute(builder: (context) => NotificationPage()),
                   );
                 }),
-                _buildCard('Messages', Icons.message, () {
+                _buildCard('Salary Calculator', Icons.calculate, () {
                   // Navigate to a blank page
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => BlankPage()),
+                    MaterialPageRoute(builder: (context) => SalarySettingsPage()),
                   );
                 }),
               ],

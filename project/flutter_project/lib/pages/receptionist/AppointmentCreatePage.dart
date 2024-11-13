@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_project/auth/AuthService.dart';
 import 'package:flutter_project/model/AppointmentModel.dart';
 import 'package:flutter_project/model/UserModel.dart';
+import 'package:flutter_project/pages/common/Salary.dart';
+import 'package:flutter_project/pages/receptionist/AppointmentSuccessful.dart';
 import 'package:flutter_project/service/AppointmentService.dart';
 import 'package:provider/provider.dart';
 
@@ -235,11 +237,28 @@ class _AppointmentCreatePageState extends State<AppointmentCreatePage> {
                               maxLines: 3,
                             ),
                             const SizedBox(height: 20),
+                            // ElevatedButton(
+                            //   style: ElevatedButton.styleFrom(
+                            //     padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                            //   ),
+                            //   onPressed: createAppointment,
+                            //   child: Row(
+                            //     mainAxisSize: MainAxisSize.min,
+                            //     children: [
+                            //       Text('Submit Appointment', style: TextStyle(fontSize: 16)),
+                            //       const SizedBox(width: 8),
+                            //       Icon(Icons.send, size: 24),
+                            //     ],
+                            //   ),
+                            // ),
+
                             ElevatedButton(
                               style: ElevatedButton.styleFrom(
                                 padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
                               ),
-                              onPressed: createAppointment,
+                              onPressed: () async {
+                                await appointment(context);  // Call the Future-based navigation method
+                              },
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
@@ -249,6 +268,7 @@ class _AppointmentCreatePageState extends State<AppointmentCreatePage> {
                                 ],
                               ),
                             ),
+
                           ],
                         ),
                       ),
@@ -261,4 +281,18 @@ class _AppointmentCreatePageState extends State<AppointmentCreatePage> {
       ),
     );
   }
+
+  // Method to handle the creation of appointment
+  Future<void> appointment(BuildContext context) async {
+      // You can perform some async operation here (e.g., API call)
+      await Future.delayed(Duration(seconds: 3)); // Simulating an async operation (like an API request)
+
+      // After the async operation completes, navigate to AppointmentSuccessful page
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => AppointmentSuccessful()),
+      );
+
+  }
+
 }

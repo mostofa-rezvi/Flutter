@@ -98,6 +98,8 @@ class UserModel {
       'role': role?.name,
     };
   }
+
+  static fromMap(map) {}
 }
 
 // UserRoleMap
