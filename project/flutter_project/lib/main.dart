@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_project/pages/LoginPage.dart';
-import 'package:flutter_project/service/AuthService.dart';
+import 'package:flutter_project/login/LoginPage.dart';
+import 'package:flutter_project/auth/AuthService.dart';
+import 'package:flutter_project/pages/MainPage.dart';
+import 'package:flutter_project/service/AppointmentService.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -9,6 +11,7 @@ void main() {
       providers: [
         Provider<AuthService>(
           create: (_) => AuthService(),
+          // child: Provider<AppointmentService>(create: (_) => AppointmentService(),
         ),
       ],
       child: MyApp(),
@@ -25,7 +28,11 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: LoginPage(),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => LoginPage(),
+        '/main': (context) => MainPage(),
+      },
     );
   }
 }
