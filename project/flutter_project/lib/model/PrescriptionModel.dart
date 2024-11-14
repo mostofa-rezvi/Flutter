@@ -5,14 +5,14 @@ import 'package:flutter_project/model/TestModel.dart';
 import 'package:flutter_project/model/UserModel.dart';
 
 class PrescriptionModel {
-  int id;
-  DateTime prescriptionDate;
-  String notes;
-  DateTime createdAt;
-  DateTime updatedAt;
-  TestModel test;
-  List<MedicineModel> medicine;
-  UserModel user;
+  String? id;
+  DateTime? prescriptionDate;
+  String? notes;
+  DateTime? createdAt;
+  DateTime? updatedAt;
+  TestModel? test;
+  List<MedicineModel>? medicine;
+  List<UserModel>? user;
 
   // Constructor
   PrescriptionModel({
@@ -44,13 +44,13 @@ class PrescriptionModel {
   Map<String, dynamic> toMap() {
     return {
       'id': id,
-      'prescriptionDate': prescriptionDate.toIso8601String(),
+      'prescriptionDate': prescriptionDate?.toIso8601String(),
       'notes': notes,
-      'createdAt': createdAt.toIso8601String(),
-      'updatedAt': updatedAt.toIso8601String(),
-      'test': test.toMap(),
-      'medicine': medicine.map((x) => x.toMap()).toList(),
-      'user': user.toMap(),
+      'createdAt': createdAt?.toIso8601String(),
+      'updatedAt': updatedAt?.toIso8601String(),
+      'test': test?.toJson(),
+      'medicine': medicine?.map((x) => x.toJson()).toList(),
+      'user': user?.asMap(),
     };
   }
 }

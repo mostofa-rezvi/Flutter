@@ -1,99 +1,232 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_project/auth/AuthService.dart';
+import 'package:flutter_project/model/UserModel.dart';
 import 'package:flutter_project/login/LoginPage.dart';
+import 'package:flutter_project/pages/common/Activities.dart';
+import 'package:flutter_project/pages/common/Notification.dart';
+import 'package:flutter_project/pages/common/Payroll.dart';
+import 'package:flutter_project/pages/common/Salary.dart';
 
-class PharmacistPage extends StatelessWidget {
-  // Function to navigate to each feature's specific page
-  void navigateToFeature(BuildContext context, Widget page) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => page),
-    );
+class PharmacistMainPage extends StatefulWidget {
+  @override
+  _PharmacistMainPageState createState() => _PharmacistMainPageState();
+}
+
+class _PharmacistMainPageState extends State<PharmacistMainPage> {
+  int _selectedIndex = 0;
+  UserModel? userModel;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUser();
   }
 
+  Future<void> _loadUser() async {
+    userModel = await AuthService.getStoredUser();
+    setState(() {}); // Update the UI after loading the user
+  }
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+  // Updated _pages to pass userModel to the respective screens
+  List<Widget> _pages() => [
+    PharmacistHomeScreen(userModel: userModel),
+    SettingsScreen(userModel: userModel),
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Pharmacist Dashboard'),
+        title: Text("Pharmacist Dashboard"),
+        centerTitle: true,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
+      body: _pages()[_selectedIndex],
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+        selectedItemColor: Colors.blueAccent,
+        unselectedItemColor: Colors.grey,
+        showUnselectedLabels: true,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.medical_services),
+            label: 'Prescriptions',  // Updated label for prescriptions
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: 'Settings',
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class PharmacistHomeScreen extends StatefulWidget {
+  final UserModel? userModel;
+
+  PharmacistHomeScreen({this.userModel});
+
+  @override
+  _PharmacistHomeScreenState createState() => _PharmacistHomeScreenState();
+}
+
+class _PharmacistHomeScreenState extends State<PharmacistHomeScreen> {
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Center(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Profile Info Card
-            Card(
-              color: Colors.blue[50],
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Pharmacist: User Name',
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold)),
-                    SizedBox(height: 4),
-                    Text('Email: pha@gmail.com',
-                        style: TextStyle(fontSize: 16)),
-                    SizedBox(height: 4),
-                    Text('Phone: +123 456 7890',
-                        style: TextStyle(fontSize: 16)),
-                  ],
-                ),
+            Text(
+              'Welcome, ${widget.userModel?.name}!',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Colors.blueAccent,
               ),
+              textAlign: TextAlign.center,
             ),
-            SizedBox(height: 16),
-
-            // Dashboard Feature Cards
-            Expanded(
-              child: GridView.count(
-                crossAxisCount: 2,
-                childAspectRatio: 3 / 2,
-                crossAxisSpacing: 16,
-                mainAxisSpacing: 16,
-                children: [
-                  DashboardCard(
-                      icon: Icons.medical_services,
-                      label: 'Medicines',
-                      onTap: () => navigateToFeature(
-                          context,
-                          MedicineView(
-                              medicineName: "Amoxicillin",
-                              strength: "500mg",
-                              instructions: "Take twice daily"))),
-                  DashboardCard(
-                      icon: Icons.people,
-                      label: 'Patients',
-                      onTap: () => navigateToFeature(
-                          context, PlaceholderPage(label: 'Patients'))),
-                  DashboardCard(
-                      icon: Icons.receipt_long,
-                      label: 'Prescriptions',
-                      onTap: () => navigateToFeature(
-                          context, PlaceholderPage(label: 'Prescriptions'))),
-                  DashboardCard(
-                      icon: Icons.history,
-                      label: 'Order History',
-                      onTap: () => navigateToFeature(
-                          context, PlaceholderPage(label: 'Order History'))),
-                  DashboardCard(
-                      icon: Icons.notifications,
-                      label: 'Notifications',
-                      onTap: () => navigateToFeature(
-                          context, PlaceholderPage(label: 'Notifications'))),
-                  DashboardCard(
-                      icon: Icons.settings,
-                      label: 'Settings',
-                      onTap: () => navigateToFeature(
-                          context, PlaceholderPage(label: 'Settings'))),
-                ],
-              ),
+            SizedBox(height: 20),
+            Text(
+              'Ready to manage prescriptions and medicines.',
+              style: TextStyle(fontSize: 16),
             ),
+            SizedBox(height: 20),
+            // Create six cards for different sections
+            GridView.count(
+              shrinkWrap: true,
+              crossAxisCount: 2,
+              crossAxisSpacing: 20,
+              mainAxisSpacing: 20,
+              padding: EdgeInsets.all(20),
+              children: [
+                _buildCard('Prescription Management', Icons.medical_services, () {
+                  // Navigate to PrescriptionCreatePage
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => BlankPage()),
+                  );
+                }),
+                _buildCard('View Medicines', Icons.local_pharmacy, () {
+                  // Navigate to a blank page or Medicine Management page
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => BlankPage()),
+                  );
+                }),
+                _buildCard('Activities', Icons.local_activity, () {
+                  // Navigate to a blank page
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ActivitiesPage()),
+                  );
+                }),
+                _buildCard('Payslip', Icons.attach_money, () {
+                  // Navigate to a blank page
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => PayslipPage()),
+                  );
+                }),
+                _buildCard('Notifications', Icons.notifications, () {
+                  // Navigate to a blank page
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => NotificationPage()),
+                  );
+                }),
+                _buildCard('Salary Calculator', Icons.calculate, () {
+                  // Navigate to a blank page
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => SalarySettingsPage()),
+                  );
+                }),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
-            // Logout Button
-            SizedBox(height: 16),
+  Widget _buildCard(String title, IconData icon, VoidCallback onTap) {
+    return Card(
+      elevation: 5,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15),
+      ),
+      child: InkWell(
+        onTap: onTap,
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon, size: 40, color: Colors.blueAccent),
+              SizedBox(height: 10),
+              Text(title, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class BlankPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Blank Page'),
+      ),
+      body: Center(child: Text('This is a blank page.')),
+    );
+  }
+}
+
+class SettingsScreen extends StatelessWidget {
+  final UserModel? userModel;
+
+  SettingsScreen({this.userModel});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              'Profile',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 20),
+            CircleAvatar(
+              radius: 50,
+            ),
+            SizedBox(height: 20),
+            Text(
+              'Name: ${userModel?.name ?? 'N/A'}',
+              style: TextStyle(fontSize: 16),
+            ),
+            Text(
+              'Email: ${userModel?.email ?? 'N/A'}',
+              style: TextStyle(fontSize: 16),
+            ),
+            SizedBox(height: 30),
             ElevatedButton(
               onPressed: () async {
                 await AuthService.logout();
@@ -111,111 +244,6 @@ class PharmacistPage extends StatelessWidget {
               child: Text('Logout'),
             ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-// Custom Card Widget for Dashboard Features
-class DashboardCard extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final Function onTap;
-
-  DashboardCard({required this.icon, required this.label, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => onTap(),
-      child: Card(
-        color: Colors.lightBlue[50],
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, size: 40, color: Colors.blue),
-            SizedBox(height: 8),
-            Text(label,
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-// Unique Medicine View UI Design
-class MedicineView extends StatelessWidget {
-  final String medicineName;
-  final String strength;
-  final String instructions;
-
-  MedicineView(
-      {required this.medicineName,
-      required this.strength,
-      required this.instructions});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Medicine Details"),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Card(
-          color: Colors.teal[50],
-          elevation: 4,
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  medicineName,
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                ),
-                SizedBox(height: 8),
-                Text(
-                  "Strength: $strength",
-                  style: TextStyle(fontSize: 18, color: Colors.grey[800]),
-                ),
-                SizedBox(height: 8),
-                Text(
-                  "Instructions:",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                SizedBox(height: 4),
-                Text(
-                  instructions,
-                  style: TextStyle(fontSize: 16, color: Colors.grey[700]),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-// Placeholder page for navigation examples
-class PlaceholderPage extends StatelessWidget {
-  final String label;
-
-  PlaceholderPage({required this.label});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(label),
-      ),
-      body: Center(
-        child: Text(
-          '$label Page',
-          style: TextStyle(fontSize: 24),
         ),
       ),
     );

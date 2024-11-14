@@ -1,12 +1,3 @@
-*Pharmacist:
-pha@gmail.com
-
-*Lab:
-rblannk@gmail.com
-
-*Admin:
-admin@gmail.com
-
 *Receptionist:
 recep@gmail.com
 
@@ -15,6 +6,16 @@ child@gmail.com
 
 Doctor:
 raju@gmail.com
+
+
+*Pharmacist:
+pha@gmail.com
+
+*Lab:
+rblannk@gmail.com
+
+*Admin:
+admin@gmail.com
 
 
 Common Password: 123

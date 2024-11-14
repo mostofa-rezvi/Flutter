@@ -5,6 +5,7 @@ import 'package:flutter_project/login/LoginPage.dart';
 import 'package:flutter_project/pages/common/Activities.dart';
 import 'package:flutter_project/pages/common/Notification.dart';
 import 'package:flutter_project/pages/common/Salary.dart';
+import 'package:flutter_project/pages/doctor/PrescriptionCreatePage.dart';
 import 'package:flutter_project/pages/receptionist/AppointmentCreatePage.dart';
 import 'package:flutter_project/pages/receptionist/AppointmentHistoryPage.dart';
 import 'package:flutter_project/pages/receptionist/ReceptionistMainPage.dart'; // New page for appointment history
@@ -130,7 +131,7 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
                 _buildCard('Prescriptions', Icons.assignment, () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => BlankPage()),
+                    MaterialPageRoute(builder: (context) => PrescriptionCreatePage()),
                   );
                 }),
                 _buildCard('Activities', Icons.local_activity, () {

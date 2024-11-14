@@ -4,11 +4,11 @@ class APIUrls {
   static Uri get login => Uri.parse('$baseURL/auth/login');
   static Uri get appointments => Uri.parse('$baseURL/appointments');
   static Uri get prescriptions => Uri.parse('$baseURL/prescriptions');
+  static Uri get medicines => Uri.parse('$baseURL/medicines');
+  static Uri get tests => Uri.parse('$baseURL/tests');
 
 
-  //
-  // static Uri get dashboard => Uri.parse('$baseURL/admin/dashboard');
-  // static Uri get project => Uri.parse('$baseURL/project');
+
   // static Uri get stage => Uri.parse('$baseURL/stage');
   // static Uri get worker => Uri.parse('$baseURL/worker');
   // static Uri get task => Uri.parse('$baseURL/task');

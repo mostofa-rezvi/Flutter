@@ -41,7 +41,7 @@ class MedicineModel {
   }
 
   // Method to convert MedicineModel to a map (e.g., for sending to the backend)
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toJson(){
     return {
       'id': id,
       'medicineName': medicineName,
@@ -55,6 +55,7 @@ class MedicineModel {
       'manufacturer': manufacturer.toMap(),
     };
   }
+
 }
 
 class Manufacturer {

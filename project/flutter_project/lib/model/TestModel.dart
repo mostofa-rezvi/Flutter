@@ -32,7 +32,7 @@ class TestModel {
   }
 
   // Method to convert TestModel to a map (e.g., for sending to the backend)
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toJson(){
     return {
       'id': id,
       'testName': testName,
