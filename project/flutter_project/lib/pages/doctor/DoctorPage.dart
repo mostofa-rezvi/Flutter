@@ -39,7 +39,7 @@ class _DoctorMainPageState extends State<DoctorMainPage> {
   // Updated _pages to reflect doctor's responsibilities
   List<Widget> _pages() => [
     DoctorHomeScreen(userModel: userModel),
-    AppointmentList(),  // Manage appointment history
+    AppointmentListPage(),  // Manage appointment history
     // PrescriptionPage(),  // Manage prescriptions
     SettingsScreen(userModel: userModel),
   ];

@@ -1,211 +1,136 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_project/model/AppointmentModel.dart';
+import 'package:flutter_project/service/AppointmentService.dart';
+import 'package:flutter_project/util/ApiResponse.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
 
-class Appointment {
-  final String name;
-  final String email;
-  final String phone;
-  final String date;
-  final String time;
-  final String notes;
-  final String doctorName;
-  String? doctorId;
-
-  Appointment({
-    required this.name,
-    required this.email,
-    required this.phone,
-    required this.date,
-    required this.time,
-    required this.notes,
-    required this.doctorName,
-    this.doctorId,
-  });
-
-  factory Appointment.fromJson(Map<String, dynamic> json) {
-    return Appointment(
-      name: json['name'],
-      email: json['email'],
-      phone: json['phone'],
-      date: json['date'],
-      time: json['time'],
-      notes: json['notes'],
-      doctorName: json['doctor'] != null ? json['doctor']['name'] : 'Not Assigned',
-      doctorId: json['doctor'] != null ? json['doctor']['id'] : null,
-    );
-  }
-}
-
-class Doctor {
-  final String id;
-  final String name;
-
-  Doctor({required this.id, required this.name});
-
-  factory Doctor.fromJson(Map<String, dynamic> json) {
-    return Doctor(
-      id: json['id'],
-      name: json['name'],
-    );
-  }
-}
-
-class AppointmentList extends StatefulWidget {
+class AppointmentListPage extends StatefulWidget {
   @override
-  _AppointmentListState createState() => _AppointmentListState();
+  _AppointmentListPageState createState() => _AppointmentListPageState();
 }
 
-class _AppointmentListState extends State<AppointmentList> {
-  List<Appointment> appointments = [];
-  List<Appointment> filteredAppointments = [];
-  List<Doctor> doctors = [];
+class _AppointmentListPageState extends State<AppointmentListPage> {
+  List<AppointmentModel> appointments = [];
   bool isLoading = true;
-  String searchTerm = '';
+  final AppointmentService _appointmentService = AppointmentService(httpClient: http.Client());
 
   @override
   void initState() {
     super.initState();
-    fetchAppointments();
-    fetchDoctors();
+    _fetchAppointments();
   }
 
-  Future<void> fetchAppointments() async {
-    final response = await http.get(Uri.parse('your_api_url/appointments'));
-
-    if (response.statusCode == 200) {
-      final List<dynamic> data = json.decode(response.body);
-      setState(() {
-        appointments = data.map((item) => Appointment.fromJson(item)).toList();
-        filteredAppointments = appointments;
-        isLoading = false;
-      });
-    } else {
-      setState(() {
-        isLoading = false;
-      });
-      // Handle error
-    }
-  }
-
-  Future<void> fetchDoctors() async {
-    final response = await http.get(Uri.parse('your_api_url/doctors'));
-
-    if (response.statusCode == 200) {
-      final List<dynamic> data = json.decode(response.body);
-      setState(() {
-        doctors = data.map((item) => Doctor.fromJson(item)).toList();
-      });
-    } else {
-      // Handle error
-    }
-  }
-
-  void onDoctorSelect(Appointment appointment, String selectedDoctorId) {
+  Future<void> _fetchAppointments() async {
     setState(() {
-      appointment.doctorId = selectedDoctorId;
+      isLoading = true;
     });
-  }
-
-  void assignDoctor(Appointment appointment) async {
-    if (appointment.doctorId == null || appointment.doctorId!.isEmpty) {
-      // Show alert: "Please select a doctor"
-      return;
-    }
-
-    final response = await http.put(
-      Uri.parse('your_api_url/appointments/${appointment.name}'),
-      body: json.encode({
-        'doctorId': appointment.doctorId,
-      }),
-    );
-
-    if (response.statusCode == 200) {
-      // Show success alert
-      fetchAppointments(); // Refresh the appointments
-    } else {
-      // Show failure alert
-    }
-  }
-
-  void searchAppointments() {
-    setState(() {
-      if (searchTerm.isNotEmpty) {
-        filteredAppointments = appointments.where((appointment) {
-          return appointment.name.toLowerCase().contains(searchTerm.toLowerCase()) ||
-              appointment.doctorName.toLowerCase().contains(searchTerm.toLowerCase());
-        }).toList();
+    try {
+      ApiResponse apiResponse = await _appointmentService.getAllAppointments();
+      if (apiResponse.successful) {
+        final List<AppointmentModel> fetchedAppointments = (apiResponse.data['appointments'] as List)
+            .map((e) => AppointmentModel.fromJson(e))
+            .toList();
+        setState(() {
+          appointments = fetchedAppointments;
+        });
       } else {
-        filteredAppointments = appointments;
+        _showError("Invalid appointment.");
       }
-    });
+    } catch (e) {
+      _showError('Failed to load appointments.');
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _deleteAppointment(int id) async {
+    try {
+      ApiResponse apiResponse = await _appointmentService.deleteAppointment(id);
+      if (apiResponse.successful) {
+        _showSuccess('Appointment deleted successfully.');
+        await _fetchAppointments();
+      } else {
+        _showError("Invalid appointment ID.");
+      }
+    } catch (e) {
+      _showError('Failed to delete appointment.');
+    }
+  }
+
+  void _viewAppointmentDetails(AppointmentModel appointment) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Appointment Details'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: [
+                Text('Name: ${appointment.name ?? ''}'),
+                Text('Email: ${appointment.email ?? ''}'),
+                Text('Phone: ${appointment.phone ?? ''}'),
+                Text('Gender: ${appointment.gender ?? ''}'),
+                Text('Age: ${appointment.age ?? ''}'),
+                Text('Date: ${appointment.date?.toLocal().toString().split(' ')[0] ?? ''}'),
+                Text('Time: ${appointment.time ?? ''}'),
+                Text('Notes: ${appointment.notes ?? ''}'),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              child: Text('Close'),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showError(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(message),
+      backgroundColor: Colors.red,
+    ));
+  }
+
+  void _showSuccess(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(message),
+      backgroundColor: Colors.green,
+    ));
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Appointments List')),
-      body: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            // Search bar
-            TextField(
-              onChanged: (value) {
-                setState(() {
-                  searchTerm = value;
-                });
-                searchAppointments();
-              },
-              decoration: InputDecoration(
-                labelText: 'Search by Patient Name or Doctor',
-                suffixIcon: Icon(Icons.search),
+      appBar: AppBar(
+        title: Text('Appointment History'),
+      ),
+      body: isLoading
+          ? Center(child: CircularProgressIndicator())
+          : appointments.isEmpty
+          ? Center(child: Text('No appointments found.'))
+          : ListView.builder(
+        itemCount: appointments.length,
+        itemBuilder: (context, index) {
+          final appointment = appointments[index];
+          return Card(
+            margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+            child: ListTile(
+              title: Text(appointment.name ?? 'No Name'),
+              subtitle: Text('Date: ${appointment.date?.toLocal().toString().split(' ')[0] ?? 'N/A'}'),
+              trailing: IconButton(
+                icon: Icon(Icons.delete, color: Colors.red),
+                onPressed: () => _deleteAppointment(appointment.id!),
               ),
+              onTap: () => _viewAppointmentDetails(appointment),
             ),
-            SizedBox(height: 20),
-
-            // Loading indicator
-            if (isLoading)
-              Center(child: CircularProgressIndicator()),
-
-            // No appointments found
-            if (!isLoading && filteredAppointments.isEmpty)
-              Center(child: Text('No appointments found')),
-
-            // Appointments list
-            if (!isLoading && filteredAppointments.isNotEmpty)
-              Expanded(
-                child: ListView.builder(
-                  itemCount: filteredAppointments.length,
-                  itemBuilder: (context, index) {
-                    final appointment = filteredAppointments[index];
-                    return Card(
-                      child: ListTile(
-                        title: Text(appointment.name),
-                        subtitle: Text('Doctor: ${appointment.doctorName}'),
-                        trailing: DropdownButton<String>(
-                          hint: Text('Assign Doctor'),
-                          value: appointment.doctorId,
-                          onChanged: (value) {
-                            onDoctorSelect(appointment, value!);
-                          },
-                          items: doctors.map((doctor) {
-                            return DropdownMenuItem<String>(
-                              value: doctor.id,
-                              child: Text(doctor.name),
-                            );
-                          }).toList(),
-                        ),
-                        onTap: () {
-                          assignDoctor(appointment);
-                        },
-                      ),
-                    );
-                  },
-                ),
-              ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }

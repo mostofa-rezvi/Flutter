@@ -174,7 +174,7 @@ class _LoginPageState extends State<LoginPage> {
         Role role = Role.values.byName(user['role']);
         if (role == Role.ADMIN) {
           Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => MainPage()), // Admin page
+            MaterialPageRoute(builder: (context) => ReceptionistMainPage()), // Admin page
           );
         } else if (role == Role.DOCTOR) {
           Navigator.of(context).pushReplacement(

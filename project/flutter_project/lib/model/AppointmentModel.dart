@@ -1,33 +1,33 @@
 import 'package:flutter_project/model/UserModel.dart';
 
 class AppointmentModel {
-  String? id;
+  int? id;
   String? name;
   String? email;
   String? phone;
   String? gender;
-  int? age;
+  String? age;
   DateTime? birthday;
   DateTime? date;
   String? time;
   String? notes;
 
-  List<UserModel>? requestedBy;
-  List<UserModel>? doctor;
+  UserModel? requestedBy;
+  UserModel? doctor;
 
   AppointmentModel({
-    required this.id,
-    required this.name,
-    required this.email,
-    required this.phone,
-    required this.gender,
-    required this.age,
-    required this.birthday,
-    required this.date,
-    required this.time,
-    required this.notes,
-    required this.requestedBy,
-    required this.doctor,
+    this.id,
+    this.name,
+    this.email,
+    this.phone,
+    this.gender,
+    this.age,
+    this.birthday,
+    this.date,
+    this.time,
+    this.notes,
+    this.requestedBy,
+    this.doctor,
   });
 
   // Factory constructor to create an instance from JSON
@@ -43,8 +43,12 @@ class AppointmentModel {
       date: DateTime.parse(json['date']),
       time: json['time'],
       notes: json['notes'],
-      requestedBy: json['requestedBy'] != null ? (json['requestedBy']).toList() : [],
-      doctor: json['doctor'] != null ? (json['doctor']).toList() : [],
+      requestedBy: json['requestedBy'] != null
+          ? UserModel.fromJson(json['requestedBy'])
+          : null,
+      doctor: json['doctor'] != null
+          ? UserModel.fromJson(json['doctor'])
+          : null
     );
   }
 
@@ -61,8 +65,8 @@ class AppointmentModel {
       'date': date?.toIso8601String(),
       'time': time,
       'notes': notes,
-      'requestedBy': requestedBy?.toList(),
-      'doctor': doctor?.toList(),
+      'requestedBy': requestedBy?.toJson(),
+      'doctor': doctor?.toJson(),
     };
   }
 }

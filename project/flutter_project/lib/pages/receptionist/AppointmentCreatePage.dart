@@ -13,20 +13,7 @@ class AppointmentCreatePage extends StatefulWidget {
 }
 
 class _AppointmentCreatePageState extends State<AppointmentCreatePage> {
-  AppointmentModel appointmentModel = AppointmentModel(
-    id: '',
-    name: '',
-    email: '',
-    phone: '',
-    gender: '',
-    age: 0,
-    birthday: null,
-    date: null,
-    time: '',
-    notes: '',
-    doctor: [],
-    requestedBy: [],
-  );
+  AppointmentModel appointmentModel = AppointmentModel();
 
   List<DateTime> availableDates = [];
   List<String> availableTimes = [];
@@ -92,7 +79,7 @@ class _AppointmentCreatePageState extends State<AppointmentCreatePage> {
       final user = await AuthService.getStoredUser();
 
       if (user != null) {
-        appointmentModel.requestedBy = [user]; // Assuming requestedBy is a list of UserModel
+        appointmentModel.requestedBy = user;
       }
 
       final appointmentService = Provider.of<AppointmentService>(context, listen: false);
@@ -198,7 +185,7 @@ class _AppointmentCreatePageState extends State<AppointmentCreatePage> {
                             const SizedBox(height: 10),
                             TextFormField(
                               decoration: InputDecoration(labelText: 'Age', border: OutlineInputBorder()),
-                              onSaved: (value) => appointmentModel.age = int.tryParse(value ?? '0') ?? 0,
+                              onSaved: (value) => appointmentModel.age = value,
                               validator: (value) {
                                 if (value!.isEmpty) return 'Please enter your age';
                                 if (int.tryParse(value) == null) return 'Age must be a number';
@@ -237,21 +224,6 @@ class _AppointmentCreatePageState extends State<AppointmentCreatePage> {
                               maxLines: 3,
                             ),
                             const SizedBox(height: 20),
-                            // ElevatedButton(
-                            //   style: ElevatedButton.styleFrom(
-                            //     padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
-                            //   ),
-                            //   onPressed: createAppointment,
-                            //   child: Row(
-                            //     mainAxisSize: MainAxisSize.min,
-                            //     children: [
-                            //       Text('Submit Appointment', style: TextStyle(fontSize: 16)),
-                            //       const SizedBox(width: 8),
-                            //       Icon(Icons.send, size: 24),
-                            //     ],
-                            //   ),
-                            // ),
-
                             ElevatedButton(
                               style: ElevatedButton.styleFrom(
                                 padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
@@ -268,7 +240,6 @@ class _AppointmentCreatePageState extends State<AppointmentCreatePage> {
                                 ],
                               ),
                             ),
-
                           ],
                         ),
                       ),

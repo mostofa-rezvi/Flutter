@@ -20,7 +20,9 @@ class AppointmentService {
   }
 
   Future<ApiResponse> getAllAppointments() async {
-    final response = await httpClient.get(APIUrls.appointments);
+    final response = await httpClient.get(
+        APIUrls.appointments.replace(path: '${APIUrls.appointments.path}/')
+        );
     return _handleResponse(response);
   }
 

@@ -38,7 +38,7 @@ class _ReceptionistMainPageState extends State<ReceptionistMainPage> {
   // Updated _pages to pass userModel to the respective screens
   List<Widget> _pages() => [
     ReceptionHomeScreen(userModel: userModel),
-    AppointmentList(),  // Navigate to AppointmentHistoryPage
+    AppointmentListPage(),  // Navigate to AppointmentHistoryPage
     SettingsScreen(userModel: userModel),
   ];
 
