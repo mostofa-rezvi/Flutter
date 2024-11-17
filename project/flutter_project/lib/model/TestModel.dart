@@ -43,4 +43,6 @@ class TestModel {
       'updatedAt': updatedAt,
     };
   }
+
+  static fromJson(json) {}
 }

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_project/auth/AuthService.dart';
 import 'package:flutter_project/model/AppointmentModel.dart';
 import 'package:flutter_project/model/UserModel.dart';
-import 'package:flutter_project/pages/common/Salary.dart';
 import 'package:flutter_project/pages/receptionist/AppointmentSuccessful.dart';
 import 'package:flutter_project/service/AppointmentService.dart';
 import 'package:provider/provider.dart';
@@ -13,7 +12,20 @@ class AppointmentCreatePage extends StatefulWidget {
 }
 
 class _AppointmentCreatePageState extends State<AppointmentCreatePage> {
-  AppointmentModel appointmentModel = AppointmentModel();
+  AppointmentModel appointmentModel = AppointmentModel(
+    id: 0,
+    name: '',
+    email: '',
+    phone: '',
+    gender: '',
+    age: null,
+    birthday: null,
+    date: null,
+    time: '',
+    notes: '',
+    requestedBy: null,
+    doctor: null,
+  );
 
   List<DateTime> availableDates = [];
   List<String> availableTimes = [];
@@ -63,36 +75,79 @@ class _AppointmentCreatePageState extends State<AppointmentCreatePage> {
   }
 
   Future<void> createAppointment() async {
+    // Ensure date and time are selected
     if (selectedDate == null || selectedTime == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Please select both date and time')),
+        SnackBar(
+          content: Text('Please select both date and time'),
+          backgroundColor: Colors.red,
+        ),
       );
       return;
     }
 
     if (_formKey.currentState?.validate() ?? false) {
       _formKey.currentState?.save();
+
       appointmentModel.date = selectedDate;
       appointmentModel.time = selectedTime;
 
-      final authService = Provider.of<AuthService>(context, listen: false);
-      final user = await AuthService.getStoredUser();
+      try {
+        final user = await AuthService.getStoredUser();
 
-      if (user != null) {
-        appointmentModel.requestedBy = user;
-      }
+        if (user != null) {
+          appointmentModel.requestedBy = user;
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Unable to fetch user information'),
+              backgroundColor: Colors.red,
+            ),
+          );
+          return;
+        }
 
-      final appointmentService = Provider.of<AppointmentService>(context, listen: false);
-      final response = await appointmentService.createAppointment(appointmentModel);
+        // Get the appointment service
+        final appointmentService = Provider.of<AppointmentService>(context, listen: false);
 
-      if (response.successful) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Appointment created successfully')));
-        Navigator.pop(context); // Navigate back on success
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(response.message ?? 'Failed to create appointment')));
+        // Call the API to create an appointment
+        final response = await appointmentService.createAppointment(appointmentModel);
+
+        // Handle the API response
+        if (response.successful) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Congratulations! Appointment created successfully.'),
+              backgroundColor: Colors.green,
+            ),
+          );
+
+          // Navigate to the success page
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => AppointmentSuccessful()),
+          );
+        } else {
+          // Show an error message if the API call fails
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(response.message ?? 'Failed to create appointment'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      } catch (e) {
+        // Catch and handle any exceptions
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('An error occurred: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
+        );
       }
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -228,9 +283,7 @@ class _AppointmentCreatePageState extends State<AppointmentCreatePage> {
                               style: ElevatedButton.styleFrom(
                                 padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
                               ),
-                              onPressed: () async {
-                                await appointment(context);  // Call the Future-based navigation method
-                              },
+                              onPressed: createAppointment, // Call the createAppointment method
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
@@ -252,18 +305,4 @@ class _AppointmentCreatePageState extends State<AppointmentCreatePage> {
       ),
     );
   }
-
-  // Method to handle the creation of appointment
-  Future<void> appointment(BuildContext context) async {
-      // You can perform some async operation here (e.g., API call)
-      await Future.delayed(Duration(seconds: 3)); // Simulating an async operation (like an API request)
-
-      // After the async operation completes, navigate to AppointmentSuccessful page
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => AppointmentSuccessful()),
-      );
-
-  }
-
 }
