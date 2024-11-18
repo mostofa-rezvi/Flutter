@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_project/model/PrescriptionModel.dart';
 import 'package:flutter_project/service/PrescriptionService.dart';
+import 'package:flutter_project/util/ApiResponse.dart';
+import 'package:http/http.dart' as http;
 
 class PrescriptionListPage extends StatefulWidget {
   @override
@@ -10,8 +12,8 @@ class PrescriptionListPage extends StatefulWidget {
 class _PrescriptionListPageState extends State<PrescriptionListPage> {
   List<PrescriptionModel> _prescriptions = [];
   bool _isLoading = true;
-
-  final PrescriptionService _prescriptionService = PrescriptionService();
+  final PrescriptionService _prescriptionService =
+  PrescriptionService(httpClient: http.Client());
 
   @override
   void initState() {
@@ -24,12 +26,19 @@ class _PrescriptionListPageState extends State<PrescriptionListPage> {
       _isLoading = true;
     });
     try {
-      final prescriptions = await _prescriptionService.getAllPrescriptions();
-      setState(() {
-        _prescriptions = prescriptions;
-      });
+      ApiResponse apiResponse = await _prescriptionService.getAllPrescriptions();
+      if (apiResponse.successful && apiResponse.data != null) {
+        final prescriptionsData = apiResponse.data['prescriptions'] as List;
+        setState(() {
+          _prescriptions = prescriptionsData
+              .map((e) => PrescriptionModel.fromJson(e))
+              .toList();
+        });
+      } else {
+        _showError(apiResponse.message ?? "Failed to load prescriptions.");
+      }
     } catch (error) {
-      _showError("Failed to load prescriptions: $error");
+      _showError("An error occurred: $error");
     } finally {
       setState(() {
         _isLoading = false;
@@ -53,21 +62,11 @@ class _PrescriptionListPageState extends State<PrescriptionListPage> {
           content: SingleChildScrollView(
             child: ListBody(
               children: [
-                Text('Prescription ID: ${prescription.id ?? 'N/A'}'),
-                Text(
-                    'Date: ${prescription.prescriptionDate?.toLocal().toString().split(' ')[0] ?? 'N/A'}'),
-                Text('Issued By: Dr. ${prescription.issuedBy?.name ?? 'N/A'}'),
-                Text('Patient: ${prescription.patient?.name ?? 'N/A'}'),
-                Text('Notes: ${prescription.notes ?? 'N/A'}'),
-                Text('Medicines:'),
-                if (prescription.medicines != null &&
-                    prescription.medicines!.isNotEmpty)
-                  ...prescription.medicines!
-                      .map((medicine) => Text(
-                          '- ${medicine.medicineName} (${medicine.medicineStrength})'))
-                      .toList()
-                else
-                  Text('No medicines assigned.'),
+                Text('Prescription ID: ${prescription.id ?? ''}'),
+                Text('Date: ${prescription.prescriptionDate?.toLocal().toString().split(' ')[0] ?? ''}'),
+                Text('Issued By: ${prescription.issuedBy ?? ''}'),
+                Text('Patient: ${prescription.patient ?? ''}'),
+                Text('Notes: ${prescription.notes ?? ''}'),
               ],
             ),
           ),
@@ -91,25 +90,24 @@ class _PrescriptionListPageState extends State<PrescriptionListPage> {
       body: _isLoading
           ? Center(child: CircularProgressIndicator())
           : _prescriptions.isEmpty
-              ? Center(child: Text('No prescriptions found.'))
-              : ListView.builder(
-                  itemCount: _prescriptions.length,
-                  itemBuilder: (context, index) {
-                    final prescription = _prescriptions[index];
-                    return Card(
-                      margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                      child: ListTile(
-                        title:
-                            Text('Prescription #${prescription.id ?? 'N/A'}'),
-                        subtitle: Text(
-                            'Issued by: Dr. ${prescription.issuedBy?.name ?? 'N/A'}\n'
-                            'Patient: ${prescription.patient?.name ?? 'N/A'}'),
-                        trailing: Icon(Icons.arrow_forward),
-                        onTap: () => _viewPrescriptionDetails(prescription),
-                      ),
-                    );
-                  },
-                ),
+          ? Center(child: Text('No prescriptions found.'))
+          : ListView.builder(
+        itemCount: _prescriptions.length,
+        itemBuilder: (context, index) {
+          final prescription = _prescriptions[index];
+          return Card(
+            margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+            child: ListTile(
+              title: Text('Prescription #${prescription.id ?? 'Unknown'}'),
+              subtitle: Text(
+                'Issued by: ${prescription.issuedBy ?? 'N/A'}\nPatient: ${prescription.patient ?? 'N/A'}',
+              ),
+              trailing: Icon(Icons.arrow_forward),
+              onTap: () => _viewPrescriptionDetails(prescription),
+            ),
+          );
+        },
+      ),
     );
   }
 }

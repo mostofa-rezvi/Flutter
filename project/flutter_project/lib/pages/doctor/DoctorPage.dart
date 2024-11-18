@@ -117,7 +117,7 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
               mainAxisSpacing: 20,
               padding: EdgeInsets.all(20),
               children: [
-                _buildCard('Patient History', Icons.person, () {
+                _buildCard('Patient Prescriptions', Icons.person, () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => PrescriptionListPage()),

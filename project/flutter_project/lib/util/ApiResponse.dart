@@ -30,4 +30,25 @@ class ApiResponse {
       'successful': successful,
     };
   }
+
+
+  // Success response
+  factory ApiResponse.success(dynamic data, {String? message}) {
+    return ApiResponse(
+      message: message ?? 'Request was successful.',
+      data: data,
+      errors: null,
+      successful: true,
+    );
+  }
+
+  // Error response
+  factory ApiResponse.error(String message, {Map<String, String>? errors}) {
+    return ApiResponse(
+      message: message,
+      data: null,
+      errors: errors,
+      successful: false,
+    );
+  }
 }

@@ -3,15 +3,16 @@ import 'package:flutter_project/model/TestModel.dart';
 import 'package:flutter_project/model/UserModel.dart';
 
 class PrescriptionModel {
-  String? id;
+  int? id;
   DateTime? prescriptionDate;
   String? notes;
   DateTime? createdAt;
   DateTime? updatedAt;
+
   TestModel? test;
-  List<MedicineModel>? medicines;
-  UserModel? issuedBy; // Doctor issuing the prescription
-  UserModel? patient; // Patient receiving the prescription
+  MedicineModel? medicines;
+  UserModel? issuedBy;
+  UserModel? patient;
 
   PrescriptionModel({
     this.id,
@@ -25,7 +26,8 @@ class PrescriptionModel {
     this.patient,
   });
 
-  // Factory constructor to create an instance from JSON
+
+// Adjusted fromJson and toJson for a single MedicineModel
   factory PrescriptionModel.fromJson(Map<String, dynamic> json) {
     return PrescriptionModel(
       id: json['id'],
@@ -39,11 +41,12 @@ class PrescriptionModel {
       updatedAt: json['updatedAt'] != null
           ? DateTime.parse(json['updatedAt'])
           : null,
-      test: json['test'] != null ? TestModel.fromJson(json['test']) : null,
-      medicines: json['medicines'] != null
-          ? List<MedicineModel>.from(
-          json['medicines'].map((x) => MedicineModel.fromJson(x)))
+      test: json['test'] != null
+          ? TestModel.fromJson(json['test'])
           : null,
+      medicines: json['medicines'] != null
+          ? MedicineModel.fromJson(json['medicines'])
+          : null, // Single MedicineModel
       issuedBy: json['issuedBy'] != null
           ? UserModel.fromJson(json['issuedBy'])
           : null,
@@ -53,7 +56,6 @@ class PrescriptionModel {
     );
   }
 
-  // Method to convert an instance to JSON
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -62,9 +64,10 @@ class PrescriptionModel {
       'createdAt': createdAt?.toIso8601String(),
       'updatedAt': updatedAt?.toIso8601String(),
       'test': test?.toJson(),
-      'medicines': medicines?.map((x) => x.toJson()).toList(),
+      'medicines': medicines?.toJson(), // Single MedicineModel
       'issuedBy': issuedBy?.toJson(),
       'patient': patient?.toJson(),
     };
   }
+
 }
