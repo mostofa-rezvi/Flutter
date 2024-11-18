@@ -1,47 +1,62 @@
-
-
 import 'package:flutter_project/model/MedicineModel.dart';
 import 'package:flutter_project/model/TestModel.dart';
 import 'package:flutter_project/model/UserModel.dart';
 
 class PrescriptionModel {
-  String? id;
+  int? id;
   DateTime? prescriptionDate;
   String? notes;
   DateTime? createdAt;
   DateTime? updatedAt;
-  TestModel? test;
-  List<MedicineModel>? medicine;
-  List<UserModel>? user;
 
-  // Constructor
+  TestModel? test;
+  MedicineModel? medicines;
+  UserModel? issuedBy;
+  UserModel? patient;
+
   PrescriptionModel({
-    required this.id,
-    required this.prescriptionDate,
-    required this.notes,
-    required this.createdAt,
-    required this.updatedAt,
-    required this.test,
-    required this.medicine,
-    required this.user,
+    this.id,
+    this.prescriptionDate,
+    this.notes,
+    this.createdAt,
+    this.updatedAt,
+    this.test,
+    this.medicines,
+    this.issuedBy,
+    this.patient,
   });
 
-  // Factory method to create PrescriptionModel from a map (e.g., JSON data)
-  factory PrescriptionModel.fromMap(Map<String, dynamic> map) {
+
+// Adjusted fromJson and toJson for a single MedicineModel
+  factory PrescriptionModel.fromJson(Map<String, dynamic> json) {
     return PrescriptionModel(
-      id: map['id'],
-      prescriptionDate: DateTime.parse(map['prescriptionDate']),
-      notes: map['notes'],
-      createdAt: DateTime.parse(map['createdAt']),
-      updatedAt: DateTime.parse(map['updatedAt']),
-      test: TestModel.fromMap(map['test']),
-      medicine: List<MedicineModel>.from(map['medicine']?.map((x) => MedicineModel.fromMap(x))),
-      user: UserModel.fromMap(map['user']),
+      id: json['id'],
+      prescriptionDate: json['prescriptionDate'] != null
+          ? DateTime.parse(json['prescriptionDate'])
+          : null,
+      notes: json['notes'],
+      createdAt: json['createdAt'] != null
+          ? DateTime.parse(json['createdAt'])
+          : null,
+      updatedAt: json['updatedAt'] != null
+          ? DateTime.parse(json['updatedAt'])
+          : null,
+      test: json['test'] != null
+          ? TestModel.fromJson(json['test'])
+          : null,
+      medicines: json['medicines'] != null
+          ? MedicineModel.fromJson(json['medicines'])
+          : null, // Single MedicineModel
+      issuedBy: json['issuedBy'] != null
+          ? UserModel.fromJson(json['issuedBy'])
+          : null,
+      patient: json['patient'] != null
+          ? UserModel.fromJson(json['patient'])
+          : null,
     );
   }
 
-  // Method to convert PrescriptionModel to a map (e.g., for sending to the backend)
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toJson() {
     return {
       'id': id,
       'prescriptionDate': prescriptionDate?.toIso8601String(),
@@ -49,12 +64,10 @@ class PrescriptionModel {
       'createdAt': createdAt?.toIso8601String(),
       'updatedAt': updatedAt?.toIso8601String(),
       'test': test?.toJson(),
-      'medicine': medicine?.map((x) => x.toJson()).toList(),
-      'user': user?.asMap(),
+      'medicines': medicines?.toJson(), // Single MedicineModel
+      'issuedBy': issuedBy?.toJson(),
+      'patient': patient?.toJson(),
     };
   }
-}
 
-extension on UserModel {
-  toMap() {}
 }

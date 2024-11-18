@@ -4,6 +4,8 @@ import 'package:flutter_project/auth/AuthService.dart';
 import 'package:flutter_project/pages/MainPage.dart';
 import 'package:flutter_project/service/AppointmentService.dart';
 import 'package:provider/provider.dart';
+import 'package:http/http.dart' as http;
+
 
 void main() {
   runApp(
@@ -11,13 +13,16 @@ void main() {
       providers: [
         Provider<AuthService>(
           create: (_) => AuthService(),
-          // child: Provider<AppointmentService>(create: (_) => AppointmentService(),
+        ),
+        Provider<AppointmentService>(
+          create: (_) => AppointmentService(httpClient: http.Client()),
         ),
       ],
       child: MyApp(),
     ),
   );
 }
+
 
 class MyApp extends StatelessWidget {
   @override

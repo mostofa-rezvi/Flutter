@@ -12,7 +12,8 @@ class AppointmentListPage extends StatefulWidget {
 class _AppointmentListPageState extends State<AppointmentListPage> {
   List<AppointmentModel> appointments = [];
   bool isLoading = true;
-  final AppointmentService _appointmentService = AppointmentService(httpClient: http.Client());
+  final AppointmentService _appointmentService =
+      AppointmentService(httpClient: http.Client());
 
   @override
   void initState() {
@@ -27,9 +28,10 @@ class _AppointmentListPageState extends State<AppointmentListPage> {
     try {
       ApiResponse apiResponse = await _appointmentService.getAllAppointments();
       if (apiResponse.successful) {
-        final List<AppointmentModel> fetchedAppointments = (apiResponse.data['appointments'] as List)
-            .map((e) => AppointmentModel.fromJson(e))
-            .toList();
+        final List<AppointmentModel> fetchedAppointments =
+            (apiResponse.data['appointments'] as List)
+                .map((e) => AppointmentModel.fromJson(e))
+                .toList();
         setState(() {
           appointments = fetchedAppointments;
         });
@@ -73,7 +75,8 @@ class _AppointmentListPageState extends State<AppointmentListPage> {
                 Text('Phone: ${appointment.phone ?? ''}'),
                 Text('Gender: ${appointment.gender ?? ''}'),
                 Text('Age: ${appointment.age ?? ''}'),
-                Text('Date: ${appointment.date?.toLocal().toString().split(' ')[0] ?? ''}'),
+                Text(
+                    'Date: ${appointment.date?.toLocal().toString().split(' ')[0] ?? ''}'),
                 Text('Time: ${appointment.time ?? ''}'),
                 Text('Notes: ${appointment.notes ?? ''}'),
               ],
@@ -113,25 +116,26 @@ class _AppointmentListPageState extends State<AppointmentListPage> {
       body: isLoading
           ? Center(child: CircularProgressIndicator())
           : appointments.isEmpty
-          ? Center(child: Text('No appointments found.'))
-          : ListView.builder(
-        itemCount: appointments.length,
-        itemBuilder: (context, index) {
-          final appointment = appointments[index];
-          return Card(
-            margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-            child: ListTile(
-              title: Text(appointment.name ?? 'No Name'),
-              subtitle: Text('Date: ${appointment.date?.toLocal().toString().split(' ')[0] ?? 'N/A'}'),
-              trailing: IconButton(
-                icon: Icon(Icons.delete, color: Colors.red),
-                onPressed: () => _deleteAppointment(appointment.id!),
-              ),
-              onTap: () => _viewAppointmentDetails(appointment),
-            ),
-          );
-        },
-      ),
+              ? Center(child: Text('No appointments found.'))
+              : ListView.builder(
+                  itemCount: appointments.length,
+                  itemBuilder: (context, index) {
+                    final appointment = appointments[index];
+                    return Card(
+                      margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                      child: ListTile(
+                        title: Text(appointment.name ?? 'No Name'),
+                        subtitle: Text(
+                            'Date: ${appointment.date?.toLocal().toString().split(' ')[0] ?? 'N/A'}'),
+                        trailing: IconButton(
+                          icon: Icon(Icons.delete, color: Colors.red),
+                          onPressed: () => _deleteAppointment(appointment.id!),
+                        ),
+                        onTap: () => _viewAppointmentDetails(appointment),
+                      ),
+                    );
+                  },
+                ),
     );
   }
 }

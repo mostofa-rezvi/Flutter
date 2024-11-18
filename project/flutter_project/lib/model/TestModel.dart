@@ -1,19 +1,19 @@
 class TestModel {
-  int id;
+  int? id;
   String testName;
   String description;
-  String result;
-  String instructions;
+  String? result; // Optional as per potential real-world scenarios
+  String? instructions; // Optional as per potential real-world scenarios
   String? createdAt;
   String? updatedAt;
 
   // Constructor
   TestModel({
-    required this.id,
+    this.id,
     required this.testName,
     required this.description,
-    required this.result,
-    required this.instructions,
+    this.result,
+    this.instructions,
     this.createdAt,
     this.updatedAt,
   });
@@ -32,7 +32,7 @@ class TestModel {
   }
 
   // Method to convert TestModel to a map (e.g., for sending to the backend)
-  Map<String, dynamic> toJson(){
+  Map<String, dynamic> toJson() {
     return {
       'id': id,
       'testName': testName,
@@ -43,4 +43,6 @@ class TestModel {
       'updatedAt': updatedAt,
     };
   }
+
+  static fromJson(x) {}
 }

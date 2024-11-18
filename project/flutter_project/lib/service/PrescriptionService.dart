@@ -1,22 +1,22 @@
 import 'dart:convert';
 import 'package:flutter_project/model/PrescriptionModel.dart';
+import 'package:flutter_project/util/ApiResponse.dart';
 import 'package:flutter_project/util/ApiUrls.dart';
-import 'package:http/http.dart' as http;// Assuming PrescriptionModel is in prescription_model.dart
+import 'package:http/http.dart' as http;
 
 class PrescriptionService {
-  // Use the APIUrls for the base URL and endpoints
-  final String baseUrl = APIUrls.baseURL;
 
-  // Fetch all prescriptions
-  Future<List<PrescriptionModel>> getAllPrescriptions() async {
-    final response = await http.get(APIUrls.prescriptions);
+  final http.Client httpClient;
 
-    if (response.statusCode == 200) {
-      List<dynamic> data = json.decode(response.body);
-      return data.map((item) => PrescriptionModel.fromMap(item)).toList();
-    } else {
-      throw Exception('Failed to load prescriptions');
-    }
+  PrescriptionService({required this.httpClient});
+
+  // final String baseUrl = APIUrls.baseURL;
+
+  Future<ApiResponse> getAllPrescriptions() async {
+    final response = await httpClient.get(
+        APIUrls.prescriptions.replace(path: APIUrls.prescriptions.path)
+    );
+    return _handleResponse(response);
   }
 
   // Fetch a prescription by ID
@@ -24,7 +24,7 @@ class PrescriptionService {
     final response = await http.get(Uri.parse('${APIUrls.prescriptions}/$id'));
 
     if (response.statusCode == 200) {
-      return PrescriptionModel.fromMap(json.decode(response.body));
+      return PrescriptionModel.fromJson(json.decode(response.body));
     } else {
       throw Exception('Failed to load prescription');
     }
@@ -35,11 +35,11 @@ class PrescriptionService {
     final response = await http.post(
       APIUrls.prescriptions,
       headers: {'Content-Type': 'application/json'},
-      body: json.encode(prescription.toMap()),
+      body: json.encode(prescription.toJson()),
     );
 
     if (response.statusCode == 201) {
-      return PrescriptionModel.fromMap(json.decode(response.body));
+      return PrescriptionModel.fromJson(json.decode(response.body));
     } else {
       throw Exception('Failed to create prescription');
     }
@@ -50,11 +50,11 @@ class PrescriptionService {
     final response = await http.put(
       Uri.parse('${APIUrls.prescriptions}/$id'),
       headers: {'Content-Type': 'application/json'},
-      body: json.encode(prescription.toMap()),
+      body: json.encode(prescription.toJson()),
     );
 
     if (response.statusCode == 200) {
-      return PrescriptionModel.fromMap(json.decode(response.body));
+      return PrescriptionModel.fromJson(json.decode(response.body));
     } else {
       throw Exception('Failed to update prescription');
     }
@@ -75,7 +75,7 @@ class PrescriptionService {
 
     if (response.statusCode == 200) {
       List<dynamic> data = json.decode(response.body);
-      return data.map((item) => PrescriptionModel.fromMap(item)).toList();
+      return data.map((item) => PrescriptionModel.fromJson(item)).toList();
     } else {
       throw Exception('Failed to load prescriptions for doctor');
     }
@@ -87,7 +87,7 @@ class PrescriptionService {
 
     if (response.statusCode == 200) {
       List<dynamic> data = json.decode(response.body);
-      return data.map((item) => PrescriptionModel.fromMap(item)).toList();
+      return data.map((item) => PrescriptionModel.fromJson(item)).toList();
     } else {
       throw Exception('Failed to load prescriptions for patient');
     }
@@ -99,9 +99,17 @@ class PrescriptionService {
 
     if (response.statusCode == 200) {
       List<dynamic> data = json.decode(response.body);
-      return data.map((item) => PrescriptionModel.fromMap(item)).toList();
+      return data.map((item) => PrescriptionModel.fromJson(item)).toList();
     } else {
       throw Exception('Failed to load prescriptions for date');
+    }
+  }
+
+  ApiResponse _handleResponse(http.Response response) {
+    if (response.statusCode == 200) {
+      return ApiResponse.fromJson(jsonDecode(response.body));
+    } else {
+      throw Exception('Failed to load data');
     }
   }
 }

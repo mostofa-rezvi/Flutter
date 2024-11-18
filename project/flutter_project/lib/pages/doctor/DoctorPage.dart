@@ -6,6 +6,7 @@ import 'package:flutter_project/pages/common/Activities.dart';
 import 'package:flutter_project/pages/common/Notification.dart';
 import 'package:flutter_project/pages/common/Salary.dart';
 import 'package:flutter_project/pages/doctor/PrescriptionCreatePage.dart';
+import 'package:flutter_project/pages/doctor/PrescriptionList.dart';
 import 'package:flutter_project/pages/receptionist/AppointmentCreatePage.dart';
 import 'package:flutter_project/pages/receptionist/AppointmentHistoryPage.dart';
 import 'package:flutter_project/pages/receptionist/ReceptionistMainPage.dart'; // New page for appointment history
@@ -116,10 +117,10 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
               mainAxisSpacing: 20,
               padding: EdgeInsets.all(20),
               children: [
-                _buildCard('Patient History', Icons.person, () {
+                _buildCard('Patient Prescriptions', Icons.person, () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => BlankPage()),
+                    MaterialPageRoute(builder: (context) => PrescriptionListPage()),
                   );
                 }),
                 _buildCard('Schedule Appointment', Icons.calendar_today, () {

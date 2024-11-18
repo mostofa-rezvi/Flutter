@@ -16,7 +16,12 @@ class AppointmentService {
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode(appointment.toJson()),
     );
-    return _handleResponse(response);
+    // return _handleResponse(response);
+    if (response.statusCode == 200) {
+      return ApiResponse.fromJson(jsonDecode(response.body));
+    } else {
+      throw Exception('Failed to create appointment: ${response.statusCode}');
+    }
   }
 
   Future<ApiResponse> getAllAppointments() async {

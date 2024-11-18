@@ -56,6 +56,8 @@ class MedicineModel {
     };
   }
 
+  static fromJson(x) {}
+
 }
 
 class Manufacturer {
