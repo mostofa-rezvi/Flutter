@@ -42,7 +42,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
         "gender": _gender,
         "birthday": _birthday?.toIso8601String(),
         "address": _addressController.text,
-        "role": "PATIENT",
+        "role": "PATIENT", // Default role for registration
       };
 
       final uri = Uri.parse("http://localhost:8080/api/user/saveUser");
@@ -73,7 +73,8 @@ class _RegistrationPageState extends State<RegistrationPage> {
     }
   }
 
-  Widget _buildTextField(String label, TextEditingController controller, TextInputType keyboardType, {bool obscureText = false, String? Function(String?)? validator}) {
+  Widget _buildTextField(String label, TextEditingController controller, TextInputType keyboardType,
+      {bool obscureText = false, String? Function(String?)? validator}) {
     return TextFormField(
       controller: controller,
       keyboardType: keyboardType,
@@ -154,7 +155,9 @@ class _RegistrationPageState extends State<RegistrationPage> {
                 readOnly: true,
                 decoration: InputDecoration(
                   labelText: "Birthday",
-                  hintText: _birthday == null ? "Select your birthday" : "${_birthday!.year}-${_birthday!.month}-${_birthday!.day}",
+                  hintText: _birthday == null
+                      ? "Select your birthday"
+                      : "${_birthday!.year}-${_birthday!.month}-${_birthday!.day}",
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12.0),
                   ),
@@ -217,24 +220,15 @@ class _RegistrationPageState extends State<RegistrationPage> {
               SizedBox(height: 24.0),
 
               // Submit Button
-              Center(
-                child: SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: _submitForm,
-                    style: ElevatedButton.styleFrom(
-                      padding: EdgeInsets.symmetric(vertical: 16.0),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12.0),
-                      ),
-                      backgroundColor: Colors.blueAccent,
-                    ),
-                    child: Text(
-                      "Register",
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: Colors.white,
-                      ),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: _submitForm,
+                  child: Text("Register"),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blueAccent,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12.0),
                     ),
                   ),
                 ),

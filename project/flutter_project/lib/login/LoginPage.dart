@@ -174,31 +174,31 @@ class _LoginPageState extends State<LoginPage> {
         Role role = Role.values.byName(user['role']);
         if (role == Role.ADMIN) {
           Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => DoctorMainPage()), // Admin page
-          );
-        } else if (role == Role.DOCTOR) {
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => DoctorMainPage()), // Doctor page
-          );
-        } else if (role == Role.NURSE) {
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => NursePage()), // Doctor page
-          );
-        } else if (role == Role.PHARMACIST) {
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => PharmacistMainPage()), // Doctor page
-          );
-        } else if (role == Role.RECEPTIONIST) {
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => ReceptionistMainPage()), // Doctor page
+            MaterialPageRoute(builder: (context) => PharmacistMainPage()), // Admin page
           );
         } else if (role == Role.LAB) {
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(builder: (context) => LaboratoristPage()), // Doctor page
           );
+        } else if (role == Role.PHARMACIST) {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => PharmacistMainPage()), // Doctor page
+          );
+        } else if (role == Role.DOCTOR) {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => DoctorMainPage()), // Doctor page
+          );
+        } else if (role == Role.RECEPTIONIST) {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => ReceptionistMainPage()), // Doctor page
+          );
         } else if (role == Role.PATIENT) {
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(builder: (context) => PatientMainPage()), // Doctor page
+          );
+        } else if (role == Role.NURSE) {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => NursePage()), // Doctor page
           );
         } else {
           Navigator.of(context).pushReplacement(

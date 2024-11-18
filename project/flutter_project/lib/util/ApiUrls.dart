@@ -6,10 +6,9 @@ class APIUrls {
   static Uri get prescriptions => Uri.parse('$baseURL/prescriptions');
   static Uri get medicines => Uri.parse('$baseURL/medicines');
   static Uri get tests => Uri.parse('$baseURL/tests');
+  static Uri get user => Uri.parse('$baseURL/users');
 
 
-
-  // static Uri get stage => Uri.parse('$baseURL/stage');
   // static Uri get worker => Uri.parse('$baseURL/worker');
   // static Uri get task => Uri.parse('$baseURL/task');
   // static Uri get rawMaterial => Uri.parse('$baseURL/rawMaterial');

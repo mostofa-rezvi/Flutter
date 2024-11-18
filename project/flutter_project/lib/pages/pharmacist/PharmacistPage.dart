@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_project/auth/AuthService.dart';
+import 'package:flutter_project/model/MedicineModel.dart';
 import 'package:flutter_project/model/UserModel.dart';
 import 'package:flutter_project/login/LoginPage.dart';
 import 'package:flutter_project/pages/common/Activities.dart';
 import 'package:flutter_project/pages/common/Notification.dart';
 import 'package:flutter_project/pages/common/Payroll.dart';
 import 'package:flutter_project/pages/common/Salary.dart';
+import 'package:flutter_project/pages/receptionist/ReceptionistMainPage.dart';
+import 'package:flutter_project/service/MedicineService.dart';
+import 'package:flutter_project/util/ApiResponse.dart';
 
 class PharmacistMainPage extends StatefulWidget {
   @override
@@ -24,7 +28,7 @@ class _PharmacistMainPageState extends State<PharmacistMainPage> {
 
   Future<void> _loadUser() async {
     userModel = await AuthService.getStoredUser();
-    setState(() {}); // Update the UI after loading the user
+    setState(() {});
   }
 
   void _onItemTapped(int index) {
@@ -33,9 +37,9 @@ class _PharmacistMainPageState extends State<PharmacistMainPage> {
     });
   }
 
-  // Updated _pages to pass userModel to the respective screens
   List<Widget> _pages() => [
     PharmacistHomeScreen(userModel: userModel),
+    MedicineListScreen(),
     SettingsScreen(userModel: userModel),
   ];
 
@@ -43,7 +47,7 @@ class _PharmacistMainPageState extends State<PharmacistMainPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Pharmacist Dashboard"),
+        title: const Text("Pharmacist Dashboard"),
         centerTitle: true,
       ),
       body: _pages()[_selectedIndex],
@@ -60,7 +64,7 @@ class _PharmacistMainPageState extends State<PharmacistMainPage> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.medical_services),
-            label: 'Prescriptions',  // Updated label for prescriptions
+            label: 'Medicine List',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings),
@@ -72,88 +76,103 @@ class _PharmacistMainPageState extends State<PharmacistMainPage> {
   }
 }
 
-class PharmacistHomeScreen extends StatefulWidget {
+class PharmacistHomeScreen extends StatelessWidget {
   final UserModel? userModel;
 
   PharmacistHomeScreen({this.userModel});
 
   @override
-  _PharmacistHomeScreenState createState() => _PharmacistHomeScreenState();
-}
-
-class _PharmacistHomeScreenState extends State<PharmacistHomeScreen> {
-  @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Center(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Welcome, ${widget.userModel?.name}!',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.blueAccent,
+            Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Text(
+                'Welcome, ${userModel?.name ?? 'Pharmacist'}!',
+                style:
+                const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
-              textAlign: TextAlign.center,
             ),
-            SizedBox(height: 20),
-            Text(
-              'Ready to manage prescriptions and medicines.',
-              style: TextStyle(fontSize: 16),
-            ),
-            SizedBox(height: 20),
-            // Create six cards for different sections
-            GridView.count(
-              shrinkWrap: true,
-              crossAxisCount: 2,
-              crossAxisSpacing: 20,
-              mainAxisSpacing: 20,
-              padding: EdgeInsets.all(20),
-              children: [
-                _buildCard('Prescription Management', Icons.medical_services, () {
-                  // Navigate to PrescriptionCreatePage
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => BlankPage()),
-                  );
-                }),
-                _buildCard('View Medicines', Icons.local_pharmacy, () {
-                  // Navigate to a blank page or Medicine Management page
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => BlankPage()),
-                  );
-                }),
-                _buildCard('Activities', Icons.local_activity, () {
-                  // Navigate to a blank page
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => ActivitiesPage()),
-                  );
-                }),
-                _buildCard('Payslip', Icons.attach_money, () {
-                  // Navigate to a blank page
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => PayslipPage()),
-                  );
-                }),
-                _buildCard('Notifications', Icons.notifications, () {
-                  // Navigate to a blank page
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => NotificationPage()),
-                  );
-                }),
-                _buildCard('Salary Calculator', Icons.calculate, () {
-                  // Navigate to a blank page
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => SalarySettingsPage()),
-                  );
-                }),
-              ],
+            SizedBox(
+              height: 600,
+              child: GridView.count(
+                shrinkWrap: true,
+                crossAxisCount: 2,
+                crossAxisSpacing: 20,
+                mainAxisSpacing: 20,
+                padding: const EdgeInsets.all(20),
+                children: [
+                  _buildCard(
+                    'Prescription Management',
+                    Icons.medical_services,
+                    Colors.blueAccent,
+                        () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => BlankPage())); // Update accordingly
+                    },
+                  ),
+                  _buildCard(
+                    'View Medicines',
+                    Icons.local_pharmacy,
+                    Colors.greenAccent,
+                        () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => MedicineListScreen()));
+                    },
+                  ),
+                  _buildCard(
+                    'Activities',
+                    Icons.local_activity,
+                    Colors.orange,
+                        () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => ActivitiesPage()));
+                    },
+                  ),
+                  _buildCard(
+                    'Payslip',
+                    Icons.attach_money,
+                    Colors.purpleAccent,
+                        () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => PayslipPage()));
+                    },
+                  ),
+                  _buildCard(
+                    'Notifications',
+                    Icons.notifications,
+                    Colors.red,
+                        () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => NotificationPage()));
+                    },
+                  ),
+                  _buildCard(
+                    'Salary Calculator',
+                    Icons.calculate,
+                    Colors.blueAccent,
+                        () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => SalarySettingsPage()));
+                    },
+                  ),
+                ],
+              ),
             ),
           ],
         ),
@@ -161,7 +180,8 @@ class _PharmacistHomeScreenState extends State<PharmacistHomeScreen> {
     );
   }
 
-  Widget _buildCard(String title, IconData icon, VoidCallback onTap) {
+  Widget _buildCard(
+      String title, IconData icon, Color color, VoidCallback onTap) {
     return Card(
       elevation: 5,
       shape: RoundedRectangleBorder(
@@ -173,9 +193,12 @@ class _PharmacistHomeScreenState extends State<PharmacistHomeScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(icon, size: 40, color: Colors.blueAccent),
+              Icon(icon, size: 40, color: color),
               SizedBox(height: 10),
-              Text(title, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              Text(
+                title,
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
             ],
           ),
         ),
@@ -184,67 +207,162 @@ class _PharmacistHomeScreenState extends State<PharmacistHomeScreen> {
   }
 }
 
-class BlankPage extends StatelessWidget {
+class MedicineListScreen extends StatefulWidget {
+  @override
+  _MedicineListScreenState createState() => _MedicineListScreenState();
+}
+
+class _MedicineListScreenState extends State<MedicineListScreen> {
+  final TextEditingController _searchController = TextEditingController();
+  final MedicineService _medicineService = MedicineService();
+
+  List<MedicineModel> medicines = [];
+  List<MedicineModel> filteredMedicines = [];
+  bool isLoading = true;
+  String? errorMessage;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchMedicines();
+  }
+
+  Future<void> _fetchMedicines() async {
+    setState(() {
+      isLoading = true;
+      errorMessage = null;
+    });
+    try {
+      ApiResponse response = await _medicineService.getAllMedicines();
+      if (response.successful) {
+        final List<MedicineModel> fetchedMedicines = (response.data as List)
+            .map((e) => MedicineModel.fromMap(e))
+            .toList();
+        setState(() {
+          medicines = fetchedMedicines;
+          filteredMedicines = medicines;
+        });
+      } else {
+        _showError("Failed to load medicines.");
+      }
+    } catch (e) {
+      _showError("An error occurred while fetching medicines.");
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  // View Medicine Details function
+  void _viewMedicineDetails(MedicineModel medicine) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('${medicine.medicineName} Details'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: [
+                Text('Name: ${medicine.medicineName ?? ''}'),
+                Text('Strength: ${medicine.medicineStrength ?? ''}'),
+                Text('Price: \$${medicine.price?.toStringAsFixed(2) ?? ''}'),
+                Text('Stock: ${medicine.stock ?? '' }'),
+                Text('Description: ${medicine.instructions ?? ''}'),
+                Text('Manufacturer: ${medicine.manufacturer ?? ''}'),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              child: Text('Close'),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _searchMedicine(String query) {
+    setState(() {
+      filteredMedicines = medicines
+          .where((medicine) =>
+          medicine.medicineName.toLowerCase().contains(query.toLowerCase()))
+          .toList();
+    });
+  }
+
+  void _showError(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(message),
+      backgroundColor: Colors.red,
+    ));
+  }
+
+  void _showSuccess(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(message),
+      backgroundColor: Colors.green,
+    ));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Blank Page'),
+        title: Text('Medicine List'),
       ),
-      body: Center(child: Text('This is a blank page.')),
-    );
-  }
-}
-
-class SettingsScreen extends StatelessWidget {
-  final UserModel? userModel;
-
-  SettingsScreen({this.userModel});
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              'Profile',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 20),
-            CircleAvatar(
-              radius: 50,
-            ),
-            SizedBox(height: 20),
-            Text(
-              'Name: ${userModel?.name ?? 'N/A'}',
-              style: TextStyle(fontSize: 16),
-            ),
-            Text(
-              'Email: ${userModel?.email ?? 'N/A'}',
-              style: TextStyle(fontSize: 16),
-            ),
-            SizedBox(height: 30),
-            ElevatedButton(
-              onPressed: () async {
-                await AuthService.logout();
-                Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(builder: (context) => LoginPage()),
-                      (route) => false,
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: TextField(
+              controller: _searchController,
+              onChanged: _searchMedicine,
+              decoration: InputDecoration(
+                hintText: 'Search medicines...',
+                prefixIcon: const Icon(Icons.search),
+                border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
-              child: Text('Logout'),
             ),
-          ],
-        ),
+          ),
+          Expanded(
+            child: isLoading
+                ? Center(child: CircularProgressIndicator())
+                : errorMessage != null
+                ? Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    errorMessage!,
+                    style: TextStyle(color: Colors.red),
+                  ),
+                  SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: _fetchMedicines,
+                    child: Text("Retry"),
+                  ),
+                ],
+              ),
+            )
+                : ListView.builder(
+              itemCount: filteredMedicines.length,
+              itemBuilder: (context, index) {
+                final medicine = filteredMedicines[index];
+                return ListTile(
+                  title: Text(medicine.medicineName ?? ''),
+                  subtitle: Text('Strength: ${medicine.medicineStrength ?? ''}'),
+                  trailing: Icon(Icons.arrow_forward),
+                  onTap: () => _viewMedicineDetails(medicine),
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }

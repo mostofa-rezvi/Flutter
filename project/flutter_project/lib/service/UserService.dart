@@ -1,12 +1,12 @@
 import 'dart:convert';
 import 'package:flutter_project/model/UserModel.dart';
 import 'package:flutter_project/util/ApiResponse.dart';
+import 'package:flutter_project/util/ApiUrls.dart';
 import 'package:http/http.dart' as http;
 
 class UserService {
-  final String baseUrl;
 
-  UserService({required this.baseUrl});
+  final String baseUrl = APIUrls.user.toString();
 
   // Fetch all users
   Future<List<UserModel>> getAllUsers() async {

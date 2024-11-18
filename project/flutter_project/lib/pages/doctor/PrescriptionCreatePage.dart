@@ -20,7 +20,7 @@ class _PrescriptionCreatePageState extends State<PrescriptionCreatePage> {
   final PrescriptionService _prescriptionService = PrescriptionService(httpClient: http.Client());
   final MedicineService _medicineService = MedicineService();
   final TestService _testService = TestService();
-  final UserService _userService = UserService(baseUrl: 'http://localhost:8080/api');
+  final UserService _userService = UserService();
 
   final PrescriptionModel _prescription = PrescriptionModel();
 

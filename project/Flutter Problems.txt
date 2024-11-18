@@ -1,0 +1,10 @@
+1. Role - Doctor
+   Prescerption Create -> Load User List?
+
+2. Role - User
+   Registration Failed
+
+3. Role - Receptionist
+   Payslip -> PDF 
+
+4. 
