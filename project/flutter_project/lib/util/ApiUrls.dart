@@ -7,13 +7,14 @@ class APIUrls {
   static Uri get medicines => Uri.parse('$baseURL/medicines');
   static Uri get tests => Uri.parse('$baseURL/tests');
   static Uri get user => Uri.parse('$baseURL/users');
+  static Uri get reports => Uri.parse('$baseURL/reports');
+  static Uri get diagnostics => Uri.parse('$baseURL/diagnostics');
+  static Uri get departments => Uri.parse('$baseURL/departments');
+  static Uri get bills => Uri.parse('$baseURL/bills');
+  static Uri get manufacturers => Uri.parse('$baseURL/manufacturers');
 
 
-  // static Uri get worker => Uri.parse('$baseURL/worker');
-  // static Uri get task => Uri.parse('$baseURL/task');
-  // static Uri get rawMaterial => Uri.parse('$baseURL/rawMaterial');
-  // static Uri get supplier => Uri.parse('$baseURL/supplier');
-  // static Uri get booking => Uri.parse('$baseURL/booking');
+
   // static Uri get payment => Uri.parse('$baseURL/payment');
   // static Uri get account => Uri.parse('$baseURL/account');
   // static Uri get transaction => Uri.parse('$baseURL/transaction');

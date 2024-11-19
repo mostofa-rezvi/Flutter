@@ -1,21 +1,21 @@
 class ManufacturerModel {
-  int id;
+  int? id;
   String manufacturerName;
   String address;
   String contactNumber;
   String email;
-  DateTime createdAt;
-  DateTime updatedAt;
+  String? createdAt; // Represented as String to handle ISO 8601 date format
+  String? updatedAt;
 
   // Constructor
   ManufacturerModel({
-    required this.id,
+    this.id,
     required this.manufacturerName,
     required this.address,
     required this.contactNumber,
     required this.email,
-    required this.createdAt,
-    required this.updatedAt,
+    this.createdAt,
+    this.updatedAt,
   });
 
   // Factory method to create ManufacturerModel from a map (e.g., JSON data)
@@ -26,21 +26,21 @@ class ManufacturerModel {
       address: map['address'],
       contactNumber: map['contactNumber'],
       email: map['email'],
-      createdAt: DateTime.parse(map['createdAt']),
-      updatedAt: DateTime.parse(map['updatedAt']),
+      createdAt: map['createdAt'],
+      updatedAt: map['updatedAt'],
     );
   }
 
   // Method to convert ManufacturerModel to a map (e.g., for sending to the backend)
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toJson() {
     return {
       'id': id,
       'manufacturerName': manufacturerName,
       'address': address,
       'contactNumber': contactNumber,
       'email': email,
-      'createdAt': createdAt.toIso8601String(),
-      'updatedAt': updatedAt.toIso8601String(),
+      'createdAt': createdAt,
+      'updatedAt': updatedAt,
     };
   }
 }
