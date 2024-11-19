@@ -75,7 +75,6 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
                 ),
                 SizedBox(height: 30.0),
 
-                // Email Field
                 TextFormField(
                   controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
@@ -97,7 +96,6 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
                 ),
                 SizedBox(height: 20.0),
 
-                // Submit Button
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(

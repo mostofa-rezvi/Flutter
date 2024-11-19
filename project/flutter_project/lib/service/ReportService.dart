@@ -7,7 +7,6 @@ import '../util/ApiUrls.dart';
 class ReportService {
   final String baseUrl = APIUrls.reports.toString();
 
-  // Fetch all reports
   Future<ApiResponse> getAllReports() async {
     try {
       final response = await http.get(Uri.parse(baseUrl));
@@ -23,7 +22,6 @@ class ReportService {
     }
   }
 
-  // Fetch a report by ID
   Future<ApiResponse> getReportById(int id) async {
     try {
       final response = await http.get(Uri.parse('$baseUrl/$id'));
@@ -39,7 +37,6 @@ class ReportService {
     }
   }
 
-  // Create a new report
   Future<ApiResponse> createReport(ReportModel report) async {
     try {
       final response = await http.post(
@@ -59,7 +56,6 @@ class ReportService {
     }
   }
 
-  // Update an existing report
   Future<ApiResponse> updateReport(int id, ReportModel report) async {
     try {
       final response = await http.put(
@@ -79,7 +75,6 @@ class ReportService {
     }
   }
 
-  // Delete a report
   Future<ApiResponse> deleteReport(int id) async {
     try {
       final response = await http.delete(Uri.parse('$baseUrl/$id'));
@@ -93,7 +88,6 @@ class ReportService {
     }
   }
 
-  // Fetch reports by Test ID
   Future<ApiResponse> getReportsByTestId(int testId) async {
     try {
       final response = await http.get(Uri.parse('$baseUrl/test/$testId'));
@@ -109,7 +103,6 @@ class ReportService {
     }
   }
 
-  // Fetch reports by Patient ID
   Future<ApiResponse> getReportsByPatientId(int patientId) async {
     try {
       final response = await http.get(Uri.parse('$baseUrl/patient/$patientId'));

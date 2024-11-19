@@ -7,7 +7,6 @@ import '../util/ApiUrls.dart';
 class DepartmentService {
   final String baseUrl = APIUrls.departments.toString();
 
-  // Fetch all departments
   Future<ApiResponse> getAllDepartments() async {
     try {
       final response = await http.get(Uri.parse(baseUrl));
@@ -24,7 +23,6 @@ class DepartmentService {
     }
   }
 
-  // Fetch a department by ID
   Future<ApiResponse> getDepartmentById(int id) async {
     try {
       final response = await http.get(Uri.parse('$baseUrl/$id'));
@@ -40,7 +38,6 @@ class DepartmentService {
     }
   }
 
-  // Create a new department
   Future<ApiResponse> createDepartment(DepartmentModel department) async {
     try {
       final response = await http.post(
@@ -60,7 +57,6 @@ class DepartmentService {
     }
   }
 
-  // Update an existing department
   Future<ApiResponse> updateDepartment(int id, DepartmentModel department) async {
     try {
       final response = await http.put(
@@ -80,7 +76,6 @@ class DepartmentService {
     }
   }
 
-  // Delete a department
   Future<ApiResponse> deleteDepartment(int id) async {
     try {
       final response = await http.delete(Uri.parse('$baseUrl/$id'));
@@ -94,7 +89,6 @@ class DepartmentService {
     }
   }
 
-  // Fetch a department by name
   Future<ApiResponse> getDepartmentByName(String departmentName) async {
     try {
       final response = await http.get(Uri.parse('$baseUrl/search?name=$departmentName'));

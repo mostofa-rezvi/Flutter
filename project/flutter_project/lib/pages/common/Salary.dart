@@ -8,7 +8,6 @@ class SalarySettingsPage extends StatefulWidget {
 }
 
 class _SalarySettingsPageState extends State<SalarySettingsPage> {
-  // Text controllers for each input
   final TextEditingController _basicSalaryController = TextEditingController();
   final TextEditingController _daController = TextEditingController();
   final TextEditingController _hraController = TextEditingController();
@@ -19,7 +18,6 @@ class _SalarySettingsPageState extends State<SalarySettingsPage> {
 
   double _netSalary = 0.0;
 
-  // Method to calculate the net salary
   void _calculateSalary() {
     final double basicSalary = double.tryParse(_basicSalaryController.text) ?? 0.0;
     final double daPercentage = double.tryParse(_daController.text) ?? 0.0;
@@ -29,7 +27,6 @@ class _SalarySettingsPageState extends State<SalarySettingsPage> {
     final double esiEmployeeSharePercentage = double.tryParse(_esiEmployeeShareController.text) ?? 0.0;
     final double esiOrgSharePercentage = double.tryParse(_esiOrgShareController.text) ?? 0.0;
 
-    // Calculating components based on the basic salary
     final double daAmount = basicSalary * (daPercentage / 100);
     final double hraAmount = basicSalary * (hraPercentage / 100);
     final double pfEmployeeShare = basicSalary * (pfEmployeeSharePercentage / 100);
@@ -37,11 +34,9 @@ class _SalarySettingsPageState extends State<SalarySettingsPage> {
     final double esiEmployeeShare = basicSalary * (esiEmployeeSharePercentage / 100);
     final double esiOrgShare = basicSalary * (esiOrgSharePercentage / 100);
 
-    // Total earnings and deductions
     final double totalEarnings = basicSalary + daAmount + hraAmount;
     final double totalDeductions = pfEmployeeShare + pfOrgShare + esiEmployeeShare + esiOrgShare;
 
-    // Net salary calculation
     setState(() {
       _netSalary = totalEarnings - totalDeductions;
     });
@@ -77,7 +72,6 @@ class _SalarySettingsPageState extends State<SalarySettingsPage> {
               ),
               const SizedBox(height: 20),
 
-              // Basic Salary Input
               _buildTextField(
                 label: 'Basic Salary',
                 controller: _basicSalaryController,
@@ -85,7 +79,6 @@ class _SalarySettingsPageState extends State<SalarySettingsPage> {
               ),
               const SizedBox(height: 20),
 
-              // DA (%) and HRA (%) Fields
               Row(
                 children: [
                   Expanded(
@@ -113,7 +106,6 @@ class _SalarySettingsPageState extends State<SalarySettingsPage> {
               ),
               const SizedBox(height: 20),
 
-              // Provident Fund Fields
               Row(
                 children: [
                   Expanded(
@@ -141,7 +133,6 @@ class _SalarySettingsPageState extends State<SalarySettingsPage> {
               ),
               const SizedBox(height: 20),
 
-              // ESI Fields
               Row(
                 children: [
                   Expanded(
@@ -163,7 +154,6 @@ class _SalarySettingsPageState extends State<SalarySettingsPage> {
               ),
               const SizedBox(height: 30),
 
-              // Net Salary Display
               Center(
                 child: Text(
                   'Net Salary: \$${_netSalary.toStringAsFixed(2)}',
@@ -180,7 +170,6 @@ class _SalarySettingsPageState extends State<SalarySettingsPage> {
     );
   }
 
-  // Helper method to create text fields
   Widget _buildTextField({
     required String label,
     required TextEditingController controller,

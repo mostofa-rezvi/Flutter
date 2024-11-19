@@ -5,13 +5,12 @@ class ReportModel {
   String sampleId;
   String reportResult;
   String interpretation;
-  int patientId; // Assuming patient ID is an integer
-  int testId; // Assuming test entity ID is an integer
+  int patientId;
+  int testId;
   String? testDate;
   String? createdAt;
   String? updatedAt;
 
-  // Constructor
   ReportModel({
     this.id,
     required this.reportName,
@@ -26,7 +25,6 @@ class ReportModel {
     this.updatedAt,
   });
 
-  // Factory method to create ReportModel from a map (e.g., JSON data)
   factory ReportModel.fromMap(Map<String, dynamic> map) {
     return ReportModel(
       id: map['id'],
@@ -36,16 +34,13 @@ class ReportModel {
       reportResult: map['reportResult'],
       interpretation: map['interpretation'],
       patientId: map['patient']['id'],
-      // Assuming nested structure for patient
       testId: map['testEntity']['id'],
-      // Assuming nested structure for testEntity
       testDate: map['testDate'],
       createdAt: map['createdAt'],
       updatedAt: map['updatedAt'],
     );
   }
 
-  // Method to convert ReportModel to a map (e.g., for sending to the backend)
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -54,8 +49,8 @@ class ReportModel {
       'sampleId': sampleId,
       'reportResult': reportResult,
       'interpretation': interpretation,
-      'patient': {'id': patientId}, // Nested structure for patient
-      'testEntity': {'id': testId}, // Nested structure for testEntity
+      'patient': {'id': patientId},
+      'testEntity': {'id': testId},
       'testDate': testDate,
       'createdAt': createdAt,
       'updatedAt': updatedAt,

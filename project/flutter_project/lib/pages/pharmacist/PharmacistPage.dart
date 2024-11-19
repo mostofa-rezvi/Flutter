@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_project/auth/AuthService.dart';
-import 'package:flutter_project/model/MedicineModel.dart';
 import 'package:flutter_project/model/UserModel.dart';
-import 'package:flutter_project/login/LoginPage.dart';
 import 'package:flutter_project/pages/common/Activities.dart';
 import 'package:flutter_project/pages/common/Notification.dart';
-import 'package:flutter_project/pages/common/Payroll.dart';
 import 'package:flutter_project/pages/common/Salary.dart';
+import 'package:flutter_project/pages/pharmacist/MedicineBillPage.dart';
+import 'package:flutter_project/pages/pharmacist/MedicineListPage.dart';
 import 'package:flutter_project/pages/receptionist/ReceptionistMainPage.dart';
-import 'package:flutter_project/service/MedicineService.dart';
-import 'package:flutter_project/util/ApiResponse.dart';
 
 class PharmacistMainPage extends StatefulWidget {
   @override
@@ -39,7 +36,7 @@ class _PharmacistMainPageState extends State<PharmacistMainPage> {
 
   List<Widget> _pages() => [
     PharmacistHomeScreen(userModel: userModel),
-    MedicineListScreen(),
+    MedicineListPage(),
     SettingsScreen(userModel: userModel),
   ];
 
@@ -106,25 +103,25 @@ class PharmacistHomeScreen extends StatelessWidget {
                 padding: const EdgeInsets.all(20),
                 children: [
                   _buildCard(
-                    'Prescription Management',
+                    'Medicine Bill',
                     Icons.medical_services,
                     Colors.blueAccent,
                         () {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => BlankPage())); // Update accordingly
+                              builder: (context) => MedicineBillPage()));
                     },
                   ),
                   _buildCard(
-                    'View Medicines',
-                    Icons.local_pharmacy,
-                    Colors.greenAccent,
+                    'Bill List',
+                    Icons.attach_money,
+                    Colors.purpleAccent,
                         () {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => MedicineListScreen()));
+                              builder: (context) => BlankPage()));
                     },
                   ),
                   _buildCard(
@@ -139,14 +136,14 @@ class PharmacistHomeScreen extends StatelessWidget {
                     },
                   ),
                   _buildCard(
-                    'Payslip',
-                    Icons.attach_money,
-                    Colors.purpleAccent,
+                    'View Medicines',
+                    Icons.local_pharmacy,
+                    Colors.greenAccent,
                         () {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => PayslipPage()));
+                              builder: (context) => MedicineListPage()));
                     },
                   ),
                   _buildCard(
@@ -202,167 +199,6 @@ class PharmacistHomeScreen extends StatelessWidget {
             ],
           ),
         ),
-      ),
-    );
-  }
-}
-
-class MedicineListScreen extends StatefulWidget {
-  @override
-  _MedicineListScreenState createState() => _MedicineListScreenState();
-}
-
-class _MedicineListScreenState extends State<MedicineListScreen> {
-  final TextEditingController _searchController = TextEditingController();
-  final MedicineService _medicineService = MedicineService();
-
-  List<MedicineModel> medicines = [];
-  List<MedicineModel> filteredMedicines = [];
-  bool isLoading = true;
-  String? errorMessage;
-
-  @override
-  void initState() {
-    super.initState();
-    _fetchMedicines();
-  }
-
-  Future<void> _fetchMedicines() async {
-    setState(() {
-      isLoading = true;
-      errorMessage = null;
-    });
-    try {
-      ApiResponse response = await _medicineService.getAllMedicines();
-      if (response.successful) {
-        final List<MedicineModel> fetchedMedicines = (response.data as List)
-            .map((e) => MedicineModel.fromMap(e))
-            .toList();
-        setState(() {
-          medicines = fetchedMedicines;
-          filteredMedicines = medicines;
-        });
-      } else {
-        _showError("Failed to load medicines.");
-      }
-    } catch (e) {
-      _showError("An error occurred while fetching medicines.");
-    } finally {
-      setState(() {
-        isLoading = false;
-      });
-    }
-  }
-
-  // View Medicine Details function
-  void _viewMedicineDetails(MedicineModel medicine) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text('${medicine.medicineName} Details'),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: [
-                Text('Name: ${medicine.medicineName ?? ''}'),
-                Text('Strength: ${medicine.medicineStrength ?? ''}'),
-                Text('Price: \$${medicine.price?.toStringAsFixed(2) ?? ''}'),
-                Text('Stock: ${medicine.stock ?? '' }'),
-                Text('Description: ${medicine.instructions ?? ''}'),
-                Text('Manufacturer: ${medicine.manufacturer ?? ''}'),
-              ],
-            ),
-          ),
-          actions: [
-            TextButton(
-              child: Text('Close'),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  void _searchMedicine(String query) {
-    setState(() {
-      filteredMedicines = medicines
-          .where((medicine) =>
-          medicine.medicineName.toLowerCase().contains(query.toLowerCase()))
-          .toList();
-    });
-  }
-
-  void _showError(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text(message),
-      backgroundColor: Colors.red,
-    ));
-  }
-
-  void _showSuccess(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text(message),
-      backgroundColor: Colors.green,
-    ));
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Medicine List'),
-      ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: TextField(
-              controller: _searchController,
-              onChanged: _searchMedicine,
-              decoration: InputDecoration(
-                hintText: 'Search medicines...',
-                prefixIcon: const Icon(Icons.search),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-            ),
-          ),
-          Expanded(
-            child: isLoading
-                ? Center(child: CircularProgressIndicator())
-                : errorMessage != null
-                ? Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    errorMessage!,
-                    style: TextStyle(color: Colors.red),
-                  ),
-                  SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: _fetchMedicines,
-                    child: Text("Retry"),
-                  ),
-                ],
-              ),
-            )
-                : ListView.builder(
-              itemCount: filteredMedicines.length,
-              itemBuilder: (context, index) {
-                final medicine = filteredMedicines[index];
-                return ListTile(
-                  title: Text(medicine.medicineName ?? ''),
-                  subtitle: Text('Strength: ${medicine.medicineStrength ?? ''}'),
-                  trailing: Icon(Icons.arrow_forward),
-                  onTap: () => _viewMedicineDetails(medicine),
-                );
-              },
-            ),
-          ),
-        ],
       ),
     );
   }

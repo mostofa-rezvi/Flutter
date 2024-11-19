@@ -7,14 +7,13 @@ import '../util/ApiUrls.dart';
 class BillService {
   final String baseUrl = APIUrls.bills.toString();
 
-  // Fetch all bills
   Future<ApiResponse> getAllBills() async {
     try {
       final response = await http.get(Uri.parse(baseUrl));
       if (response.statusCode == 200) {
         List<dynamic> data = jsonDecode(response.body)['data']['bills'];
         List<BillModel> bills =
-            data.map((item) => BillModel.fromMap(item)).toList();
+            data.map((item) => BillModel.fromJson(item)).toList();
         return ApiResponse(
             successful: true,
             message: 'Bills fetched successfully.',
@@ -28,13 +27,12 @@ class BillService {
     }
   }
 
-  // Fetch a bill by ID
   Future<ApiResponse> getBillById(int id) async {
     try {
       final response = await http.get(Uri.parse('$baseUrl/$id'));
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body)['data']['bill'];
-        BillModel bill = BillModel.fromMap(data);
+        BillModel bill = BillModel.fromJson(data);
         return ApiResponse(
             successful: true,
             message: 'Bill fetched successfully.',
@@ -47,7 +45,6 @@ class BillService {
     }
   }
 
-  // Create a new bill
   Future<ApiResponse> createBill(BillModel bill) async {
     try {
       final response = await http.post(
@@ -57,7 +54,7 @@ class BillService {
       );
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body)['data']['bill'];
-        BillModel createdBill = BillModel.fromMap(data);
+        BillModel createdBill = BillModel.fromJson(data);
         return ApiResponse(
             successful: true,
             message: 'Bill created successfully.',
@@ -71,7 +68,6 @@ class BillService {
     }
   }
 
-  // Update an existing bill
   Future<ApiResponse> updateBill(int id, BillModel bill) async {
     try {
       final response = await http.put(
@@ -81,7 +77,7 @@ class BillService {
       );
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body)['data']['bill'];
-        BillModel updatedBill = BillModel.fromMap(data);
+        BillModel updatedBill = BillModel.fromJson(data);
         return ApiResponse(
             successful: true,
             message: 'Bill updated successfully.',
@@ -95,7 +91,6 @@ class BillService {
     }
   }
 
-  // Delete a bill
   Future<ApiResponse> deleteBill(int id) async {
     try {
       final response = await http.delete(Uri.parse('$baseUrl/$id'));
@@ -111,7 +106,6 @@ class BillService {
     }
   }
 
-  // Fetch bills by Patient ID
   Future<ApiResponse> getBillsByPatientId(int patientId) async {
     try {
       final response = await http
@@ -119,7 +113,7 @@ class BillService {
       if (response.statusCode == 200) {
         List<dynamic> data = jsonDecode(response.body);
         List<BillModel> bills =
-            data.map((item) => BillModel.fromMap(item)).toList();
+            data.map((item) => BillModel.fromJson(item)).toList();
         return ApiResponse(
             successful: true,
             message: 'Bills fetched successfully.',
@@ -133,7 +127,6 @@ class BillService {
     }
   }
 
-  // Fetch bills by Doctor ID
   Future<ApiResponse> getBillsByDoctorId(int doctorId) async {
     try {
       final response = await http
@@ -141,7 +134,7 @@ class BillService {
       if (response.statusCode == 200) {
         List<dynamic> data = jsonDecode(response.body);
         List<BillModel> bills =
-            data.map((item) => BillModel.fromMap(item)).toList();
+            data.map((item) => BillModel.fromJson(item)).toList();
         return ApiResponse(
             successful: true,
             message: 'Bills fetched successfully.',
@@ -155,7 +148,6 @@ class BillService {
     }
   }
 
-  // Fetch bills by Pharmacist ID
   Future<ApiResponse> getBillsByPharmacistId(int pharmacistId) async {
     try {
       final response = await http.get(Uri.parse(
@@ -163,7 +155,7 @@ class BillService {
       if (response.statusCode == 200) {
         List<dynamic> data = jsonDecode(response.body);
         List<BillModel> bills =
-            data.map((item) => BillModel.fromMap(item)).toList();
+            data.map((item) => BillModel.fromJson(item)).toList();
         return ApiResponse(
             successful: true,
             message: 'Bills fetched successfully.',

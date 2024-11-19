@@ -51,7 +51,6 @@ class UserModel {
     required this.role,
   });
 
-  // From JSON
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
       id: json['id'],
@@ -75,7 +74,6 @@ class UserModel {
     );
   }
 
-  // To JSON
    Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -102,7 +100,6 @@ class UserModel {
   static fromMap(map) {}
 }
 
-// UserRoleMap
 const userRoleMap = [
   {'value': Role.ADMIN, 'label': 'Administrator'},
   {'value': Role.PATIENT, 'label': 'Patient'},

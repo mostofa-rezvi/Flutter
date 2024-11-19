@@ -7,7 +7,6 @@ import '../util/ApiUrls.dart';
 class ManufacturerService {
   final String baseUrl = APIUrls.manufacturers.toString();
 
-  // Fetch all manufacturers
   Future<ApiResponse> getAllManufacturers() async {
     try {
       final response = await http.get(Uri.parse(baseUrl));
@@ -28,7 +27,6 @@ class ManufacturerService {
     }
   }
 
-  // Fetch a manufacturer by ID
   Future<ApiResponse> getManufacturerById(int id) async {
     try {
       final response = await http.get(Uri.parse('$baseUrl/$id'));
@@ -48,7 +46,6 @@ class ManufacturerService {
     }
   }
 
-  // Create a new manufacturer
   Future<ApiResponse> createManufacturer(ManufacturerModel manufacturer) async {
     try {
       final response = await http.post(
@@ -72,7 +69,6 @@ class ManufacturerService {
     }
   }
 
-  // Update an existing manufacturer
   Future<ApiResponse> updateManufacturer(
       int id, ManufacturerModel manufacturer) async {
     try {
@@ -97,7 +93,6 @@ class ManufacturerService {
     }
   }
 
-  // Delete a manufacturer
   Future<ApiResponse> deleteManufacturer(int id) async {
     try {
       final response = await http.delete(Uri.parse('$baseUrl/$id'));

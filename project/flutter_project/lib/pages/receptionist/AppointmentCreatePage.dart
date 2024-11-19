@@ -105,7 +105,6 @@ class _AppointmentCreatePageState extends State<AppointmentCreatePage> {
           ),
         );
 
-        // Navigate to a success page
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => AppointmentSuccessful()),

@@ -2,12 +2,11 @@ class TestModel {
   int? id;
   String testName;
   String description;
-  String? result; // Optional as per potential real-world scenarios
-  String? instructions; // Optional as per potential real-world scenarios
+  String? result;
+  String? instructions;
   String? createdAt;
   String? updatedAt;
 
-  // Constructor
   TestModel({
     this.id,
     required this.testName,
@@ -18,7 +17,6 @@ class TestModel {
     this.updatedAt,
   });
 
-  // Factory method to create TestModel from a map (e.g., JSON data)
   factory TestModel.fromMap(Map<String, dynamic> map) {
     return TestModel(
       id: map['id'],
@@ -31,7 +29,6 @@ class TestModel {
     );
   }
 
-  // Method to convert TestModel to a map (e.g., for sending to the backend)
   Map<String, dynamic> toJson() {
     return {
       'id': id,

@@ -20,7 +20,7 @@ class _MainPageState extends State<MainPage> {
 
   Future<void> _loadUser() async {
     userModel = await AuthService.getStoredUser();
-    setState(() {}); // Update the UI after loading the user
+    setState(() {});
   }
 
   void _onItemTapped(int index) {
@@ -29,7 +29,6 @@ class _MainPageState extends State<MainPage> {
     });
   }
 
-  // Updated _pages to pass userModel to HomeScreen
   List<Widget> _pages() => [
     HomeScreen(userModel: userModel),
     ProfileScreen(),

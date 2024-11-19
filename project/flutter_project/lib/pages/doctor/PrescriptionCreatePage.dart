@@ -138,7 +138,6 @@ class _PrescriptionCreatePageState extends State<PrescriptionCreatePage> {
                 validator: (value) => value == null ? 'Please select a doctor' : null,
               ),
 
-              // Patient Dropdown
               DropdownButtonFormField<UserModel>(
                 decoration: InputDecoration(labelText: 'Patient Name'),
                 items: _patients.map((patient) {
@@ -151,25 +150,23 @@ class _PrescriptionCreatePageState extends State<PrescriptionCreatePage> {
                 validator: (value) => value == null ? 'Please select a patient' : null,
               ),
 
-              // Medicine Dropdown
               DropdownButtonFormField<MedicineModel>(
                 decoration: InputDecoration(labelText: 'Select Medicine'),
                 items: _medicines.map((medicine) {
                   return DropdownMenuItem(
                     value: medicine,
-                    child: Text(medicine.medicineName),
+                    child: Text('${medicine.medicineName}'),
                   );
                 }).toList(),
                 onChanged: (value) => _addMedicine(value!),
               ),
 
-              // Selected Medicines List
               ListView.builder(
                 shrinkWrap: true,
                 itemCount: _selectedMedicines.length,
                 itemBuilder: (context, index) {
                   return ListTile(
-                    title: Text(_selectedMedicines[index].medicineName),
+                    title: Text('${_selectedMedicines[index].medicineName}'),
                     trailing: IconButton(
                       icon: Icon(Icons.remove_circle, color: Colors.red),
                       onPressed: () => setState(() => _selectedMedicines.removeAt(index)),
@@ -178,7 +175,6 @@ class _PrescriptionCreatePageState extends State<PrescriptionCreatePage> {
                 },
               ),
 
-              // Test Dropdown
               DropdownButtonFormField<TestModel>(
                 decoration: InputDecoration(labelText: 'Select Test'),
                 items: _tests.map((test) {
@@ -190,7 +186,6 @@ class _PrescriptionCreatePageState extends State<PrescriptionCreatePage> {
                 onChanged: (value) => _addTest(value!),
               ),
 
-              // Selected Tests List
               ListView.builder(
                 shrinkWrap: true,
                 itemCount: _selectedTests.length,
@@ -205,7 +200,6 @@ class _PrescriptionCreatePageState extends State<PrescriptionCreatePage> {
                 },
               ),
 
-              // Notes Field
               TextFormField(
                 decoration: InputDecoration(labelText: 'Notes'),
                 maxLines: 3,

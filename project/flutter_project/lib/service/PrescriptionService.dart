@@ -19,7 +19,6 @@ class PrescriptionService {
     return _handleResponse(response);
   }
 
-  // Fetch a prescription by ID
   Future<PrescriptionModel> getPrescriptionById(int id) async {
     final response = await http.get(Uri.parse('${APIUrls.prescriptions}/$id'));
 
@@ -30,7 +29,6 @@ class PrescriptionService {
     }
   }
 
-  // Create a new prescription
   Future<PrescriptionModel> createPrescription(PrescriptionModel prescription) async {
     final response = await http.post(
       APIUrls.prescriptions,
@@ -45,7 +43,6 @@ class PrescriptionService {
     }
   }
 
-  // Update an existing prescription
   Future<PrescriptionModel> updatePrescription(int id, PrescriptionModel prescription) async {
     final response = await http.put(
       Uri.parse('${APIUrls.prescriptions}/$id'),
@@ -60,7 +57,6 @@ class PrescriptionService {
     }
   }
 
-  // Delete a prescription
   Future<void> deletePrescription(int id) async {
     final response = await http.delete(Uri.parse('${APIUrls.prescriptions}/$id'));
 
@@ -69,7 +65,6 @@ class PrescriptionService {
     }
   }
 
-  // Get prescriptions by doctor ID
   Future<List<PrescriptionModel>> getPrescriptionsByDoctor(int doctorId) async {
     final response = await http.get(Uri.parse('${APIUrls.prescriptions}/doctor/$doctorId'));
 
@@ -81,7 +76,6 @@ class PrescriptionService {
     }
   }
 
-  // Get prescriptions by patient ID
   Future<List<PrescriptionModel>> getPrescriptionsByPatient(int patientId) async {
     final response = await http.get(Uri.parse('${APIUrls.prescriptions}/patient/$patientId'));
 
@@ -93,7 +87,6 @@ class PrescriptionService {
     }
   }
 
-  // Get prescriptions by date
   Future<List<PrescriptionModel>> getPrescriptionsByDate(DateTime date) async {
     final response = await http.get(Uri.parse('${APIUrls.prescriptions}/date?date=${date.toIso8601String()}'));
 

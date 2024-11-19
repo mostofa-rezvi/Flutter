@@ -21,7 +21,6 @@ class NursePage extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // Full-width Profile info card section
             Card(
               margin: EdgeInsets.all(16),
               elevation: 5,
@@ -29,9 +28,9 @@ class NursePage extends StatelessWidget {
                 borderRadius: BorderRadius.circular(15),
               ),
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 106), // Adjust padding
+                padding: const EdgeInsets.symmetric(horizontal: 106),
                 child: Card(
-                  margin: EdgeInsets.all(0),  // Remove any margin if needed
+                  margin: EdgeInsets.all(0),
                   elevation: 5,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15),
@@ -62,7 +61,6 @@ class NursePage extends StatelessWidget {
 
             ),
 
-            // Cart/Feature Cards Section
             GridView.builder(
               shrinkWrap: true,
               physics: NeverScrollableScrollPhysics(),
@@ -74,7 +72,6 @@ class NursePage extends StatelessWidget {
               ),
               itemCount: 6,
               itemBuilder: (context, index) {
-                // Define the feature cards for the nurse role
                 final List<Map<String, dynamic>> nurseFeatures = [
                   {'name': 'Patient Monitoring', 'icon': Icons.accessibility_new},
                   {'name': 'Medication', 'icon': Icons.medication},
@@ -86,7 +83,6 @@ class NursePage extends StatelessWidget {
 
                 return GestureDetector(
                   onTap: () {
-                    // Navigate to the specific page on click
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -131,7 +127,6 @@ class NursePage extends StatelessWidget {
               },
             ),
             SizedBox(height: 20),
-            // Logout Button
             ElevatedButton(
               onPressed: () async {
                 await AuthService.logout();

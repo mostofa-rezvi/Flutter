@@ -68,7 +68,6 @@ class MedicineService {
     if (response.statusCode == 200) {
       return ApiResponse.fromJson(json.decode(response.body));
     } else {
-      // Handle other status codes or error response
       return ApiResponse(successful: false, message: 'Error: ${response.statusCode}');
     }
   }

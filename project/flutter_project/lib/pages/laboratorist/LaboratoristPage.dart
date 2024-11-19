@@ -21,7 +21,6 @@ class LaboratoristPage extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // Full-width Profile info card section
             Card(
               margin: EdgeInsets.all(16),
               elevation: 5,
@@ -29,9 +28,9 @@ class LaboratoristPage extends StatelessWidget {
                 borderRadius: BorderRadius.circular(15),
               ),
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 106), // Adjust padding
+                padding: const EdgeInsets.symmetric(horizontal: 106),
                 child: Card(
-                  margin: EdgeInsets.all(0),  // Remove any margin if needed
+                  margin: EdgeInsets.all(0),
                   elevation: 5,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15),
@@ -61,7 +60,6 @@ class LaboratoristPage extends StatelessWidget {
               ),
             ),
 
-            // Cart/Feature Cards Section
             GridView.builder(
               shrinkWrap: true,
               physics: NeverScrollableScrollPhysics(),
@@ -73,7 +71,6 @@ class LaboratoristPage extends StatelessWidget {
               ),
               itemCount: 6,
               itemBuilder: (context, index) {
-                // Define the feature cards for the laboratorist role
                 final List<Map<String, dynamic>> laboratoristFeatures = [
                   {'name': 'Sample Collection', 'icon': Icons.speaker_notes},
                   {'name': 'Test Analysis', 'icon': Icons.analytics},
@@ -85,7 +82,6 @@ class LaboratoristPage extends StatelessWidget {
 
                 return GestureDetector(
                   onTap: () {
-                    // Navigate to the specific page on click
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -141,7 +137,7 @@ class LaboratoristPage extends StatelessWidget {
                 );
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blueAccent.shade100,  // Set the background color to black
+                backgroundColor: Colors.blueAccent.shade100,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
@@ -149,7 +145,7 @@ class LaboratoristPage extends StatelessWidget {
               child: Text(
                 'Logout',
                 style: TextStyle(
-                  color: Colors.black, // Set text color to white for contrast
+                  color: Colors.black,
                 ),
               ),
             )

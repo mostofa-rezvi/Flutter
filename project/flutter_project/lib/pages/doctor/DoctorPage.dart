@@ -37,10 +37,9 @@ class _DoctorMainPageState extends State<DoctorMainPage> {
     });
   }
 
-  // Updated _pages to reflect doctor's responsibilities
   List<Widget> _pages() => [
     DoctorHomeScreen(userModel: userModel),
-    AppointmentListPage(),  // Manage appointment history
+    AppointmentListPage(),
     // PrescriptionPage(),  // Manage prescriptions
     SettingsScreen(userModel: userModel),
   ];
@@ -109,7 +108,6 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
               style: TextStyle(fontSize: 16),
             ),
             SizedBox(height: 20),
-            // Create cards for doctor's tasks
             GridView.count(
               shrinkWrap: true,
               crossAxisCount: 2,

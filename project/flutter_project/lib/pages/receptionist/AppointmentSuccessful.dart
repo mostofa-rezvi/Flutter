@@ -6,7 +6,7 @@ class AppointmentSuccessful extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text("Appointment Successful"),
-        automaticallyImplyLeading: false, // Removes the default back button
+        automaticallyImplyLeading: false,
       ),
       body: Padding(
         padding: EdgeInsets.all(16.0),

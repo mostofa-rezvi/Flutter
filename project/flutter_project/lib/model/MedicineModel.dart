@@ -1,31 +1,29 @@
 class MedicineModel {
-  int id;
-  String medicineName;
-  String dosageForm;
-  String instructions;
-  String medicineStrength;
-  double price;
-  int stock;
-  String createdAt;
-  String updatedAt;
-  Manufacturer manufacturer;
+  int? id;
+  String? medicineName;
+  String? dosageForm;
+  String? instructions;
+  String? medicineStrength;
+  double? price;
+  int? stock;
+  String? createdAt;
+  String? updatedAt;
+  Manufacturer? manufacturer;
 
-  // Constructor
   MedicineModel({
-    required this.id,
-    required this.medicineName,
-    required this.dosageForm,
-    required this.instructions,
-    required this.medicineStrength,
-    required this.price,
-    required this.stock,
-    required this.createdAt,
-    required this.updatedAt,
-    required this.manufacturer,
+    this.id,
+    this.medicineName,
+    this.dosageForm,
+    this.instructions,
+    this.medicineStrength,
+    this.price,
+    this.stock,
+    this.createdAt,
+    this.updatedAt,
+    this.manufacturer,
   });
 
-  // Factory method to create MedicineModel from a map (e.g., JSON data)
-  factory MedicineModel.fromMap(Map<String, dynamic> map) {
+  factory MedicineModel.fromJson(Map<String, dynamic> map) {
     return MedicineModel(
       id: map['id'],
       medicineName: map['medicineName'],
@@ -36,12 +34,13 @@ class MedicineModel {
       stock: map['stock'],
       createdAt: map['createdAt'],
       updatedAt: map['updatedAt'],
-      manufacturer: Manufacturer.fromMap(map['manufacturer']),
+      manufacturer: map['manufacturer'] != null
+          ? Manufacturer.fromJson(map['manufacturer'])
+          : null,
     );
   }
 
-  // Method to convert MedicineModel to a map (e.g., for sending to the backend)
-  Map<String, dynamic> toJson(){
+  Map<String, dynamic> toJson() {
     return {
       'id': id,
       'medicineName': medicineName,
@@ -52,37 +51,28 @@ class MedicineModel {
       'stock': stock,
       'createdAt': createdAt,
       'updatedAt': updatedAt,
-      'manufacturer': manufacturer.toMap(),
+      'manufacturer': manufacturer?.toJson(),
     };
   }
-
-  static fromJson(x) {}
-
 }
 
 class Manufacturer {
-  int id;
-  String name;
+  String? name;
+  String? address;
 
-  // Constructor
-  Manufacturer({
-    required this.id,
-    required this.name,
-  });
+  Manufacturer({this.name, this.address});
 
-  // Factory method to create Manufacturer from a map
-  factory Manufacturer.fromMap(Map<String, dynamic> map) {
+  factory Manufacturer.fromJson(Map<String, dynamic> map) {
     return Manufacturer(
-      id: map['id'],
       name: map['name'],
+      address: map['address'],
     );
   }
 
-  // Method to convert Manufacturer to a map
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toJson() {
     return {
-      'id': id,
       'name': name,
+      'address': address,
     };
   }
 }

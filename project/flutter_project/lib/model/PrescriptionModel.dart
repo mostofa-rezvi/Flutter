@@ -26,8 +26,6 @@ class PrescriptionModel {
     this.patient,
   });
 
-
-// Adjusted fromJson and toJson for a single MedicineModel
   factory PrescriptionModel.fromJson(Map<String, dynamic> json) {
     return PrescriptionModel(
       id: json['id'],
@@ -46,7 +44,7 @@ class PrescriptionModel {
           : null,
       medicines: json['medicines'] != null
           ? MedicineModel.fromJson(json['medicines'])
-          : null, // Single MedicineModel
+          : null,
       issuedBy: json['issuedBy'] != null
           ? UserModel.fromJson(json['issuedBy'])
           : null,
@@ -64,7 +62,7 @@ class PrescriptionModel {
       'createdAt': createdAt?.toIso8601String(),
       'updatedAt': updatedAt?.toIso8601String(),
       'test': test?.toJson(),
-      'medicines': medicines?.toJson(), // Single MedicineModel
+      'medicines': medicines?.toJson(),
       'issuedBy': issuedBy?.toJson(),
       'patient': patient?.toJson(),
     };

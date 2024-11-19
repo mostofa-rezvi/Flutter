@@ -24,7 +24,7 @@ class _PatientMainPageState extends State<PatientMainPage> {
 
   Future<void> _loadUser() async {
     userModel = await AuthService.getStoredUser();
-    setState(() {}); // Update the UI after loading the user
+    setState(() {});
   }
 
   void _onItemTapped(int index) {
@@ -33,10 +33,9 @@ class _PatientMainPageState extends State<PatientMainPage> {
     });
   }
 
-  // Updated _pages to pass userModel to the respective screens
   List<Widget> _pages() => [
     PatientHomeScreen(userModel: userModel),
-    AppointmentCreatePage(), // Patient appointment history
+    AppointmentCreatePage(),
     SettingsScreen(userModel: userModel),
   ];
 
@@ -61,7 +60,7 @@ class _PatientMainPageState extends State<PatientMainPage> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.history),
-            label: 'Appointments',  // Updated label for patient appointments
+            label: 'Appointments',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings),
@@ -104,7 +103,6 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
               style: TextStyle(fontSize: 16),
             ),
             SizedBox(height: 20),
-            // Create cards for patient-specific sections
             GridView.count(
               shrinkWrap: true,
               crossAxisCount: 2,
@@ -113,35 +111,30 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
               padding: EdgeInsets.all(20),
               children: [
                 _buildCard('My Appointments', Icons.calendar_today, () {
-                  // Navigate to AppointmentHistoryPage
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => AppointmentCreatePage()),
                   );
                 }),
                 _buildCard('My Prescriptions', Icons.local_pharmacy, () {
-                  // Navigate to PrescriptionPage
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => BlankPage()),
                   );
                 }),
                 _buildCard('Activities', Icons.local_activity, () {
-                  // Navigate to ActivitiesPage
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => ActivitiesPage()),
                   );
                 }),
                 _buildCard('Notifications', Icons.notifications, () {
-                  // Navigate to NotificationPage
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => NotificationPage()),
                   );
                 }),
                 _buildCard('Medical History', Icons.history, () {
-                  // Navigate to MedicalHistoryPage
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => BlankPage()),

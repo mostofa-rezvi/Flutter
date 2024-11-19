@@ -30,7 +30,6 @@ class AppointmentModel {
     this.doctor,
   });
 
-  // Factory constructor to create an instance from JSON
   factory AppointmentModel.fromJson(Map<String, dynamic> json) {
     return AppointmentModel(
       id: json['id'],
@@ -52,7 +51,6 @@ class AppointmentModel {
     );
   }
 
-  // Method to convert an instance to JSON
   Map<String, dynamic> toJson() {
     return {
       'id': id,

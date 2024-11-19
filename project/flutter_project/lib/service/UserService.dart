@@ -8,7 +8,6 @@ class UserService {
 
   final String baseUrl = APIUrls.user.toString();
 
-  // Fetch all users
   Future<List<UserModel>> getAllUsers() async {
     final response = await http.get(Uri.parse('$baseUrl/users'));
     if (response.statusCode == 200) {
@@ -19,7 +18,6 @@ class UserService {
     }
   }
 
-  // Fetch users by role
   Future<List<UserModel>> getUsersByRole(String role) async {
     final response = await http.get(Uri.parse('$baseUrl/users/role/$role'));
     if (response.statusCode == 200) {
@@ -30,7 +28,6 @@ class UserService {
     }
   }
 
-  // Fetch user by ID
   Future<UserModel> getUserById(int id) async {
     final response = await http.get(Uri.parse('$baseUrl/users/$id'));
     if (response.statusCode == 200) {
@@ -41,7 +38,6 @@ class UserService {
     }
   }
 
-  // Create a new user
   Future<UserModel> createUser(UserModel user, String avatarPath) async {
     var request = http.MultipartRequest('POST', Uri.parse('$baseUrl/users'));
     request.fields.addAll(user.toJson().map((key, value) => MapEntry(key, value.toString())));
@@ -60,7 +56,6 @@ class UserService {
     }
   }
 
-  // Update an existing user
   Future<UserModel> updateUser(UserModel user, String avatarPath) async {
     var request = http.MultipartRequest('PUT', Uri.parse('$baseUrl/users'));
     request.fields.addAll(user.toJson().map((key, value) => MapEntry(key, value.toString())));
@@ -79,7 +74,6 @@ class UserService {
     }
   }
 
-  // Delete user by ID
   Future<bool> deleteUserById(int id) async {
     final response = await http.delete(Uri.parse('$baseUrl/users/$id'));
     if (response.statusCode == 200) {

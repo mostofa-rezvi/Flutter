@@ -1,10 +1,14 @@
-1. Role - Doctor
+1. Role - Doctor (raju@gmail.com)
    Prescerption Create -> Load User List?
 
 2. Role - User
    Registration Failed
 
-3. Role - Receptionist
+3. Role - Receptionist (recep@gmail.com)
    Payslip -> PDF 
 
-4. 
+4. Role - Pharmacist
+   MedicineListPage -> Unexpected data format received.
+
+5. Role - Pharmacist
+   MedicineBillPage -> _loadMedicines() - do not load this

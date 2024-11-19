@@ -42,7 +42,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
         "gender": _gender,
         "birthday": _birthday?.toIso8601String(),
         "address": _addressController.text,
-        "role": "PATIENT", // Default role for registration
+        "role": "PATIENT",
       };
 
       final uri = Uri.parse("http://localhost:8080/api/user/saveUser");
@@ -103,11 +103,10 @@ class _RegistrationPageState extends State<RegistrationPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Name Field
+
               _buildTextField("Name", _nameController, TextInputType.name),
               SizedBox(height: 16.0),
 
-              // Email Field
               _buildTextField("Email", _emailController, TextInputType.emailAddress, validator: (value) {
                 if (value == null || value.isEmpty) {
                   return "Please enter your email";
@@ -118,19 +117,15 @@ class _RegistrationPageState extends State<RegistrationPage> {
               }),
               SizedBox(height: 16.0),
 
-              // Password Field
               _buildTextField("Password", _passwordController, TextInputType.text, obscureText: true),
               SizedBox(height: 16.0),
 
-              // Cell Field
               _buildTextField("Cell", _cellController, TextInputType.phone),
               SizedBox(height: 16.0),
 
-              // Age Field
               _buildTextField("Age", _ageController, TextInputType.number),
               SizedBox(height: 16.0),
 
-              // Gender Dropdown Field
               DropdownButtonFormField<String>(
                 value: _gender,
                 decoration: InputDecoration(
@@ -150,7 +145,6 @@ class _RegistrationPageState extends State<RegistrationPage> {
               ),
               SizedBox(height: 16.0),
 
-              // Birthday Picker
               TextFormField(
                 readOnly: true,
                 decoration: InputDecoration(
@@ -176,7 +170,6 @@ class _RegistrationPageState extends State<RegistrationPage> {
               ),
               SizedBox(height: 16.0),
 
-              // Address Field
               TextFormField(
                 controller: _addressController,
                 decoration: InputDecoration(
@@ -189,7 +182,6 @@ class _RegistrationPageState extends State<RegistrationPage> {
               ),
               SizedBox(height: 16.0),
 
-              // Profile Image Picker
               Row(
                 children: [
                   Text("Profile Image:", style: TextStyle(fontSize: 16)),
@@ -219,7 +211,6 @@ class _RegistrationPageState extends State<RegistrationPage> {
                 ),
               SizedBox(height: 24.0),
 
-              // Submit Button
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(

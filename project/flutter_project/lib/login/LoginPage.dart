@@ -39,7 +39,7 @@ class _LoginPageState extends State<LoginPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // Logo
+
                   Padding(
                     padding: const EdgeInsets.only(bottom: 24.0),
                     child: Image.asset(
@@ -47,7 +47,7 @@ class _LoginPageState extends State<LoginPage> {
                       height: 100,
                     ),
                   ),
-                  // Email Field
+
                   TextFormField(
                     controller: _emailController,
                     decoration: InputDecoration(
@@ -67,7 +67,7 @@ class _LoginPageState extends State<LoginPage> {
                     },
                   ),
                   SizedBox(height: 16.0),
-                  // Password Field
+
                   TextFormField(
                     controller: _passwordController,
                     decoration: InputDecoration(
@@ -83,7 +83,7 @@ class _LoginPageState extends State<LoginPage> {
                     },
                   ),
                   SizedBox(height: 16.0),
-                  // Error Message
+
                   if (_errorMessage != null) ...[
                     Text(
                       _errorMessage!,
@@ -91,7 +91,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     SizedBox(height: 16.0),
                   ],
-                  // Forgot Password Link
+
                   Align(
                     alignment: Alignment.centerRight,
                     child: TextButton(
@@ -174,35 +174,35 @@ class _LoginPageState extends State<LoginPage> {
         Role role = Role.values.byName(user['role']);
         if (role == Role.ADMIN) {
           Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => PharmacistMainPage()), // Admin page
+            MaterialPageRoute(builder: (context) => PharmacistMainPage()),
           );
         } else if (role == Role.LAB) {
           Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => LaboratoristPage()), // Doctor page
+            MaterialPageRoute(builder: (context) => LaboratoristPage()),
           );
         } else if (role == Role.PHARMACIST) {
           Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => PharmacistMainPage()), // Doctor page
+            MaterialPageRoute(builder: (context) => PharmacistMainPage()),
           );
         } else if (role == Role.DOCTOR) {
           Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => DoctorMainPage()), // Doctor page
+            MaterialPageRoute(builder: (context) => DoctorMainPage()),
           );
         } else if (role == Role.RECEPTIONIST) {
           Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => ReceptionistMainPage()), // Doctor page
+            MaterialPageRoute(builder: (context) => ReceptionistMainPage()),
           );
         } else if (role == Role.PATIENT) {
           Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => PatientMainPage()), // Doctor page
+            MaterialPageRoute(builder: (context) => PatientMainPage()),
           );
         } else if (role == Role.NURSE) {
           Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => NursePage()), // Doctor page
+            MaterialPageRoute(builder: (context) => NursePage()),
           );
         } else {
           Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => MainPage()), // Main page
+            MaterialPageRoute(builder: (context) => MainPage()),
           );
         }
             } else {

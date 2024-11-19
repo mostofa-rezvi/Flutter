@@ -7,7 +7,6 @@ import 'package:http/http.dart' as http;
 class TestService {
   final String baseUrl = APIUrls.tests.toString();
 
-  // Fetch all tests
   Future<ApiResponse> getAllTests() async {
     try {
       final response = await http.get(Uri.parse(baseUrl));
@@ -23,7 +22,6 @@ class TestService {
     }
   }
 
-  // Fetch a test by ID
   Future<ApiResponse> getTestById(int id) async {
     try {
       final response = await http.get(Uri.parse('$baseUrl/$id'));
@@ -39,7 +37,6 @@ class TestService {
     }
   }
 
-  // Create a new test
   Future<ApiResponse> createTest(TestModel test) async {
     try {
       final response = await http.post(
@@ -59,7 +56,6 @@ class TestService {
     }
   }
 
-  // Update an existing test
   Future<ApiResponse> updateTest(int id, TestModel test) async {
     try {
       final response = await http.put(
@@ -79,7 +75,6 @@ class TestService {
     }
   }
 
-  // Delete a test
   Future<ApiResponse> deleteTest(int id) async {
     try {
       final response = await http.delete(Uri.parse('$baseUrl/$id'));

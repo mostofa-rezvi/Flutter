@@ -26,7 +26,7 @@ class _ReceptionistMainPageState extends State<ReceptionistMainPage> {
 
   Future<void> _loadUser() async {
     userModel = await AuthService.getStoredUser();
-    setState(() {}); // Update the UI after loading the user
+    setState(() {});
   }
 
   void _onItemTapped(int index) {
@@ -35,10 +35,9 @@ class _ReceptionistMainPageState extends State<ReceptionistMainPage> {
     });
   }
 
-  // Updated _pages to pass userModel to the respective screens
   List<Widget> _pages() => [
     ReceptionHomeScreen(userModel: userModel),
-    AppointmentListPage(),  // Navigate to AppointmentHistoryPage
+    AppointmentListPage(),
     SettingsScreen(userModel: userModel),
   ];
 
@@ -63,7 +62,7 @@ class _ReceptionistMainPageState extends State<ReceptionistMainPage> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.calendar_today),
-            label: 'Appointments',  // Updated label for appointment history
+            label: 'Appointments',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings),
@@ -106,7 +105,6 @@ class _ReceptionHomeScreenState extends State<ReceptionHomeScreen> {
               style: TextStyle(fontSize: 16),
             ),
             SizedBox(height: 20),
-            // Create six cards for different sections
             GridView.count(
               shrinkWrap: true,
               crossAxisCount: 2,
@@ -115,42 +113,36 @@ class _ReceptionHomeScreenState extends State<ReceptionHomeScreen> {
               padding: EdgeInsets.all(20),
               children: [
                 _buildCard('Patient Management', Icons.person, () {
-                  // Navigate to a blank page
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => BlankPage()),
                   );
                 }),
                 _buildCard('Schedule Appointment', Icons.calendar_today, () {
-                  // Navigate to AppointmentCreatePage
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => AppointmentCreatePage()),
                   );
                 }),
                 _buildCard('Activities', Icons.local_activity, () {
-                  // Navigate to a blank page
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => ActivitiesPage()),
                   );
                 }),
                 _buildCard('Payslip', Icons.attach_money, () {
-                  // Navigate to a blank page
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => PayslipPage()),
                   );
                 }),
                 _buildCard('Notifications', Icons.notifications, () {
-                  // Navigate to a blank page
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => NotificationPage()),
                   );
                 }),
                 _buildCard('Salary Calculator', Icons.calculate, () {
-                  // Navigate to a blank page
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => SalarySettingsPage()),

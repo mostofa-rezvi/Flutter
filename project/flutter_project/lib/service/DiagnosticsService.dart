@@ -7,7 +7,6 @@ import '../util/ApiUrls.dart';
 class DiagnosticsService {
   final String baseUrl = APIUrls.diagnostics.toString();
 
-  // Fetch all diagnostics
   Future<ApiResponse> getAllDiagnostics() async {
     try {
       final response = await http.get(Uri.parse(baseUrl));
@@ -28,7 +27,6 @@ class DiagnosticsService {
     }
   }
 
-  // Fetch a diagnostic by ID
   Future<ApiResponse> getDiagnosticsById(int id) async {
     try {
       final response = await http.get(Uri.parse('$baseUrl/$id'));
@@ -48,7 +46,6 @@ class DiagnosticsService {
     }
   }
 
-  // Create a new diagnostic
   Future<ApiResponse> createDiagnostics(DiagnosticsModel diagnostics) async {
     try {
       final response = await http.post(
@@ -72,7 +69,6 @@ class DiagnosticsService {
     }
   }
 
-  // Update an existing diagnostic
   Future<ApiResponse> updateDiagnostics(
       int id, DiagnosticsModel diagnostics) async {
     try {
@@ -97,7 +93,6 @@ class DiagnosticsService {
     }
   }
 
-  // Delete a diagnostic
   Future<ApiResponse> deleteDiagnostics(int id) async {
     try {
       final response = await http.delete(Uri.parse('$baseUrl/$id'));
@@ -113,7 +108,6 @@ class DiagnosticsService {
     }
   }
 
-  // Fetch diagnostics by Patient ID
   Future<ApiResponse> getDiagnosticsByPatientId(int patientId) async {
     try {
       final response = await http.get(Uri.parse('$baseUrl/patient/$patientId'));
@@ -135,7 +129,6 @@ class DiagnosticsService {
     }
   }
 
-  // Fetch diagnostics by Doctor ID
   Future<ApiResponse> getDiagnosticsByDoctorId(int doctorId) async {
     try {
       final response = await http.get(Uri.parse('$baseUrl/doctor/$doctorId'));

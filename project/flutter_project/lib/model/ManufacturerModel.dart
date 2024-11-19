@@ -4,10 +4,9 @@ class ManufacturerModel {
   String address;
   String contactNumber;
   String email;
-  String? createdAt; // Represented as String to handle ISO 8601 date format
+  String? createdAt;
   String? updatedAt;
 
-  // Constructor
   ManufacturerModel({
     this.id,
     required this.manufacturerName,
@@ -18,7 +17,6 @@ class ManufacturerModel {
     this.updatedAt,
   });
 
-  // Factory method to create ManufacturerModel from a map (e.g., JSON data)
   factory ManufacturerModel.fromMap(Map<String, dynamic> map) {
     return ManufacturerModel(
       id: map['id'],
@@ -31,7 +29,6 @@ class ManufacturerModel {
     );
   }
 
-  // Method to convert ManufacturerModel to a map (e.g., for sending to the backend)
   Map<String, dynamic> toJson() {
     return {
       'id': id,

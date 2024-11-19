@@ -112,7 +112,6 @@ class NotificationBox extends StatelessWidget {
           content: 'Lorem ipsum dolor sit amet, consectetur adipiscing',
           isNew: true,
         ),
-        // Add more MessageItems here...
       ],
     );
   }

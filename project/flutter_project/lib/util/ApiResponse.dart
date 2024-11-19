@@ -31,8 +31,6 @@ class ApiResponse {
     };
   }
 
-
-  // Success response
   factory ApiResponse.success(dynamic data, {String? message}) {
     return ApiResponse(
       message: message ?? 'Request was successful.',
@@ -42,7 +40,6 @@ class ApiResponse {
     );
   }
 
-  // Error response
   factory ApiResponse.error(String message, {Map<String, String>? errors}) {
     return ApiResponse(
       message: message,
