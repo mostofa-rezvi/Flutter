@@ -31,7 +31,7 @@ class BillService {
     try {
       final response = await http.get(Uri.parse('$baseUrl/$id'));
       if (response.statusCode == 200) {
-        var data = jsonDecode(response.body)['data']['bill'];
+        var data = jsonDecode(response.body)['data']['bills'];
         BillModel bill = BillModel.fromJson(data);
         return ApiResponse(
             successful: true,
@@ -48,12 +48,12 @@ class BillService {
   Future<ApiResponse> createBill(BillModel bill) async {
     try {
       final response = await http.post(
-        Uri.parse('$baseUrl/create'),
+        Uri.parse('$baseUrl/bills'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(bill.toJson()),
       );
       if (response.statusCode == 200) {
-        var data = jsonDecode(response.body)['data']['bill'];
+        var data = jsonDecode(response.body)['data']['bills'];
         BillModel createdBill = BillModel.fromJson(data);
         return ApiResponse(
             successful: true,
@@ -76,7 +76,7 @@ class BillService {
         body: jsonEncode(bill.toJson()),
       );
       if (response.statusCode == 200) {
-        var data = jsonDecode(response.body)['data']['bill'];
+        var data = jsonDecode(response.body)['data']['bills'];
         BillModel updatedBill = BillModel.fromJson(data);
         return ApiResponse(
             successful: true,
