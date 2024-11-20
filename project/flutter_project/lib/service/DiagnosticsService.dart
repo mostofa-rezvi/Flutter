@@ -5,7 +5,7 @@ import '../util/ApiResponse.dart';
 import '../util/ApiUrls.dart';
 
 class DiagnosticsService {
-  final String baseUrl = APIUrls.diagnostics.toString();
+  final String baseUrl = APIUrls.diagnostics;
 
   Future<ApiResponse> getAllDiagnostics() async {
     try {

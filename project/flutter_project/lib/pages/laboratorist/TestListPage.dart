@@ -20,6 +20,7 @@ class _TestListPageState extends State<TestListPage> {
     super.initState();
     _testService = TestService(httpClient: http.Client());
     _testsFuture = _fetchTests();
+    print(_testsFuture);
   }
 
   Future<List<TestModel>> _fetchTests() async {
@@ -58,14 +59,11 @@ class _TestListPageState extends State<TestListPage> {
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                     subtitle: Text(test.description),
-                    trailing: test.result != null
-                        ? Text(
-                      test.result!,
-                      style: const TextStyle(color: Colors.green),
-                    )
-                        : const Text(
-                      'No Result',
-                      style: TextStyle(color: Colors.red),
+                    trailing: TextButton(
+                      onPressed: () {
+                        _showTestResultDialog(context, test.result);
+                      },
+                      child: const Text('View Result'),
                     ),
                     onTap: () {
                       _showTestDetails(context, test);
@@ -81,6 +79,28 @@ class _TestListPageState extends State<TestListPage> {
       ),
     );
   }
+
+// Method to show a dialog with the test result
+  void _showTestResultDialog(BuildContext context, String? result) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Test Result'),
+          content: Text(result != null ? result : 'No Result Available'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Close'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
 
   void _showTestDetails(BuildContext context, TestModel test) {
     showDialog(

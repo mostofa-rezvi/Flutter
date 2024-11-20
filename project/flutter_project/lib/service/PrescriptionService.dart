@@ -5,6 +5,7 @@ import 'package:flutter_project/util/ApiUrls.dart';
 import 'package:http/http.dart' as http;
 
 class PrescriptionService {
+  final String baseUrl = APIUrls.prescriptions;
 
   final http.Client httpClient;
 
@@ -13,14 +14,12 @@ class PrescriptionService {
   // final String baseUrl = APIUrls.baseURL;
 
   Future<ApiResponse> getAllPrescriptions() async {
-    final response = await httpClient.get(
-        APIUrls.prescriptions.replace(path: APIUrls.prescriptions.path)
-    );
+    final response = await http.get(Uri.parse('$baseUrl/'));
     return _handleResponse(response);
   }
 
   Future<PrescriptionModel> getPrescriptionById(int id) async {
-    final response = await http.get(Uri.parse('${APIUrls.prescriptions}/$id'));
+    final response = await http.get(Uri.parse('$baseUrl/$id'));
 
     if (response.statusCode == 200) {
       return PrescriptionModel.fromJson(json.decode(response.body));
@@ -31,7 +30,7 @@ class PrescriptionService {
 
   Future<PrescriptionModel> createPrescription(PrescriptionModel prescription) async {
     final response = await http.post(
-      APIUrls.prescriptions,
+      Uri.parse(baseUrl),
       headers: {'Content-Type': 'application/json'},
       body: json.encode(prescription.toJson()),
     );
@@ -45,7 +44,7 @@ class PrescriptionService {
 
   Future<PrescriptionModel> updatePrescription(int id, PrescriptionModel prescription) async {
     final response = await http.put(
-      Uri.parse('${APIUrls.prescriptions}/$id'),
+      Uri.parse('$baseUrl/$id'),
       headers: {'Content-Type': 'application/json'},
       body: json.encode(prescription.toJson()),
     );
@@ -58,7 +57,7 @@ class PrescriptionService {
   }
 
   Future<void> deletePrescription(int id) async {
-    final response = await http.delete(Uri.parse('${APIUrls.prescriptions}/$id'));
+    final response = await http.delete(Uri.parse('$baseUrl/$id'));
 
     if (response.statusCode != 200) {
       throw Exception('Failed to delete prescription');
@@ -66,7 +65,7 @@ class PrescriptionService {
   }
 
   Future<List<PrescriptionModel>> getPrescriptionsByDoctor(int doctorId) async {
-    final response = await http.get(Uri.parse('${APIUrls.prescriptions}/doctor/$doctorId'));
+    final response = await http.get(Uri.parse('$baseUrl/doctor/$doctorId'));
 
     if (response.statusCode == 200) {
       List<dynamic> data = json.decode(response.body);
@@ -77,7 +76,7 @@ class PrescriptionService {
   }
 
   Future<List<PrescriptionModel>> getPrescriptionsByPatient(int patientId) async {
-    final response = await http.get(Uri.parse('${APIUrls.prescriptions}/patient/$patientId'));
+    final response = await http.get(Uri.parse('$baseUrl/patient/$patientId'));
 
     if (response.statusCode == 200) {
       List<dynamic> data = json.decode(response.body);
@@ -88,7 +87,7 @@ class PrescriptionService {
   }
 
   Future<List<PrescriptionModel>> getPrescriptionsByDate(DateTime date) async {
-    final response = await http.get(Uri.parse('${APIUrls.prescriptions}/date?date=${date.toIso8601String()}'));
+    final response = await http.get(Uri.parse('$baseUrl/date?date=${date.toIso8601String()}'));
 
     if (response.statusCode == 200) {
       List<dynamic> data = json.decode(response.body);

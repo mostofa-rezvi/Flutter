@@ -113,7 +113,7 @@ class _MedicineBillPageState extends State<MedicineBillPage> {
   }
 
   num _calculateBalance() {
-    return bill.totalAmount! - (bill.amountPaid ?? 0);
+    return bill.totalAmount??0 - (bill.amountPaid ?? 0);
   }
 
   @override

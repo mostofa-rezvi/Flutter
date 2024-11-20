@@ -5,7 +5,7 @@ import '../util/ApiResponse.dart';
 import '../util/ApiUrls.dart';
 
 class DepartmentService {
-  final String baseUrl = APIUrls.departments.toString();
+  final String baseUrl = APIUrls.departments;
 
   Future<ApiResponse> getAllDepartments() async {
     try {

@@ -5,13 +5,14 @@ import 'package:flutter_project/util/ApiUrls.dart';
 import 'package:http/http.dart' as http;
 
 class TestService {
+  final String baseUrl = APIUrls.tests;
   final http.Client httpClient;
 
   TestService({required this.httpClient});
 
   Future<ApiResponse> getAllTests() async {
     try {
-      final response = await http.get(Uri.parse(APIUrls() as String ));
+      final response = await http.get(Uri.parse(baseUrl));
       if (response.statusCode == 200) {
         List<dynamic> data = jsonDecode(response.body)['data']['tests'];
         List<TestModel> tests = data.map((item) => TestModel.fromJson(item)).toList();
@@ -26,7 +27,7 @@ class TestService {
 
   Future<ApiResponse> getTestById(int id) async {
     try {
-      final response = await http.get(Uri.parse('$APIUrls/$id'));
+      final response = await http.get(Uri.parse('$baseUrl/$id'));
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body)['data']['tests'];
         TestModel test = TestModel.fromJson(data);
@@ -42,12 +43,12 @@ class TestService {
   Future<ApiResponse> createTest(TestModel test) async {
     try {
       final response = await http.post(
-        Uri.parse(APIUrls() as String),
+        Uri.parse(baseUrl),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(test.toJson()),
       );
       if (response.statusCode == 200) {
-        var data = jsonDecode(response.body)['data']['tests'];
+        var data = jsonDecode(response.body)['data']['test'];
         TestModel createdTest = TestModel.fromJson(data);
         return ApiResponse(successful: true, message: 'Test created successfully.', data: createdTest);
       } else {
@@ -61,7 +62,7 @@ class TestService {
   Future<ApiResponse> updateTest(int id, TestModel test) async {
     try {
       final response = await http.put(
-        Uri.parse('$APIUrls/update/$id'),
+        Uri.parse('$baseUrl/update/$id'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(test.toJson()),
       );
@@ -79,7 +80,7 @@ class TestService {
 
   Future<ApiResponse> deleteTest(int id) async {
     try {
-      final response = await http.delete(Uri.parse('$APIUrls/$id'));
+      final response = await http.delete(Uri.parse('$baseUrl/$id'));
       if (response.statusCode == 200) {
         return ApiResponse(successful: true, message: 'Test deleted successfully.');
       } else {

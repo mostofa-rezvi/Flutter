@@ -6,13 +6,14 @@ import 'package:flutter_project/util/ApiUrls.dart';
 import 'package:http/http.dart' as http;
 
 class AppointmentService {
+  final String baseUrl = APIUrls.appointments;
   final http.Client httpClient;
 
   AppointmentService({required this.httpClient});
 
   Future<ApiResponse> createAppointment(AppointmentModel appointment) async {
     final response = await httpClient.post(
-      APIUrls.appointments.replace(path: '${APIUrls.appointments.path}/save'),
+      Uri.parse('$baseUrl/save'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode(appointment.toJson()),
     );
@@ -26,21 +27,21 @@ class AppointmentService {
 
   Future<ApiResponse> getAllAppointments() async {
     final response = await httpClient.get(
-        APIUrls.appointments.replace(path: '${APIUrls.appointments.path}/')
+        Uri.parse('$baseUrl/')
         );
     return _handleResponse(response);
   }
 
   Future<ApiResponse> getAppointmentById(int id) async {
     final response = await httpClient.get(
-      APIUrls.appointments.replace(path: '${APIUrls.appointments.path}/$id'),
+        Uri.parse('$baseUrl/$id')
     );
     return _handleResponse(response);
   }
 
   Future<ApiResponse> updateAppointment(AppointmentModel appointment) async {
     final response = await httpClient.put(
-      APIUrls.appointments.replace(path: '${APIUrls.appointments.path}/update'),
+      Uri.parse('$baseUrl/update'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode(appointment.toJson()),
     );
@@ -49,17 +50,14 @@ class AppointmentService {
 
   Future<ApiResponse> deleteAppointment(int id) async {
     final response = await httpClient.delete(
-      APIUrls.appointments.replace(path: '${APIUrls.appointments.path}/$id'),
+      Uri.parse('$baseUrl/$id'),
     );
     return _handleResponse(response);
   }
 
   Future<ApiResponse> getAppointmentsByUserId(int userId) async {
     final response = await httpClient.get(
-      APIUrls.appointments.replace(
-        path: '${APIUrls.appointments.path}/getAppointmentsByUserId',
-        queryParameters: {'userId': userId.toString()},
-      ),
+      Uri.parse('$baseUrl/getAppointmentsByUserId?userId=$userId'),
       headers: {'Content-Type': 'application/json'},
     );
     return _handleResponse(response);
@@ -67,10 +65,7 @@ class AppointmentService {
 
   Future<ApiResponse> getAppointmentsByDoctorId(int doctorId) async {
     final response = await httpClient.get(
-      APIUrls.appointments.replace(
-        path: '${APIUrls.appointments.path}/getAppointmentsByDoctorId',
-        queryParameters: {'doctorId': doctorId.toString()},
-      ),
+      Uri.parse('$baseUrl/getAppointmentsByDoctorId?doctorId=$doctorId'),
       headers: {'Content-Type': 'application/json'},
     );
     return _handleResponse(response);

@@ -5,7 +5,7 @@ import '../util/ApiResponse.dart';
 import '../util/ApiUrls.dart';
 
 class ManufacturerService {
-  final String baseUrl = APIUrls.manufacturers.toString();
+  final String baseUrl = APIUrls.manufacturers;
 
   Future<ApiResponse> getAllManufacturers() async {
     try {

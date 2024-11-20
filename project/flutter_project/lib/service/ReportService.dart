@@ -1,17 +1,18 @@
 import 'dart:convert';
 import 'package:flutter_project/model/ReportModel.dart';
+import 'package:flutter_project/util/ApiUrls.dart';
 import 'package:http/http.dart' as http;
 import '../util/ApiResponse.dart';
-import '../util/ApiUrls.dart';
 
 class ReportService {
+  final String baseUrl = APIUrls.reports;
   final http.Client httpClient;
 
   ReportService({required this.httpClient});
 
   Future<ApiResponse> getAllReports() async {
     try {
-      final response = await http.get(Uri.parse(APIUrls as String));
+      final response = await http.get(Uri.parse(baseUrl));
       if (response.statusCode == 200) {
         List<dynamic> data = jsonDecode(response.body)['data']['reports'];
         List<ReportModel> reports = data.map((item) => ReportModel.fromJson(item)).toList();
@@ -26,7 +27,7 @@ class ReportService {
 
   Future<ApiResponse> getReportById(int id) async {
     try {
-      final response = await http.get(Uri.parse('$APIUrls/$id'));
+      final response = await http.get(Uri.parse('$baseUrl/$id'));
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body)['data']['reports'];
         ReportModel report = ReportModel.fromJson(data);
@@ -42,7 +43,7 @@ class ReportService {
   Future<ApiResponse> createReport(ReportModel report) async {
     try {
       final response = await http.post(
-        Uri.parse(APIUrls() as String),
+        Uri.parse(baseUrl),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(report.toJson()),
       );
@@ -61,7 +62,7 @@ class ReportService {
   Future<ApiResponse> updateReport(int id, ReportModel report) async {
     try {
       final response = await http.put(
-        Uri.parse('$APIUrls/$id'),
+        Uri.parse('$baseUrl/$id'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(report.toJson()),
       );
@@ -79,7 +80,7 @@ class ReportService {
 
   Future<ApiResponse> deleteReport(int id) async {
     try {
-      final response = await http.delete(Uri.parse('$APIUrls/$id'));
+      final response = await http.delete(Uri.parse('$baseUrl/$id'));
       if (response.statusCode == 200) {
         return ApiResponse(successful: true, message: 'Report deleted successfully.');
       } else {
@@ -92,7 +93,7 @@ class ReportService {
 
   Future<ApiResponse> getReportsByTestId(int testId) async {
     try {
-      final response = await http.get(Uri.parse('$APIUrls/test/$testId'));
+      final response = await http.get(Uri.parse('$baseUrl/test/$testId'));
       if (response.statusCode == 200) {
         List<dynamic> data = jsonDecode(response.body);
         List<ReportModel> reports = data.map((item) => ReportModel.fromJson(item)).toList();
@@ -107,7 +108,7 @@ class ReportService {
 
   Future<ApiResponse> getReportsByPatientId(int patientId) async {
     try {
-      final response = await http.get(Uri.parse('$APIUrls/patient/$patientId'));
+      final response = await http.get(Uri.parse('$baseUrl/patient/$patientId'));
       if (response.statusCode == 200) {
         List<dynamic> data = jsonDecode(response.body);
         List<ReportModel> reports = data.map((item) => ReportModel.fromJson(item)).toList();

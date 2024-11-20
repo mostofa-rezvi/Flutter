@@ -5,7 +5,7 @@ import '../util/ApiResponse.dart';
 import '../util/ApiUrls.dart';
 
 class BillService {
-  final String baseUrl = APIUrls.bills.toString();
+  final String baseUrl = APIUrls.bills;
   final http.Client httpClient;
 
   BillService({required this.httpClient});

@@ -1,16 +1,26 @@
 class APIUrls {
   static const String baseURL = 'http://localhost:8080/api';
 
-  static Uri get login => Uri.parse('$baseURL/auth/login');
-  static Uri get appointments => Uri.parse('$baseURL/appointments');
-  static Uri get prescriptions => Uri.parse('$baseURL/prescriptions');
-  static Uri get medicines => Uri.parse('$baseURL/medicines');
-  static Uri get tests => Uri.parse('$baseURL/tests');
-  static Uri get user => Uri.parse('$baseURL/users');
-  static Uri get reports => Uri.parse('$baseURL/reports');
-  static Uri get diagnostics => Uri.parse('$baseURL/diagnostics');
-  static Uri get departments => Uri.parse('$baseURL/departments');
-  static Uri get bills => Uri.parse('$baseURL/bills');
-  static Uri get manufacturers => Uri.parse('$baseURL/manufacturers');
+  // Auth Endpoints
+  static const String login = '$baseURL/auth/login';
 
+  // Appointments & Prescriptions Endpoints
+  static const String appointments = '$baseURL/appointments';
+  static const String prescriptions = '$baseURL/prescriptions';
+
+  // Medicine & Test Endpoints
+  static const String medicines = '$baseURL/medicines';
+  static const String tests = '$baseURL/tests';
+
+  // User & Report Endpoints
+  static const String user = '$baseURL/users';
+  static const String reports = '$baseURL/reports';
+
+  // Diagnostics & Department Endpoints
+  static const String diagnostics = '$baseURL/diagnostics';
+  static const String departments = '$baseURL/departments';
+
+  // Billing & Manufacturer Endpoints
+  static const String bills = '$baseURL/bills';
+  static const String manufacturers = '$baseURL/manufacturers';
 }
