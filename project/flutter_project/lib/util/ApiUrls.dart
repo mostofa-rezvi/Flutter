@@ -13,10 +13,4 @@ class APIUrls {
   static Uri get bills => Uri.parse('$baseURL/bills');
   static Uri get manufacturers => Uri.parse('$baseURL/manufacturers');
 
-
-
-  // static Uri get payment => Uri.parse('$baseURL/payment');
-  // static Uri get account => Uri.parse('$baseURL/account');
-  // static Uri get transaction => Uri.parse('$baseURL/transaction');
-  // static Uri get ledger => Uri.parse('$baseURL/ledger');
 }

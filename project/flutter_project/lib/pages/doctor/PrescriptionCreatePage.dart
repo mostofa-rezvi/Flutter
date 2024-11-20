@@ -18,8 +18,8 @@ class _PrescriptionCreatePageState extends State<PrescriptionCreatePage> {
   final _formKey = GlobalKey<FormState>();
 
   final PrescriptionService _prescriptionService = PrescriptionService(httpClient: http.Client());
-  final MedicineService _medicineService = MedicineService();
-  final TestService _testService = TestService();
+  final MedicineService _medicineService = MedicineService(httpClient: http.Client());
+  final TestService _testService = TestService(httpClient: http.Client());
   final UserService _userService = UserService();
 
   final PrescriptionModel _prescription = PrescriptionModel();

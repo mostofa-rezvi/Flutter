@@ -1,31 +1,31 @@
 class ReportModel {
   int? id;
-  String reportName;
-  String description;
-  String sampleId;
-  String reportResult;
-  String interpretation;
-  int patientId;
-  int testId;
+  String? reportName;
+  String? description;
+  String? sampleId;
+  String? reportResult;
+  String? interpretation;
+  int? patientId;
+  int? testId;
   String? testDate;
   String? createdAt;
   String? updatedAt;
 
   ReportModel({
     this.id,
-    required this.reportName,
-    required this.description,
-    required this.sampleId,
-    required this.reportResult,
-    required this.interpretation,
-    required this.patientId,
-    required this.testId,
+    this.reportName,
+    this.description,
+    this.sampleId,
+    this.reportResult,
+    this.interpretation,
+    this.patientId,
+    this.testId,
     this.testDate,
     this.createdAt,
     this.updatedAt,
   });
 
-  factory ReportModel.fromMap(Map<String, dynamic> map) {
+  factory ReportModel.fromJson(Map<String, dynamic> map) {
     return ReportModel(
       id: map['id'],
       reportName: map['reportName'],

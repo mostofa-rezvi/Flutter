@@ -1,132 +1,254 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_project/auth/AuthService.dart';
+import 'package:flutter_project/login/LoginPage.dart';
+import 'package:flutter_project/model/UserModel.dart';
+import 'package:flutter_project/pages/common/Notification.dart';
+import 'package:flutter_project/pages/common/Salary.dart';
+import 'package:flutter_project/pages/laboratorist/ReportCreatePage.dart';
+import 'package:flutter_project/pages/laboratorist/ReportListPage.dart';
+import 'package:flutter_project/pages/laboratorist/TestCreatePage.dart';
+import 'package:flutter_project/pages/laboratorist/TestListPage.dart';
 
-class LaboratoristPage extends StatelessWidget {
-  // Simulate user data from the database for the laboratorist
-  final Map<String, String> laboratoristProfile = {
-    'name': 'Dr. Alice Smith',
-    'role': 'Laboratorist',
-    'hospital': 'City Hospital',
-    'email': 'alice.smith@hospital.com',
-    'phone': '123-456-7890'
-  };
+class LaboratoristPage extends StatefulWidget {
+  @override
+  _LaboratoristPageState createState() => _LaboratoristPageState();
+}
+
+class _LaboratoristPageState extends State<LaboratoristPage> {
+  int _selectedIndex = 0;
+  UserModel? userModel;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUser();
+  }
+
+  Future<void> _loadUser() async {
+    userModel = await AuthService.getStoredUser();
+    setState(() {});
+  }
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+  List<Widget> _pages() => [
+    LaboratoristHomeScreen(userModel: userModel),
+    SettingsScreen(userModel: userModel),
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Laboratorist Dashboard"),
-        backgroundColor: Colors.blueAccent,
+        title: const Text("Laboratorist Dashboard"),
+        centerTitle: true,
       ),
-      body: SingleChildScrollView(
+      body: _pages()[_selectedIndex],
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+        selectedItemColor: Colors.blueAccent,
+        unselectedItemColor: Colors.grey,
+        showUnselectedLabels: true,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: 'Settings',
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class LaboratoristHomeScreen extends StatelessWidget {
+  final UserModel? userModel;
+
+  LaboratoristHomeScreen({this.userModel});
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Center(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Card(
-              margin: EdgeInsets.all(16),
-              elevation: 5,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 106),
-                child: Card(
-                  margin: EdgeInsets.all(0),
-                  elevation: 5,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Laboratorist",
-                          style: TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        SizedBox(height: 10),
-                        Text("Name: ${laboratoristProfile['name']}"),
-                        Text("Role: ${laboratoristProfile['role']}"),
-                        Text("Hospital: ${laboratoristProfile['hospital']}"),
-                        Text("Email: ${laboratoristProfile['email']}"),
-                        Text("Phone: ${laboratoristProfile['phone']}"),
-                      ],
-                    ),
-                  ),
-                ),
+            Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Text(
+                'Welcome, ${userModel?.name ?? 'Laboratorist'}!',
+                style: const TextStyle(
+                    fontSize: 24, fontWeight: FontWeight.bold),
               ),
             ),
-
-            GridView.builder(
-              shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            SizedBox(
+              height: 600,
+              child: GridView.count(
+                shrinkWrap: true,
                 crossAxisCount: 2,
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10,
-                childAspectRatio: 1.5,
-              ),
-              itemCount: 6,
-              itemBuilder: (context, index) {
-                final List<Map<String, dynamic>> laboratoristFeatures = [
-                  {'name': 'Sample Collection', 'icon': Icons.speaker_notes},
-                  {'name': 'Test Analysis', 'icon': Icons.analytics},
-                  {'name': 'Medical Reports', 'icon': Icons.report},
-                  {'name': 'Lab Equipment', 'icon': Icons.build},
-                  {'name': 'Patient Records', 'icon': Icons.receipt},
-                  {'name': 'Lab Inventory', 'icon': Icons.inventory},
-                ];
-
-                return GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => DetailPage(index: index),
-                      ),
-                    );
-                  },
-                  child: Card(
-                    elevation: 5,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(15),
-                        color: Colors.blueAccent.shade100,
-                      ),
-                      child: Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              laboratoristFeatures[index]['icon'],
-                              size: 40,
-                              color: Colors.white,
-                            ),
-                            SizedBox(height: 10),
-                            Text(
-                              laboratoristFeatures[index]['name'],
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.black,  // Changed text color to black
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
+                crossAxisSpacing: 20,
+                mainAxisSpacing: 20,
+                padding: const EdgeInsets.all(20),
+                children: [
+                  _buildCard(
+                    'All Reports',
+                    Icons.file_copy,
+                    Colors.blueAccent,
+                        () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ReportListPage()),
+                      );
+                    },
                   ),
-                );
-              },
+                  _buildCard(
+                    'Create Report',
+                    Icons.add_box,
+                    Colors.purpleAccent,
+                        () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ReportCreatePage()),
+                      );
+                    },
+                  ),
+                  _buildCard(
+                    'All Tests',
+                    Icons.list,
+                    Colors.orange,
+                        () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => TestListPage()),
+                      );
+                    },
+                  ),
+                  _buildCard(
+                    'Create Test',
+                    Icons.add_circle,
+                    Colors.greenAccent,
+                        () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => TestCreatePage()),
+                      );
+                    },
+                  ),
+                  _buildCard(
+                    'Notifications',
+                    Icons.notifications,
+                    Colors.red,
+                        () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => NotificationPage()),
+                      );
+                    },
+                  ),
+                  _buildCard(
+                    'Salary',
+                    Icons.calculate,
+                    Colors.blueAccent,
+                        () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => SalarySettingsPage()),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCard(
+      String title, IconData icon, Color color, VoidCallback onTap) {
+    return Card(
+      elevation: 5,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15),
+      ),
+      child: InkWell(
+        onTap: onTap,
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon, size: 40, color: color),
+              SizedBox(height: 10),
+              Text(
+                title,
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class BlankPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Blank Page'),
+      ),
+      body: Center(child: Text('This is a blank page.')),
+    );
+  }
+}
+
+class SettingsScreen extends StatelessWidget {
+  final UserModel? userModel;
+
+  SettingsScreen({this.userModel});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              'Profile',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 20),
-            // Logout Button
+            CircleAvatar(
+              radius: 50,
+            ),
+            SizedBox(height: 20),
+            Text(
+              'Name: ${userModel?.name ?? 'N/A'}',
+              style: TextStyle(fontSize: 16),
+            ),
+            Text(
+              'Email: ${userModel?.email ?? 'N/A'}',
+              style: TextStyle(fontSize: 16),
+            ),
+            SizedBox(height: 30),
             ElevatedButton(
               onPressed: () async {
                 await AuthService.logout();
@@ -137,62 +259,15 @@ class LaboratoristPage extends StatelessWidget {
                 );
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blueAccent.shade100,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
-              child: Text(
-                'Logout',
-                style: TextStyle(
-                  color: Colors.black,
-                ),
-              ),
-            )
+              child: Text('Logout'),
+            ),
           ],
         ),
       ),
-    );
-  }
-}
-
-class DetailPage extends StatelessWidget {
-  final int index;
-
-  const DetailPage({required this.index});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Feature ${index + 1} Details"),
-        backgroundColor: Colors.blueAccent,
-      ),
-      body: Center(
-        child: Text(
-          "Detail page for Feature ${index + 1}",
-          style: TextStyle(fontSize: 22),
-        ),
-      ),
-    );
-  }
-}
-
-void main() {
-  runApp(MaterialApp(
-    home: LaboratoristPage(),
-    routes: {
-      '/login': (context) => LoginPage(),
-    },
-  ));
-}
-
-class LoginPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text("Login Page")),
-      body: Center(child: Text("Login Here")),
     );
   }
 }

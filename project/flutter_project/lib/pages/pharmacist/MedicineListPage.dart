@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_project/model/MedicineModel.dart';
 import 'package:flutter_project/service/MedicineService.dart';
 import 'package:flutter_project/util/ApiResponse.dart';
+import 'package:http/http.dart' as http;
 
 class MedicineListPage extends StatefulWidget {
   @override
@@ -9,16 +10,19 @@ class MedicineListPage extends StatefulWidget {
 }
 
 class _MedicineListPageState extends State<MedicineListPage> {
+  bool isLoading = true;
+  List<MedicineModel> availableMedicines = [];
+  final MedicineService _medicineService = MedicineService(httpClient: http.Client());
+
   List<MedicineModel> medicines = [];
   List<MedicineModel> filteredMedicines = [];
-  bool isLoading = true;
   final TextEditingController searchController = TextEditingController();
   ApiResponse? apiResponse;
 
   @override
   void initState() {
     super.initState();
-    fetchMedicines();
+    _loadMedicines();
     searchController.addListener(onSearch);
   }
 
@@ -28,41 +32,45 @@ class _MedicineListPageState extends State<MedicineListPage> {
     super.dispose();
   }
 
-  void fetchMedicines() async {
+  Future<void> _loadMedicines() async {
+    setState(() {
+      isLoading = true;
+    });
     try {
-      ApiResponse response = await MedicineService().getAllMedicines();
-
-      print('Raw response data: ${response.data}');
-
-      if (response.successful) {
-        if (response.data is List) {
-          List dataList = response.data as List;
-          print('Parsed data list: $dataList');
-
-          setState(() {
-            medicines =
-                dataList.map((item) => MedicineModel.fromJson(item)).toList();
-            filteredMedicines = medicines;
-            isLoading = false;
-          });
-        } else {
-          setState(() {
-            isLoading = false;
-          });
-          showError('Unexpected data format received.');
-        }
-      } else {
+      ApiResponse apiResponse = await _medicineService.getAllMedicines();
+      if (apiResponse.successful) {
+        final List<MedicineModel> loadMedicines = (
+            apiResponse.data['medicines'] as List
+        )
+            .map((e) => MedicineModel.fromJson(e))
+            .toList();
         setState(() {
-          isLoading = false;
+          availableMedicines = loadMedicines;
         });
-        showError('An error occurred.');
+      } else {
+        _showError("No medicines available.");
       }
-    } catch (error) {
+    } catch (e) {
+      _showError('Error fetching medicines: $e');
+    } finally {
       setState(() {
         isLoading = false;
       });
-      showError('An error occurred: $error');
     }
+  }
+
+  void _showError(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(message),
+      backgroundColor: Colors.red,
+    ));
+  }
+
+  void _showSuccess(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(message),
+      backgroundColor: Colors.green,
+    ));
   }
 
   void onSearch() {

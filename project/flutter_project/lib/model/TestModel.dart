@@ -17,7 +17,7 @@ class TestModel {
     this.updatedAt,
   });
 
-  factory TestModel.fromMap(Map<String, dynamic> map) {
+  factory TestModel.fromJson(Map<String, dynamic> map) {
     return TestModel(
       id: map['id'],
       testName: map['testName'],
@@ -41,5 +41,4 @@ class TestModel {
     };
   }
 
-  static fromJson(x) {}
 }

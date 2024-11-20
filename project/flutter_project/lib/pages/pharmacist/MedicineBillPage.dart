@@ -3,6 +3,8 @@ import 'package:flutter_project/model/BillModel.dart';
 import 'package:flutter_project/model/MedicineModel.dart';
 import 'package:flutter_project/service/BillService.dart';
 import 'package:flutter_project/service/MedicineService.dart';
+import 'package:flutter_project/util/ApiResponse.dart';
+import 'package:http/http.dart' as http;
 
 class MedicineBillPage extends StatefulWidget {
   @override
@@ -10,9 +12,12 @@ class MedicineBillPage extends StatefulWidget {
 }
 
 class _MedicineBillPageState extends State<MedicineBillPage> {
-  BillModel bill = BillModel();  // Use BillModel here
+  bool isLoading = true;
   List<MedicineModel> availableMedicines = [];
-  List<MedicineModel> selectedMedicines = [];
+  final MedicineService _medicineService = MedicineService(httpClient: http.Client());
+
+  BillModel bill = BillModel();
+  List<MedicineModel?> selectedMedicines = [];
   double totalAmount = 0.0;
 
   @override
@@ -21,29 +26,49 @@ class _MedicineBillPageState extends State<MedicineBillPage> {
     _loadMedicines();
   }
 
-  void _loadMedicines() async {
+  Future<void> _loadMedicines() async {
+    setState(() {
+      isLoading = true;
+    });
     try {
-      var response = await MedicineService().getAllMedicines();
-
-      if (response != null && response is List) {
+      ApiResponse apiResponse = await _medicineService.getAllMedicines();
+      if (apiResponse.successful) {
+        final List<MedicineModel> loadMedicines = (apiResponse.data['medicines'] as List)
+            .map((e) => MedicineModel.fromJson(e))
+            .toList();
         setState(() {
-          availableMedicines = response
-              .data((medicine) => MedicineModel.fromJson(medicine))
-              .toList();
+          availableMedicines = loadMedicines;
         });
       } else {
-        print('Failed to load medicines: Invalid response');
+        _showError("No medicines available.");
       }
     } catch (e) {
-      print('Error fetching medicines: $e');
+      _showError('Error fetching medicines: $e');
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
     }
+  }
+
+  void _showError(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(message),
+      backgroundColor: Colors.red,
+    ));
+  }
+
+  void _showSuccess(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(message),
+      backgroundColor: Colors.green,
+    ));
   }
 
   void addMedicine() {
     setState(() {
-      selectedMedicines.add(MedicineModel());
+      selectedMedicines.add(null);
     });
-    _calculateTotal();
   }
 
   void removeMedicine(int index) {
@@ -56,69 +81,74 @@ class _MedicineBillPageState extends State<MedicineBillPage> {
   void _calculateTotal() {
     setState(() {
       totalAmount = selectedMedicines.fold(0.0, (sum, medicine) {
-        return sum + (medicine.price ?? 0.0);
+        return sum + (medicine?.price ?? 0.0);
       });
-      bill.totalAmount = totalAmount as int?;
+      bill.totalAmount = totalAmount.toInt();
     });
   }
 
   void _onSubmit() async {
-    bill.medicineIds = selectedMedicines.cast<int>();
+    // Validate form inputs
+    if (bill.name == null || bill.name!.isEmpty) {
+      _showError("Patient name is required.");
+      return;
+    }
+    if (selectedMedicines.isEmpty) {
+      _showError("Please select at least one medicine.");
+      return;
+    }
+
+    bill.medicineIds = selectedMedicines.map((medicine) => medicine!.id).cast<int>().toList();
     try {
-      var response = await BillService().createBill(bill);
+      var response = await BillService(httpClient: http.Client()).createBill(bill);
       if (response != null) {
+        _showSuccess("Bill created successfully!");
         Navigator.pushNamed(context, '/medicine-bill-list');
       } else {
-        print('Failed to create bill');
+        _showError('Failed to create bill.');
       }
     } catch (e) {
-      print('Error creating bill: $e');
+      _showError('Error creating bill: $e');
     }
   }
 
   num _calculateBalance() {
-    return bill.totalAmount! - (bill.amountPaid ?? 0.0);
+    return bill.totalAmount! - (bill.amountPaid ?? 0);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('Create Medicine Bill')),
-      body: Padding(
+      body: isLoading
+          ? Center(child: CircularProgressIndicator())
+          : Padding(
         padding: const EdgeInsets.all(16.0),
         child: SingleChildScrollView(
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Patient Information Form
               TextField(
                 decoration: InputDecoration(labelText: 'Patient Name'),
-                onChanged: (value) => setState(() {
-                  bill.name = value;
-                }),
+                onChanged: (value) => setState(() => bill.name = value),
               ),
               TextField(
                 decoration: InputDecoration(labelText: 'Phone'),
-                onChanged: (value) => setState(() {
-                  bill.phone = value as int?;
-                }),
+                keyboardType: TextInputType.phone,
+                onChanged: (value) => setState(() => bill.phone = int.tryParse(value)),
               ),
               TextField(
                 decoration: InputDecoration(labelText: 'Email'),
-                onChanged: (value) => setState(() {
-                  bill.email = value;
-                }),
+                onChanged: (value) => setState(() => bill.email = value),
               ),
               TextField(
                 decoration: InputDecoration(labelText: 'Address'),
-                onChanged: (value) => setState(() {
-                  bill.address = value;
-                }),
+                onChanged: (value) => setState(() => bill.address = value),
               ),
               TextField(
                 decoration: InputDecoration(labelText: 'Invoice Date'),
-                onChanged: (value) => setState(() {
-                  bill.invoiceDate = value;
-                }),
+                onChanged: (value) => setState(() => bill.invoiceDate = value),
               ),
               SizedBox(height: 20),
 
@@ -128,7 +158,7 @@ class _MedicineBillPageState extends State<MedicineBillPage> {
                 keyboardType: TextInputType.number,
                 onChanged: (value) {
                   setState(() {
-                    bill.amountPaid = (double.tryParse(value) ?? 0.0) as int?;
+                    bill.amountPaid = int.tryParse(value) ?? 0;
                   });
                 },
               ),
@@ -145,14 +175,13 @@ class _MedicineBillPageState extends State<MedicineBillPage> {
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           DropdownButton<MedicineModel>(
                             isExpanded: true,
                             value: selectedMedicines[index],
                             onChanged: (selectedMedicine) {
                               setState(() {
-                                selectedMedicines[index] = selectedMedicine!;
+                                selectedMedicines[index] = selectedMedicine;
                                 _calculateTotal();
                               });
                             },
@@ -168,7 +197,7 @@ class _MedicineBillPageState extends State<MedicineBillPage> {
                             keyboardType: TextInputType.number,
                             onChanged: (value) {
                               setState(() {
-                                selectedMedicines[index].price = double.tryParse(value);
+                                selectedMedicines[index]?.price = double.tryParse(value);
                                 _calculateTotal();
                               });
                             },
@@ -189,7 +218,6 @@ class _MedicineBillPageState extends State<MedicineBillPage> {
               ),
               SizedBox(height: 20),
 
-              // Submit Button
               ElevatedButton(
                 onPressed: _onSubmit,
                 child: Text('Create Bill'),

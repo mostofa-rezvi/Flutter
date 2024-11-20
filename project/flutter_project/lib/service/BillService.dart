@@ -6,6 +6,9 @@ import '../util/ApiUrls.dart';
 
 class BillService {
   final String baseUrl = APIUrls.bills.toString();
+  final http.Client httpClient;
+
+  BillService({required this.httpClient});
 
   Future<ApiResponse> getAllBills() async {
     try {

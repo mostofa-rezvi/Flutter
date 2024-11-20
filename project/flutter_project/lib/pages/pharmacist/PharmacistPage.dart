@@ -4,6 +4,7 @@ import 'package:flutter_project/model/UserModel.dart';
 import 'package:flutter_project/pages/common/Activities.dart';
 import 'package:flutter_project/pages/common/Notification.dart';
 import 'package:flutter_project/pages/common/Salary.dart';
+import 'package:flutter_project/pages/pharmacist/MedicineBillListPage.dart';
 import 'package:flutter_project/pages/pharmacist/MedicineBillPage.dart';
 import 'package:flutter_project/pages/pharmacist/MedicineListPage.dart';
 import 'package:flutter_project/pages/receptionist/ReceptionistMainPage.dart';
@@ -121,7 +122,7 @@ class PharmacistHomeScreen extends StatelessWidget {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => BlankPage()));
+                              builder: (context) => MedicineBillListPage()));
                     },
                   ),
                   _buildCard(

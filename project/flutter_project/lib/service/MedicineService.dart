@@ -5,21 +5,25 @@ import 'package:flutter_project/util/ApiUrls.dart';
 import 'package:http/http.dart' as http;
 
 class MedicineService {
-  final String apiUrl = APIUrls.medicines.toString();
+  final http.Client httpClient;
+
+  MedicineService({required this.httpClient});
 
   Future<ApiResponse> getAllMedicines() async {
-    final response = await http.get(Uri.parse('$apiUrl/'));
+    final response = await httpClient.get(
+        APIUrls.medicines.replace(path: '${APIUrls.medicines.path}/')
+    );
     return _processResponse(response);
   }
 
   Future<ApiResponse> getMedicineById(int id) async {
-    final response = await http.get(Uri.parse('$apiUrl/$id'));
+    final response = await http.get(Uri.parse('$APIUrls/$id'));
     return _processResponse(response);
   }
 
   Future<ApiResponse> addMedicine(MedicineModel medicine) async {
     final response = await http.post(
-      Uri.parse('$apiUrl/'),
+      Uri.parse('$APIUrls/'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode(medicine.toJson()),
     );
@@ -28,7 +32,7 @@ class MedicineService {
 
   Future<ApiResponse> updateMedicine(int id, MedicineModel medicine) async {
     final response = await http.put(
-      Uri.parse('$apiUrl/$id'),
+      Uri.parse('$APIUrls/$id'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode(medicine.toJson()),
     );
@@ -36,31 +40,31 @@ class MedicineService {
   }
 
   Future<ApiResponse> deleteMedicine(int id) async {
-    final response = await http.delete(Uri.parse('$apiUrl/$id'));
+    final response = await http.delete(Uri.parse('$APIUrls/$id'));
     return _processResponse(response);
   }
 
   Future<ApiResponse> addStock(int id, int quantity) async {
     final response = await http.put(
-      Uri.parse('$apiUrl/$id/add-stock?quantity=$quantity'),
+      Uri.parse('$APIUrls/$id/add-stock?quantity=$quantity'),
     );
     return _processResponse(response);
   }
 
   Future<ApiResponse> subtractStock(int id, int quantity) async {
     final response = await http.put(
-      Uri.parse('$apiUrl/$id/subtract-stock?quantity=$quantity'),
+      Uri.parse('$APIUrls/$id/subtract-stock?quantity=$quantity'),
     );
     return _processResponse(response);
   }
 
   Future<ApiResponse> searchMedicinesByName(String name) async {
-    final response = await http.get(Uri.parse('$apiUrl/search?name=$name'));
+    final response = await http.get(Uri.parse('$APIUrls/search?name=$name'));
     return _processResponse(response);
   }
 
   Future<ApiResponse> getMedicinesByManufacturer(int manufacturerId) async {
-    final response = await http.get(Uri.parse('$apiUrl/manufacturer/$manufacturerId'));
+    final response = await http.get(Uri.parse('$APIUrls/manufacturer/$manufacturerId'));
     return _processResponse(response);
   }
 
