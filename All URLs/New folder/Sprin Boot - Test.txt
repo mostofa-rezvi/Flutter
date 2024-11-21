@@ -1,0 +1,22 @@
+Test:
+
+Base Url:
+http://localhost:8080/api/tests
+
+
+getAllTests:
+/all
+
+createTest:
+/create
+
+updateTest:
+/update/{id}
+
+deleteTest:
+/delete/{id}
+
+
+getTestById:
+/{id}
+
