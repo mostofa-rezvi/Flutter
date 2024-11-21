@@ -132,7 +132,7 @@ class _TestCreatePageState extends State<TestCreatePage> {
                 items: _tests.map((TestModel test) {
                   return DropdownMenuItem<TestModel>(
                     value: test,
-                    child: Text(test.testName),
+                    child: Text("$test.testName"),
                   );
                 }).toList(),
                 validator: (value) {

@@ -1,7 +1,7 @@
 class TestModel {
   int? id;
-  String testName;
-  String description;
+  String? testName;
+  String? description;
   String? result;
   String? instructions;
   String? createdAt;
@@ -9,8 +9,8 @@ class TestModel {
 
   TestModel({
     this.id,
-    required this.testName,
-    required this.description,
+    this.testName,
+    this.description,
     this.result,
     this.instructions,
     this.createdAt,

@@ -12,7 +12,7 @@ class TestService {
 
   Future<ApiResponse> getAllTests() async {
     try {
-      final response = await http.get(Uri.parse(baseUrl));
+      final response = await http.get(Uri.parse('$baseUrl/all'));
       if (response.statusCode == 200) {
         List<dynamic> data = jsonDecode(response.body)['data']['tests'];
         List<TestModel> tests = data.map((item) => TestModel.fromJson(item)).toList();
@@ -25,30 +25,15 @@ class TestService {
     }
   }
 
-  Future<ApiResponse> getTestById(int id) async {
-    try {
-      final response = await http.get(Uri.parse('$baseUrl/$id'));
-      if (response.statusCode == 200) {
-        var data = jsonDecode(response.body)['data']['tests'];
-        TestModel test = TestModel.fromJson(data);
-        return ApiResponse(successful: true, message: 'Test fetched successfully.', data: test);
-      } else {
-        return ApiResponse(successful: false, message: 'Test not found.');
-      }
-    } catch (e) {
-      return ApiResponse(successful: false, message: 'Error: $e');
-    }
-  }
-
   Future<ApiResponse> createTest(TestModel test) async {
     try {
       final response = await http.post(
-        Uri.parse(baseUrl),
+        Uri.parse('$baseUrl/create'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(test.toJson()),
       );
       if (response.statusCode == 200) {
-        var data = jsonDecode(response.body)['data']['test'];
+        var data = jsonDecode(response.body)['data']['tests'];
         TestModel createdTest = TestModel.fromJson(data);
         return ApiResponse(successful: true, message: 'Test created successfully.', data: createdTest);
       } else {
@@ -80,11 +65,27 @@ class TestService {
 
   Future<ApiResponse> deleteTest(int id) async {
     try {
-      final response = await http.delete(Uri.parse('$baseUrl/$id'));
+      final response = await http.delete(Uri.parse('$baseUrl/delete/$id'));
       if (response.statusCode == 200) {
         return ApiResponse(successful: true, message: 'Test deleted successfully.');
       } else {
         return ApiResponse(successful: false, message: 'Failed to delete test.');
+      }
+    } catch (e) {
+      return ApiResponse(successful: false, message: 'Error: $e');
+    }
+  }
+
+
+  Future<ApiResponse> getTestById(int id) async {
+    try {
+      final response = await http.get(Uri.parse('$baseUrl/$id'));
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body)['data']['tests'];
+        TestModel test = TestModel.fromJson(data);
+        return ApiResponse(successful: true, message: 'Test fetched successfully.', data: test);
+      } else {
+        return ApiResponse(successful: false, message: 'Test not found.');
       }
     } catch (e) {
       return ApiResponse(successful: false, message: 'Error: $e');

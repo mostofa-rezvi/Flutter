@@ -55,10 +55,10 @@ class _TestListPageState extends State<TestListPage> {
                   margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   child: ListTile(
                     title: Text(
-                      test.testName,
+                      test.testName ?? '',
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
-                    subtitle: Text(test.description),
+                    subtitle: Text(test.description ?? ''),
                     trailing: TextButton(
                       onPressed: () {
                         _showTestResultDialog(context, test.result);
@@ -107,7 +107,7 @@ class _TestListPageState extends State<TestListPage> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text(test.testName),
+          title: Text(test.testName ?? ''),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -120,7 +120,7 @@ class _TestListPageState extends State<TestListPage> {
               const SizedBox(height: 8),
               Text('Created At: ${test.createdAt ?? 'N/A'}'),
               if (test.updatedAt != null)
-                Text('Updated At: ${test.updatedAt}'),
+                Text('Updated At: ${test.updatedAt ?? 'N/A'}'),
             ],
           ),
           actions: [

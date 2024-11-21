@@ -9,7 +9,7 @@ class DiagnosticsService {
 
   Future<ApiResponse> getAllDiagnostics() async {
     try {
-      final response = await http.get(Uri.parse(baseUrl));
+      final response = await http.get(Uri.parse('$baseUrl/all'));
       if (response.statusCode == 200) {
         List<dynamic> data = jsonDecode(response.body)['data']['diagnostics'];
         List<DiagnosticsModel> diagnostics =
@@ -27,29 +27,10 @@ class DiagnosticsService {
     }
   }
 
-  Future<ApiResponse> getDiagnosticsById(int id) async {
-    try {
-      final response = await http.get(Uri.parse('$baseUrl/$id'));
-      if (response.statusCode == 200) {
-        var data = jsonDecode(response.body)['data']['diagnostics'];
-        DiagnosticsModel diagnostics = DiagnosticsModel.fromMap(data);
-        return ApiResponse(
-            successful: true,
-            message: 'Diagnostics fetched successfully.',
-            data: diagnostics);
-      } else {
-        return ApiResponse(
-            successful: false, message: 'Diagnostics not found.');
-      }
-    } catch (e) {
-      return ApiResponse(successful: false, message: 'Error: $e');
-    }
-  }
-
   Future<ApiResponse> createDiagnostics(DiagnosticsModel diagnostics) async {
     try {
       final response = await http.post(
-        Uri.parse(baseUrl),
+        Uri.parse('$baseUrl/create'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(diagnostics.toJson()),
       );
@@ -69,11 +50,10 @@ class DiagnosticsService {
     }
   }
 
-  Future<ApiResponse> updateDiagnostics(
-      int id, DiagnosticsModel diagnostics) async {
+  Future<ApiResponse> updateDiagnostics(int id, DiagnosticsModel diagnostics) async {
     try {
       final response = await http.put(
-        Uri.parse('$baseUrl/$id'),
+        Uri.parse('$baseUrl/update/$id'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(diagnostics.toJson()),
       );
@@ -95,13 +75,33 @@ class DiagnosticsService {
 
   Future<ApiResponse> deleteDiagnostics(int id) async {
     try {
-      final response = await http.delete(Uri.parse('$baseUrl/$id'));
+      final response = await http.delete(Uri.parse('$baseUrl/delete/$id'));
       if (response.statusCode == 200) {
         return ApiResponse(
             successful: true, message: 'Diagnostics deleted successfully.');
       } else {
         return ApiResponse(
             successful: false, message: 'Failed to delete diagnostics.');
+      }
+    } catch (e) {
+      return ApiResponse(successful: false, message: 'Error: $e');
+    }
+  }
+
+
+  Future<ApiResponse> getDiagnosticsById(int id) async {
+    try {
+      final response = await http.get(Uri.parse('$baseUrl/$id'));
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body)['data']['diagnostics'];
+        DiagnosticsModel diagnostics = DiagnosticsModel.fromMap(data);
+        return ApiResponse(
+            successful: true,
+            message: 'Diagnostics fetched successfully.',
+            data: diagnostics);
+      } else {
+        return ApiResponse(
+            successful: false, message: 'Diagnostics not found.');
       }
     } catch (e) {
       return ApiResponse(successful: false, message: 'Error: $e');

@@ -34,8 +34,8 @@ class _PrescriptionCreatePageState extends State<PrescriptionCreatePage> {
   UserModel? _selectedDoctor;
   UserModel? _selectedPatient;
 
-  List<MedicineModel> _selectedMedicines = [];
-  List<TestModel> _selectedTests = [];
+  final List<MedicineModel> _selectedMedicines = [];
+  final List<TestModel> _selectedTests = [];
 
   bool _isLoading = true;
 
@@ -180,7 +180,7 @@ class _PrescriptionCreatePageState extends State<PrescriptionCreatePage> {
                 items: _tests.map((test) {
                   return DropdownMenuItem(
                     value: test,
-                    child: Text(test.testName),
+                    child: Text("$test.testName"),
                   );
                 }).toList(),
                 onChanged: (value) => _addTest(value!),
@@ -191,7 +191,7 @@ class _PrescriptionCreatePageState extends State<PrescriptionCreatePage> {
                 itemCount: _selectedTests.length,
                 itemBuilder: (context, index) {
                   return ListTile(
-                    title: Text(_selectedTests[index].testName),
+                    // title: Text(_selectedTests[index].testName),
                     trailing: IconButton(
                       icon: Icon(Icons.remove_circle, color: Colors.red),
                       onPressed: () => setState(() => _selectedTests.removeAt(index)),

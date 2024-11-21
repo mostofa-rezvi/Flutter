@@ -9,7 +9,7 @@ class ManufacturerService {
 
   Future<ApiResponse> getAllManufacturers() async {
     try {
-      final response = await http.get(Uri.parse(baseUrl));
+      final response = await http.get(Uri.parse('$baseUrl/all'));
       if (response.statusCode == 200) {
         List<dynamic> data = jsonDecode(response.body)['data']['manufacturers'];
         List<ManufacturerModel> manufacturers =
@@ -27,29 +27,10 @@ class ManufacturerService {
     }
   }
 
-  Future<ApiResponse> getManufacturerById(int id) async {
-    try {
-      final response = await http.get(Uri.parse('$baseUrl/$id'));
-      if (response.statusCode == 200) {
-        var data = jsonDecode(response.body)['data']['manufacturer'];
-        ManufacturerModel manufacturer = ManufacturerModel.fromMap(data);
-        return ApiResponse(
-            successful: true,
-            message: 'Manufacturer fetched successfully.',
-            data: manufacturer);
-      } else {
-        return ApiResponse(
-            successful: false, message: 'Manufacturer not found.');
-      }
-    } catch (e) {
-      return ApiResponse(successful: false, message: 'Error: $e');
-    }
-  }
-
   Future<ApiResponse> createManufacturer(ManufacturerModel manufacturer) async {
     try {
       final response = await http.post(
-        Uri.parse(baseUrl),
+        Uri.parse('$baseUrl/create'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(manufacturer.toJson()),
       );
@@ -69,11 +50,10 @@ class ManufacturerService {
     }
   }
 
-  Future<ApiResponse> updateManufacturer(
-      int id, ManufacturerModel manufacturer) async {
+  Future<ApiResponse> updateManufacturer(int id, ManufacturerModel manufacturer) async {
     try {
       final response = await http.put(
-        Uri.parse('$baseUrl/$id'),
+        Uri.parse('$baseUrl/update/$id'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(manufacturer.toJson()),
       );
@@ -95,13 +75,33 @@ class ManufacturerService {
 
   Future<ApiResponse> deleteManufacturer(int id) async {
     try {
-      final response = await http.delete(Uri.parse('$baseUrl/$id'));
+      final response = await http.delete(Uri.parse('$baseUrl/delete/$id'));
       if (response.statusCode == 200) {
         return ApiResponse(
             successful: true, message: 'Manufacturer deleted successfully.');
       } else {
         return ApiResponse(
             successful: false, message: 'Failed to delete manufacturer.');
+      }
+    } catch (e) {
+      return ApiResponse(successful: false, message: 'Error: $e');
+    }
+  }
+
+
+  Future<ApiResponse> getManufacturerById(int id) async {
+    try {
+      final response = await http.get(Uri.parse('$baseUrl/$id'));
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body)['data']['manufacturer'];
+        ManufacturerModel manufacturer = ManufacturerModel.fromMap(data);
+        return ApiResponse(
+            successful: true,
+            message: 'Manufacturer fetched successfully.',
+            data: manufacturer);
+      } else {
+        return ApiResponse(
+            successful: false, message: 'Manufacturer not found.');
       }
     } catch (e) {
       return ApiResponse(successful: false, message: 'Error: $e');

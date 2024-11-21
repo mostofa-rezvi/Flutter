@@ -12,7 +12,7 @@ class BillService {
 
   Future<ApiResponse> getAllBills() async {
     try {
-      final response = await http.get(Uri.parse(baseUrl));
+      final response = await http.get(Uri.parse('$baseUrl/all'));
       if (response.statusCode == 200) {
         List<dynamic> data = jsonDecode(response.body)['data']['bills'];
         List<BillModel> bills =
@@ -30,28 +30,10 @@ class BillService {
     }
   }
 
-  Future<ApiResponse> getBillById(int id) async {
-    try {
-      final response = await http.get(Uri.parse('$baseUrl/$id'));
-      if (response.statusCode == 200) {
-        var data = jsonDecode(response.body)['data']['bills'];
-        BillModel bill = BillModel.fromJson(data);
-        return ApiResponse(
-            successful: true,
-            message: 'Bill fetched successfully.',
-            data: bill);
-      } else {
-        return ApiResponse(successful: false, message: 'Bill not found.');
-      }
-    } catch (e) {
-      return ApiResponse(successful: false, message: 'Error: $e');
-    }
-  }
-
   Future<ApiResponse> createBill(BillModel bill) async {
     try {
       final response = await http.post(
-        Uri.parse('$baseUrl/bills'),
+        Uri.parse('$baseUrl/create'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(bill.toJson()),
       );
@@ -74,7 +56,7 @@ class BillService {
   Future<ApiResponse> updateBill(int id, BillModel bill) async {
     try {
       final response = await http.put(
-        Uri.parse('$baseUrl/$id'),
+        Uri.parse('$baseUrl/update/$id'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(bill.toJson()),
       );
@@ -96,13 +78,32 @@ class BillService {
 
   Future<ApiResponse> deleteBill(int id) async {
     try {
-      final response = await http.delete(Uri.parse('$baseUrl/$id'));
+      final response = await http.delete(Uri.parse('$baseUrl/delete/$id'));
       if (response.statusCode == 200) {
         return ApiResponse(
             successful: true, message: 'Bill deleted successfully.');
       } else {
         return ApiResponse(
             successful: false, message: 'Failed to delete bill.');
+      }
+    } catch (e) {
+      return ApiResponse(successful: false, message: 'Error: $e');
+    }
+  }
+
+
+  Future<ApiResponse> getBillById(int id) async {
+    try {
+      final response = await http.get(Uri.parse('$baseUrl/$id'));
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body)['data']['bills'];
+        BillModel bill = BillModel.fromJson(data);
+        return ApiResponse(
+            successful: true,
+            message: 'Bill fetched successfully.',
+            data: bill);
+      } else {
+        return ApiResponse(successful: false, message: 'Bill not found.');
       }
     } catch (e) {
       return ApiResponse(successful: false, message: 'Error: $e');

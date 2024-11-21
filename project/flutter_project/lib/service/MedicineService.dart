@@ -11,18 +11,13 @@ class MedicineService {
   MedicineService({required this.httpClient});
 
   Future<ApiResponse> getAllMedicines() async {
-    final response = await http.get(Uri.parse('$baseUrl/'));
-    return _processResponse(response);
-  }
-
-  Future<ApiResponse> getMedicineById(int id) async {
-    final response = await http.get(Uri.parse('$baseUrl/$id'));
+    final response = await http.get(Uri.parse('$baseUrl/all'));
     return _processResponse(response);
   }
 
   Future<ApiResponse> addMedicine(MedicineModel medicine) async {
     final response = await http.post(
-      Uri.parse('$baseUrl/'),
+      Uri.parse('$baseUrl/create'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode(medicine.toJson()),
     );
@@ -31,7 +26,7 @@ class MedicineService {
 
   Future<ApiResponse> updateMedicine(int id, MedicineModel medicine) async {
     final response = await http.put(
-      Uri.parse('$baseUrl/$id'),
+      Uri.parse('$baseUrl/update/$id'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode(medicine.toJson()),
     );
@@ -39,7 +34,18 @@ class MedicineService {
   }
 
   Future<ApiResponse> deleteMedicine(int id) async {
-    final response = await http.delete(Uri.parse('$baseUrl/$id'));
+    final response = await http.delete(Uri.parse('$baseUrl/delete/$id'));
+    return _processResponse(response);
+  }
+
+
+  Future<ApiResponse> getMedicineById(int id) async {
+    final response = await http.get(Uri.parse('$baseUrl/$id'));
+    return _processResponse(response);
+  }
+
+  Future<ApiResponse> getMedicinesByManufacturer(int manufacturerId) async {
+    final response = await http.get(Uri.parse('$baseUrl/manufacturer/$manufacturerId'));
     return _processResponse(response);
   }
 
@@ -58,12 +64,7 @@ class MedicineService {
   }
 
   Future<ApiResponse> searchMedicinesByName(String name) async {
-    final response = await http.get(Uri.parse('$baseUrl/search?name=$name'));
-    return _processResponse(response);
-  }
-
-  Future<ApiResponse> getMedicinesByManufacturer(int manufacturerId) async {
-    final response = await http.get(Uri.parse('$baseUrl/manufacturer/$manufacturerId'));
+    final response = await http.get(Uri.parse('$baseUrl/searchByName?name=$name'));
     return _processResponse(response);
   }
 

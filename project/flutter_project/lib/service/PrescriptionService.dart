@@ -14,23 +14,13 @@ class PrescriptionService {
   // final String baseUrl = APIUrls.baseURL;
 
   Future<ApiResponse> getAllPrescriptions() async {
-    final response = await http.get(Uri.parse('$baseUrl/'));
+    final response = await http.get(Uri.parse('$baseUrl/all'));
     return _handleResponse(response);
-  }
-
-  Future<PrescriptionModel> getPrescriptionById(int id) async {
-    final response = await http.get(Uri.parse('$baseUrl/$id'));
-
-    if (response.statusCode == 200) {
-      return PrescriptionModel.fromJson(json.decode(response.body));
-    } else {
-      throw Exception('Failed to load prescription');
-    }
   }
 
   Future<PrescriptionModel> createPrescription(PrescriptionModel prescription) async {
     final response = await http.post(
-      Uri.parse(baseUrl),
+      Uri.parse('$baseUrl/create'),
       headers: {'Content-Type': 'application/json'},
       body: json.encode(prescription.toJson()),
     );
@@ -44,7 +34,7 @@ class PrescriptionService {
 
   Future<PrescriptionModel> updatePrescription(int id, PrescriptionModel prescription) async {
     final response = await http.put(
-      Uri.parse('$baseUrl/$id'),
+      Uri.parse('$baseUrl/update/$id'),
       headers: {'Content-Type': 'application/json'},
       body: json.encode(prescription.toJson()),
     );
@@ -57,10 +47,21 @@ class PrescriptionService {
   }
 
   Future<void> deletePrescription(int id) async {
-    final response = await http.delete(Uri.parse('$baseUrl/$id'));
+    final response = await http.delete(Uri.parse('$baseUrl/delete/$id'));
 
     if (response.statusCode != 200) {
       throw Exception('Failed to delete prescription');
+    }
+  }
+
+
+  Future<PrescriptionModel> getPrescriptionById(int id) async {
+    final response = await http.get(Uri.parse('$baseUrl/$id'));
+
+    if (response.statusCode == 200) {
+      return PrescriptionModel.fromJson(json.decode(response.body));
+    } else {
+      throw Exception('Failed to load prescription');
     }
   }
 

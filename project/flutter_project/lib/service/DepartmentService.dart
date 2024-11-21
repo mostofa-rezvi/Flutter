@@ -9,7 +9,7 @@ class DepartmentService {
 
   Future<ApiResponse> getAllDepartments() async {
     try {
-      final response = await http.get(Uri.parse(baseUrl));
+      final response = await http.get(Uri.parse('$baseUrl/all'));
       if (response.statusCode == 200) {
         List<dynamic> data = jsonDecode(response.body)['data']['departments'];
         List<DepartmentModel> departments =
@@ -23,25 +23,10 @@ class DepartmentService {
     }
   }
 
-  Future<ApiResponse> getDepartmentById(int id) async {
-    try {
-      final response = await http.get(Uri.parse('$baseUrl/$id'));
-      if (response.statusCode == 200) {
-        var data = jsonDecode(response.body)['data']['department'];
-        DepartmentModel department = DepartmentModel.fromMap(data);
-        return ApiResponse(successful: true, message: 'Department fetched successfully.', data: department);
-      } else {
-        return ApiResponse(successful: false, message: 'Department not found.');
-      }
-    } catch (e) {
-      return ApiResponse(successful: false, message: 'Error: $e');
-    }
-  }
-
   Future<ApiResponse> createDepartment(DepartmentModel department) async {
     try {
       final response = await http.post(
-        Uri.parse(baseUrl),
+        Uri.parse('$baseUrl/create'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(department.toJson()),
       );
@@ -60,7 +45,7 @@ class DepartmentService {
   Future<ApiResponse> updateDepartment(int id, DepartmentModel department) async {
     try {
       final response = await http.put(
-        Uri.parse('$baseUrl/$id'),
+        Uri.parse('$baseUrl/update/$id'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(department.toJson()),
       );
@@ -78,7 +63,7 @@ class DepartmentService {
 
   Future<ApiResponse> deleteDepartment(int id) async {
     try {
-      final response = await http.delete(Uri.parse('$baseUrl/$id'));
+      final response = await http.delete(Uri.parse('$baseUrl/delete/$id'));
       if (response.statusCode == 200) {
         return ApiResponse(successful: true, message: 'Department deleted successfully.');
       } else {
@@ -89,9 +74,25 @@ class DepartmentService {
     }
   }
 
+
+  Future<ApiResponse> getDepartmentById(int id) async {
+    try {
+      final response = await http.get(Uri.parse('$baseUrl/$id'));
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body)['data']['department'];
+        DepartmentModel department = DepartmentModel.fromMap(data);
+        return ApiResponse(successful: true, message: 'Department fetched successfully.', data: department);
+      } else {
+        return ApiResponse(successful: false, message: 'Department not found.');
+      }
+    } catch (e) {
+      return ApiResponse(successful: false, message: 'Error: $e');
+    }
+  }
+
   Future<ApiResponse> getDepartmentByName(String departmentName) async {
     try {
-      final response = await http.get(Uri.parse('$baseUrl/search?name=$departmentName'));
+      final response = await http.get(Uri.parse('$baseUrl/searchByName?name=$departmentName'));
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body)['data']['department'];
         DepartmentModel department = DepartmentModel.fromMap(data);

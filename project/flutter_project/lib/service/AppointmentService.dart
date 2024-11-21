@@ -11,9 +11,16 @@ class AppointmentService {
 
   AppointmentService({required this.httpClient});
 
+  Future<ApiResponse> getAllAppointments() async {
+    final response = await httpClient.get(
+        Uri.parse('$baseUrl/all')
+    );
+    return _handleResponse(response);
+  }
+
   Future<ApiResponse> createAppointment(AppointmentModel appointment) async {
     final response = await httpClient.post(
-      Uri.parse('$baseUrl/save'),
+      Uri.parse('$baseUrl/create'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode(appointment.toJson()),
     );
@@ -25,23 +32,9 @@ class AppointmentService {
     }
   }
 
-  Future<ApiResponse> getAllAppointments() async {
-    final response = await httpClient.get(
-        Uri.parse('$baseUrl/')
-        );
-    return _handleResponse(response);
-  }
-
-  Future<ApiResponse> getAppointmentById(int id) async {
-    final response = await httpClient.get(
-        Uri.parse('$baseUrl/$id')
-    );
-    return _handleResponse(response);
-  }
-
-  Future<ApiResponse> updateAppointment(AppointmentModel appointment) async {
+  Future<ApiResponse> updateAppointment(AppointmentModel appointment, int id) async {
     final response = await httpClient.put(
-      Uri.parse('$baseUrl/update'),
+      Uri.parse('$baseUrl/update/$id'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode(appointment.toJson()),
     );
@@ -50,7 +43,14 @@ class AppointmentService {
 
   Future<ApiResponse> deleteAppointment(int id) async {
     final response = await httpClient.delete(
-      Uri.parse('$baseUrl/$id'),
+      Uri.parse('$baseUrl/delete/$id'),
+    );
+    return _handleResponse(response);
+  }
+
+  Future<ApiResponse> getAppointmentById(int id) async {
+    final response = await httpClient.get(
+        Uri.parse('$baseUrl/$id')
     );
     return _handleResponse(response);
   }
