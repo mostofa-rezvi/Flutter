@@ -20,7 +20,7 @@ http://localhost:8080/api/reports/delete/{id}
 getReportById:
 http://localhost:8080/api/reports/{id}
 
-getReportsByTestEntityId:
+getReportsByTestId:
 http://localhost:8080/api/reports/test/{testId}
 
 getReportsByPatientId:
