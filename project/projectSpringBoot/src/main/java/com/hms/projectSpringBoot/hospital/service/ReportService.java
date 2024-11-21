@@ -111,7 +111,7 @@ public class ReportService {
         }
     }
 
-    public List<Report> getReportsByTestEntityId(Long testId) {
+    public List<Report> getReportsByTestId(Long testId) {
         return reportRepository.findByTestEntityId(testId);
     }
 

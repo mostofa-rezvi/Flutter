@@ -17,28 +17,28 @@ public class ManufacturerController {
     @Autowired
     private ManufacturerService manufacturerService;
 
-    @GetMapping("/")
+    @GetMapping("/all")
     public ApiResponse getAllManufacturers() {
         return manufacturerService.getAllManufacturers();
+    }
+
+    @PostMapping("/create")
+    public ApiResponse createManufacturer(@RequestBody Manufacturer manufacturer) {
+        return manufacturerService.createManufacturer(manufacturer);
+    }
+
+    @PutMapping("/update/{id}")
+    public ApiResponse updateManufacturer(@PathVariable Long id, @RequestBody Manufacturer manufacturerDetails) {
+        return manufacturerService.updateManufacturer(id, manufacturerDetails);
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ApiResponse deleteManufacturer(@PathVariable Long id) {
+        return manufacturerService.deleteManufacturer(id);
     }
 
     @GetMapping("/{id}")
     public ApiResponse getManufacturerById(@PathVariable Long id) {
         return manufacturerService.getManufacturerById(id);
-    }
-
-    @PostMapping("/")
-    public ApiResponse createManufacturer(@RequestBody Manufacturer manufacturer) {
-        return manufacturerService.createManufacturer(manufacturer);
-    }
-
-    @PutMapping("/{id}")
-    public ApiResponse updateManufacturer(@PathVariable Long id, @RequestBody Manufacturer manufacturerDetails) {
-        return manufacturerService.updateManufacturer(id, manufacturerDetails);
-    }
-
-    @DeleteMapping("/{id}")
-    public ApiResponse deleteManufacturer(@PathVariable Long id) {
-        return manufacturerService.deleteManufacturer(id);
     }
 }

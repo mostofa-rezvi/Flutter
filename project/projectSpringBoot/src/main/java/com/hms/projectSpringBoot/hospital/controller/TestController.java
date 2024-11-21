@@ -15,17 +15,12 @@ public class TestController {
     @Autowired
     private TestService testService;
 
-    @GetMapping
+    @GetMapping("/all")
     public ApiResponse getAllTests() {
         return testService.getAllTests();
     }
 
-    @GetMapping("/{id}")
-    public ApiResponse getTestById(@PathVariable Long id) {
-        return testService.getTestById(id);
-    }
-
-    @PostMapping
+    @PostMapping("/create")
     public ApiResponse createTest(@RequestBody TestEntity testEntity) {
         return testService.createTest(testEntity);
     }
@@ -35,8 +30,13 @@ public class TestController {
         return testService.updateTest(id, updatedTest);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public ApiResponse deleteTest(@PathVariable Long id) {
         return testService.deleteTest(id);
+    }
+
+    @GetMapping("/{id}")
+    public ApiResponse getTestById(@PathVariable Long id) {
+        return testService.getTestById(id);
     }
 }

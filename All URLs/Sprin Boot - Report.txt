@@ -1,0 +1,27 @@
+Report:
+
+Base Url:
+http://localhost:8080/api/reports
+
+
+getAllReports:
+http://localhost:8080/api/reports/all
+
+createReport:
+http://localhost:8080/api/reports/create
+
+updateReport:
+http://localhost:8080/api/reports/update/{id}
+
+deleteReport:
+http://localhost:8080/api/reports/delete/{id}
+
+
+getReportById:
+http://localhost:8080/api/reports/{id}
+
+getReportsByTestEntityId:
+http://localhost:8080/api/reports/test/{testId}
+
+getReportsByPatientId:
+http://localhost:8080/api/reports/patient/{patientId}

@@ -18,14 +18,9 @@ public class BillController {
     @Autowired
     private BillService billService;
 
-    @GetMapping("/")
+    @GetMapping("/all")
     public ApiResponse getAllBills() {
         return billService.getAllBills();
-    }
-
-    @GetMapping("/{id}")
-    public ApiResponse getBillById(@PathVariable Long id) {
-        return billService.getBillById(id);
     }
 
     @PostMapping("/create")
@@ -33,14 +28,19 @@ public class BillController {
         return billService.createBill(bill);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/update/{id}")
     public ApiResponse updateBill(@RequestBody Bill bill) {
         return billService.updateBill(bill);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public ApiResponse deleteBill(@PathVariable Long id) {
         return billService.deleteBill(id);
+    }
+
+    @GetMapping("/{id}")
+    public ApiResponse getBillById(@PathVariable Long id) {
+        return billService.getBillById(id);
     }
 
     @GetMapping("/getBillsByPatientId")
