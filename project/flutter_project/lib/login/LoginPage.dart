@@ -174,11 +174,11 @@ class _LoginPageState extends State<LoginPage> {
         Role role = Role.values.byName(user['role']);
         if (role == Role.ADMIN) {
           Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => LaboratoristPage()),
+            MaterialPageRoute(builder: (context) => DoctorMainPage()),
           );
         } else if (role == Role.LAB) {
           Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => LaboratoristPage()),
+            MaterialPageRoute(builder: (context) => LaboratoristPage()), // done
           );
         } else if (role == Role.PHARMACIST) {
           Navigator.of(context).pushReplacement(
@@ -190,19 +190,19 @@ class _LoginPageState extends State<LoginPage> {
           );
         } else if (role == Role.RECEPTIONIST) {
           Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => ReceptionistMainPage()),
+            MaterialPageRoute(builder: (context) => ReceptionistMainPage()), // done
           );
         } else if (role == Role.PATIENT) {
           Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => PatientMainPage()),
+            MaterialPageRoute(builder: (context) => PatientMainPage()), // Okay
           );
         } else if (role == Role.NURSE) {
           Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => NursePage()),
+            MaterialPageRoute(builder: (context) => NursePage()), // Okay
           );
         } else {
           Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => MainPage()),
+            MaterialPageRoute(builder: (context) => MainPage()), // No need
           );
         }
             } else {

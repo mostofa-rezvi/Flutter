@@ -13,7 +13,7 @@ class APIUrls {
   static const String tests = '$baseURL/tests';
 
   // User & Report Endpoints
-  static const String user = '$baseURL/users';
+  static const String user = '$baseURL/user';
   static const String reports = '$baseURL/reports';
 
   // Diagnostics & Department Endpoints

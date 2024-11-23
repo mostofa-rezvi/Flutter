@@ -14,7 +14,6 @@ class TestCreatePage extends StatefulWidget {
 class _TestCreatePageState extends State<TestCreatePage> {
   final _formKey = GlobalKey<FormState>();
 
-  // Controllers for text fields
   final _testNameController = TextEditingController();
   final _descriptionController = TextEditingController();
   final _resultController = TextEditingController();
@@ -23,10 +22,9 @@ class _TestCreatePageState extends State<TestCreatePage> {
   bool _isLoading = false;
   String _errorMessage = '';
 
-  List<TestModel> _tests = [];  // List to hold all fetched tests
-  TestModel? _selectedTest;     // Variable to hold the selected test
+  List<TestModel> _tests = [];
+  TestModel? _selectedTest;
 
-  // Method to fetch all tests and populate dropdown
   Future<void> _fetchTests() async {
     setState(() {
       _isLoading = true;
@@ -40,7 +38,7 @@ class _TestCreatePageState extends State<TestCreatePage> {
 
     if (response.successful) {
       setState(() {
-        _tests = response.data;  // Set the list of tests
+        _tests = response.data;
       });
     } else {
       setState(() {
@@ -49,7 +47,6 @@ class _TestCreatePageState extends State<TestCreatePage> {
     }
   }
 
-  // Method to create test
   Future<void> _createTest() async {
     if (_formKey.currentState?.validate() ?? false) {
       setState(() {
@@ -57,7 +54,6 @@ class _TestCreatePageState extends State<TestCreatePage> {
         _errorMessage = '';
       });
 
-      // Create a new test model
       TestModel test = TestModel(
         testName: _testNameController.text,
         description: _descriptionController.text,
@@ -65,7 +61,6 @@ class _TestCreatePageState extends State<TestCreatePage> {
         instructions: _instructionsController.text,
       );
 
-      // Call the TestService to create a test
       ApiResponse response = await TestService(httpClient: http.Client()).createTest(test);
 
       setState(() {
@@ -73,11 +68,10 @@ class _TestCreatePageState extends State<TestCreatePage> {
       });
 
       if (response.successful) {
-        // Navigate back or show success message
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('${response.message}')),
         );
-        Navigator.pop(context); // Close the page after successful creation
+        Navigator.pop(context);
       } else {
         setState(() {
           _errorMessage = response.message!;
@@ -86,7 +80,6 @@ class _TestCreatePageState extends State<TestCreatePage> {
     }
   }
 
-  // Method to handle the selection of a test and update the instructions
   void _onTestSelected(TestModel? test) {
     setState(() {
       _selectedTest = test;
@@ -97,7 +90,7 @@ class _TestCreatePageState extends State<TestCreatePage> {
   @override
   void initState() {
     super.initState();
-    _fetchTests();  // Fetch tests when the page is loaded
+    _fetchTests();
   }
 
   @override
@@ -132,7 +125,7 @@ class _TestCreatePageState extends State<TestCreatePage> {
                 items: _tests.map((TestModel test) {
                   return DropdownMenuItem<TestModel>(
                     value: test,
-                    child: Text("$test.testName"),
+                    child: Text(test.testName ?? ''),
                   );
                 }).toList(),
                 validator: (value) {
@@ -144,7 +137,6 @@ class _TestCreatePageState extends State<TestCreatePage> {
               ),
               const SizedBox(height: 16.0),
 
-              // Description Field
               TextFormField(
                 controller: _descriptionController,
                 decoration: const InputDecoration(
@@ -160,7 +152,6 @@ class _TestCreatePageState extends State<TestCreatePage> {
               ),
               const SizedBox(height: 16.0),
 
-              // Result Field
               TextFormField(
                 controller: _resultController,
                 decoration: const InputDecoration(
@@ -170,18 +161,16 @@ class _TestCreatePageState extends State<TestCreatePage> {
               ),
               const SizedBox(height: 16.0),
 
-              // Instructions Field (Auto-filled when test is selected)
               TextFormField(
                 controller: _instructionsController,
                 decoration: const InputDecoration(
                   labelText: 'Instructions',
                   border: OutlineInputBorder(),
                 ),
-                readOnly: true,  // Make the instructions field read-only
+                readOnly: true,
               ),
               const SizedBox(height: 16.0),
 
-              // Error Message Display
               if (_errorMessage.isNotEmpty)
                 Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -191,7 +180,6 @@ class _TestCreatePageState extends State<TestCreatePage> {
                   ),
                 ),
 
-              // Submit Button
               ElevatedButton(
                 onPressed: _isLoading ? null : _createTest,
                 child: _isLoading

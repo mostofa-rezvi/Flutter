@@ -1,17 +1,16 @@
-Laboratorist
-   Report
-   Test
+Doctor
+   Prescription
 
 Pharmacist
    Medicine
    Medicine Bill
 
 ---------------------
-Doctor
-   Prescription
 Receptionist
    Appointment
-
+Laboratorist
+   Report
+   Test
 ---------------------
 Nurse
 Patient

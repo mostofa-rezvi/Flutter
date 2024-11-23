@@ -17,55 +17,79 @@ class PrescriptionCreatePage extends StatefulWidget {
 class _PrescriptionCreatePageState extends State<PrescriptionCreatePage> {
   final _formKey = GlobalKey<FormState>();
 
-  final PrescriptionService _prescriptionService = PrescriptionService(httpClient: http.Client());
-  final MedicineService _medicineService = MedicineService(httpClient: http.Client());
-  final TestService _testService = TestService(httpClient: http.Client());
-  final UserService _userService = UserService();
+  final _descriptionController = TextEditingController();
+  final _notesController = TextEditingController();
 
-  final PrescriptionModel _prescription = PrescriptionModel();
-
-  List<MedicineModel> _medicines = [];
-  List<TestModel> _tests = [];
-  List<UserModel> _doctors = [];
-  List<UserModel> _patients = [];
-
-  MedicineModel? _selectedMedicine;
-  TestModel? _selectedTest;
+  bool _isLoading = false;
+  String _errorMessage = '';
+  List<TestModel> _testList = [];
+  List<MedicineModel> _medicineList = [];
+  List<UserModel> _userList = [];
+  List<MedicineModel> _selectedMedicines = [];
+  List<TestModel> _selectedTests = [];
   UserModel? _selectedDoctor;
   UserModel? _selectedPatient;
 
-  final List<MedicineModel> _selectedMedicines = [];
-  final List<TestModel> _selectedTests = [];
-
-  bool _isLoading = true;
+  late TestService _testService;
+  late MedicineService _medicineService;
+  late UserService _userService;
+  late PrescriptionService _prescriptionService;
 
   @override
   void initState() {
     super.initState();
-    _loadInitialData();
+    _prescriptionService = PrescriptionService(httpClient: http.Client());
+    _userService = UserService();
+    _medicineService = MedicineService(httpClient: http.Client());
+    _testService = TestService(httpClient: http.Client());
+    _fetchTests();
+    _fetchUsers();
+    _fetchMedicines(); // Fetch medicines as well
   }
 
-  Future<void> _loadInitialData() async {
-    setState(() => _isLoading = true);
+  Future<void> _fetchTests() async {
+    setState(() {
+      _isLoading = true;
+    });
 
-    try {
-      final medicines = await _medicineService.getAllMedicines();
-      final tests = await _testService.getAllTests();
-      final users = await _userService.getAllUsers();
+    final response = await _testService.getAllTests();
 
-      setState(() {
-        _medicines = medicines as List<MedicineModel>;
-        _tests = tests as List<TestModel>;
-        _doctors = users.where((user) => user.role == 'DOCTOR').toList();
-        _patients = users.where((user) => user.role == 'PATIENT').toList();
-      });
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to load data: $e')),
-      );
-    } finally {
-      setState(() => _isLoading = false);
-    }
+    setState(() {
+      _isLoading = false;
+      if (response.successful) {
+        _testList = response.data ?? [];
+      } else {
+        _errorMessage = response.message ?? 'Failed to load tests.';
+      }
+    });
+  }
+
+  Future<void> _fetchUsers() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    _userList = await _userService.getAllUsers();
+    setState(() {
+      _isLoading = false;
+    });
+  }
+
+  Future<void> _fetchMedicines() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    final response = await _medicineService.getAllMedicines();
+
+    setState(() {
+      _isLoading = false;
+      if (response.successful) {
+        _medicineList = response.data ?? [];
+      } else {
+        _errorMessage = response.message ?? 'Failed to load medicines.';
+      }
+    });
   }
 
   void _addMedicine(MedicineModel medicine) {
@@ -90,13 +114,17 @@ class _PrescriptionCreatePageState extends State<PrescriptionCreatePage> {
     }
     _formKey.currentState!.save();
 
-    _prescription.medicines = _selectedMedicines.isNotEmpty ? _selectedMedicines.first : null;
-    _prescription.test = _selectedTests.isNotEmpty ? _selectedTests.first : null;
-    _prescription.issuedBy = _selectedDoctor?.name as UserModel?;
-    _prescription.patient = _selectedPatient?.name as UserModel?;
+    PrescriptionModel prescription = PrescriptionModel(
+      // description: _descriptionController.text,
+      medicines: _selectedMedicines.isNotEmpty ? _selectedMedicines[0] : null,
+      test: _selectedTests.isNotEmpty ? _selectedTests[0] : null,
+      issuedBy: _selectedDoctor,
+      patient: _selectedPatient,
+      notes: _notesController.text,
+    );
 
     try {
-      await _prescriptionService.createPrescription(_prescription);
+      await _prescriptionService.createPrescription(prescription);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Prescription created successfully')),
       );
@@ -128,34 +156,42 @@ class _PrescriptionCreatePageState extends State<PrescriptionCreatePage> {
               // Doctor Dropdown
               DropdownButtonFormField<UserModel>(
                 decoration: InputDecoration(labelText: 'Issued By (Doctor)'),
-                items: _doctors.map((doctor) {
+                items: _userList
+                    .where((user) => user.role == 'DOCTOR')
+                    .map((doctor) {
                   return DropdownMenuItem(
                     value: doctor,
-                    child: Text(_doctors as String),
+                    child: Text(doctor.name ?? ''),
                   );
                 }).toList(),
                 onChanged: (value) => setState(() => _selectedDoctor = value),
-                validator: (value) => value == null ? 'Please select a doctor' : null,
+                validator: (value) =>
+                    value == null ? 'Please select a doctor' : null,
               ),
 
+              // Patient Dropdown
               DropdownButtonFormField<UserModel>(
                 decoration: InputDecoration(labelText: 'Patient Name'),
-                items: _patients.map((patient) {
+                items: _userList
+                    .where((user) => user.role == 'PATIENT')
+                    .map((patient) {
                   return DropdownMenuItem(
                     value: patient,
-                    child: Text(_patients as String),
+                    child: Text(patient.name ?? ''),
                   );
                 }).toList(),
                 onChanged: (value) => setState(() => _selectedPatient = value),
-                validator: (value) => value == null ? 'Please select a patient' : null,
+                validator: (value) =>
+                    value == null ? 'Please select a patient' : null,
               ),
 
+              // Medicine Dropdown
               DropdownButtonFormField<MedicineModel>(
                 decoration: InputDecoration(labelText: 'Select Medicine'),
-                items: _medicines.map((medicine) {
+                items: _medicineList.map((medicine) {
                   return DropdownMenuItem(
                     value: medicine,
-                    child: Text('${medicine.medicineName}'),
+                    child: Text(medicine.medicineName ?? ''),
                   );
                 }).toList(),
                 onChanged: (value) => _addMedicine(value!),
@@ -169,18 +205,21 @@ class _PrescriptionCreatePageState extends State<PrescriptionCreatePage> {
                     title: Text('${_selectedMedicines[index].medicineName}'),
                     trailing: IconButton(
                       icon: Icon(Icons.remove_circle, color: Colors.red),
-                      onPressed: () => setState(() => _selectedMedicines.removeAt(index)),
+                      onPressed: () => setState(() {
+                        _selectedMedicines.removeAt(index);
+                      }),
                     ),
                   );
                 },
               ),
 
+              // Test Dropdown
               DropdownButtonFormField<TestModel>(
                 decoration: InputDecoration(labelText: 'Select Test'),
-                items: _tests.map((test) {
+                items: _testList.map((test) {
                   return DropdownMenuItem(
                     value: test,
-                    child: Text("$test.testName"),
+                    child: Text(test.testName ?? ''),
                   );
                 }).toList(),
                 onChanged: (value) => _addTest(value!),
@@ -191,22 +230,26 @@ class _PrescriptionCreatePageState extends State<PrescriptionCreatePage> {
                 itemCount: _selectedTests.length,
                 itemBuilder: (context, index) {
                   return ListTile(
-                    // title: Text(_selectedTests[index].testName),
+                    title: Text(_selectedTests[index].testName ?? ''),
                     trailing: IconButton(
                       icon: Icon(Icons.remove_circle, color: Colors.red),
-                      onPressed: () => setState(() => _selectedTests.removeAt(index)),
+                      onPressed: () => setState(() {
+                        _selectedTests.removeAt(index);
+                      }),
                     ),
                   );
                 },
               ),
 
+              // Notes
               TextFormField(
                 decoration: InputDecoration(labelText: 'Notes'),
+                controller: _notesController,
                 maxLines: 3,
-                onSaved: (value) => _prescription.notes = value,
               ),
 
               SizedBox(height: 20),
+
               ElevatedButton(
                 onPressed: _createPrescription,
                 child: Text('Create Prescription'),

@@ -9,7 +9,7 @@ class UserService {
   final String baseUrl = APIUrls.user.toString();
 
   Future<List<UserModel>> getAllUsers() async {
-    final response = await http.get(Uri.parse('$baseUrl/users'));
+    final response = await http.get(Uri.parse('$baseUrl/findAllUsers'));
     if (response.statusCode == 200) {
       List<dynamic> data = jsonDecode(response.body)['data']['users'];
       return data.map((user) => UserModel.fromJson(user)).toList();

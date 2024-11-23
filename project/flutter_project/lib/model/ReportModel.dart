@@ -1,3 +1,6 @@
+import 'package:flutter_project/model/TestModel.dart';
+import 'package:flutter_project/model/UserModel.dart';
+
 class ReportModel {
   int? id;
   String? reportName;
@@ -5,11 +8,11 @@ class ReportModel {
   String? sampleId;
   String? reportResult;
   String? interpretation;
-  int? patientId;
-  int? testId;
-  String? testDate;
-  String? createdAt;
-  String? updatedAt;
+  UserModel? name;
+  TestModel? testName;
+  DateTime? testDate;
+  DateTime? createdAt;
+  DateTime? updatedAt;
 
   ReportModel({
     this.id,
@@ -18,29 +21,31 @@ class ReportModel {
     this.sampleId,
     this.reportResult,
     this.interpretation,
-    this.patientId,
-    this.testId,
+    this.name,
+    this.testName,
     this.testDate,
     this.createdAt,
     this.updatedAt,
   });
 
-  factory ReportModel.fromJson(Map<String, dynamic> map) {
+  /// Factory constructor for deserialization
+  factory ReportModel.fromJson(Map<String, dynamic> json) {
     return ReportModel(
-      id: map['id'],
-      reportName: map['reportName'],
-      description: map['description'],
-      sampleId: map['sampleId'],
-      reportResult: map['reportResult'],
-      interpretation: map['interpretation'],
-      patientId: map['patient']['id'],
-      testId: map['testEntity']['id'],
-      testDate: map['testDate'],
-      createdAt: map['createdAt'],
-      updatedAt: map['updatedAt'],
+      id: json['id'],
+      reportName: json['reportName'],
+      description: json['description'],
+      sampleId: json['sampleId'],
+      reportResult: json['reportResult'],
+      interpretation: json['interpretation'],
+      testDate: DateTime.parse(json['testDate']),
+      createdAt: DateTime.parse(json['createdAt']),
+      updatedAt: DateTime.parse(json['updatedAt']),
+      name: json['name'] != null ? UserModel.fromJson(json['name']) : null,
+      testName: json['testName'] != null ? TestModel.fromJson(json['testName']) : null,
     );
   }
 
+  /// Method for serialization
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -49,11 +54,11 @@ class ReportModel {
       'sampleId': sampleId,
       'reportResult': reportResult,
       'interpretation': interpretation,
-      'patient': {'id': patientId},
-      'testEntity': {'id': testId},
-      'testDate': testDate,
-      'createdAt': createdAt,
-      'updatedAt': updatedAt,
+      'testDate': testDate?.toIso8601String(),
+      'createdAt': createdAt?.toIso8601String(),
+      'updatedAt': updatedAt?.toIso8601String(),
+      'name': name?.toJson(),
+      'testName': testName?.toJson(),
     };
   }
 }

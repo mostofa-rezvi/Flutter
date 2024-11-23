@@ -8,7 +8,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -27,8 +26,10 @@ public class Prescription {
     private Date prescriptionDate;
     private String notes;
 
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    @Temporal(TemporalType.DATE)
+    private Date createdAt;
+    @Temporal(TemporalType.DATE)
+    private Date updatedAt;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "doctor_id")

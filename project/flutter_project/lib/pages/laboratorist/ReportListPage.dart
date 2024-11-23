@@ -5,7 +5,7 @@ import 'package:flutter_project/util/ApiResponse.dart';
 import 'package:http/http.dart' as http;
 
 class ReportListPage extends StatefulWidget {
-  const ReportListPage({super.key});
+  const ReportListPage({Key? key}) : super(key: key);
 
   @override
   State<ReportListPage> createState() => _ReportListPageState();
@@ -13,30 +13,22 @@ class ReportListPage extends StatefulWidget {
 
 class _ReportListPageState extends State<ReportListPage> {
   late ReportService _reportService;
-  List<ReportModel> _reports = [];
-  bool _isLoading = true;
-  String _errorMessage = '';
+  late Future<List<ReportModel>> _reportList;
+  int? _expandedReportIndex;
 
   @override
   void initState() {
     super.initState();
     _reportService = ReportService(httpClient: http.Client());
-    _fetchReports();
+    _reportList = fetchReports();
   }
 
-  // Fetch reports from the backend
-  Future<void> _fetchReports() async {
+  Future<List<ReportModel>> fetchReports() async {
     ApiResponse response = await _reportService.getAllReports();
     if (response.successful) {
-      setState(() {
-        _reports = response.data;
-        _isLoading = false;
-      });
+      return response.data as List<ReportModel>;
     } else {
-      setState(() {
-        _isLoading = false;
-        _errorMessage = response.message!;
-      });
+      throw Exception(response.message);
     }
   }
 
@@ -46,68 +38,91 @@ class _ReportListPageState extends State<ReportListPage> {
       appBar: AppBar(
         title: const Text('Report List'),
       ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : _errorMessage.isNotEmpty
-          ? Center(child: Text(_errorMessage, style: TextStyle(color: Colors.red)))
-          : _reports.isEmpty
-          ? const Center(child: Text('No reports available'))
-          : ListView.builder(
-        itemCount: _reports.length,
-        itemBuilder: (context, index) {
-          ReportModel report = _reports[index];
-          return Card(
-            margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-            child: ListTile(
-              title: Text(report.reportName ?? 'Unknown Report'),
-              subtitle: Text(report.reportResult ?? 'No result'),
-              trailing: IconButton(
-                icon: const Icon(Icons.arrow_forward),
-                onPressed: () {
-                  // Handle navigation to report details
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ReportDetailPage(report: report),
-                    ),
-                  );
-                },
+      body: FutureBuilder<List<ReportModel>>(
+        future: _reportList,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          } else if (snapshot.hasError) {
+            return Center(
+              child: Text(
+                'Error: ${snapshot.error}',
+                style: const TextStyle(color: Colors.red, fontSize: 18),
               ),
-            ),
-          );
+            );
+          } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+            return ListView.builder(
+              itemCount: snapshot.data!.length,
+              itemBuilder: (context, index) {
+                final report = snapshot.data![index];
+                return Card(
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  child: Column(
+                    children: [
+                      ListTile(
+                        title: Text(
+                          report.reportName ?? 'Unnamed Report',
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        subtitle:
+                            Text('Test Date: ${report.testDate ?? 'N/A'}'),
+                        trailing: IconButton(
+                          icon: Icon(
+                            _expandedReportIndex == index
+                                ? Icons.expand_less
+                                : Icons.expand_more,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              if (_expandedReportIndex == index) {
+                                _expandedReportIndex = null;
+                              } else {
+                                _expandedReportIndex = index;
+                              }
+                            });
+                          },
+                        ),
+                      ),
+                      if (_expandedReportIndex == index) ...[
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                  'Description: ${report.description ?? 'N/A'}'),
+                              Text('Sample ID: ${report.sampleId ?? 'N/A'}'),
+                              Text(
+                                  'Result: ${report.reportResult ?? 'No Result'}'),
+                              Text(
+                                  'Interpretation: ${report.interpretation ?? 'N/A'}'),
+                              Text('Patient ID: ${report.name ?? 'N/A'}'),
+                              Text('Test ID: ${report.testName ?? 'N/A'}'),
+                              Text('Test Date: ${report.testDate ?? 'N/A'}'),
+                              Text('Created At: ${report.createdAt ?? 'N/A'}'),
+                              if (report.updatedAt != null)
+                                Text('Updated At: ${report.updatedAt}'),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                );
+              },
+            );
+          } else {
+            return const Center(
+              child: Text(
+                'No reports available.',
+                style: TextStyle(fontSize: 18),
+              ),
+            );
+          }
         },
-      ),
-    );
-  }
-}
-
-class ReportDetailPage extends StatelessWidget {
-  final ReportModel report;
-
-  const ReportDetailPage({super.key, required this.report});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(report.reportName ?? 'Report Details'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Report Name: ${report.reportName ?? 'N/A'}', style: TextStyle(fontSize: 18)),
-            SizedBox(height: 8),
-            Text('Description: ${report.description ?? 'N/A'}'),
-            SizedBox(height: 8),
-            Text('Test Date: ${report.testDate ?? 'N/A'}'),
-            SizedBox(height: 8),
-            Text('Result: ${report.reportResult ?? 'N/A'}'),
-            SizedBox(height: 8),
-            Text('Interpretation: ${report.interpretation ?? 'N/A'}'),
-          ],
-        ),
       ),
     );
   }

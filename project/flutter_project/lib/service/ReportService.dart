@@ -10,20 +10,45 @@ class ReportService {
 
   ReportService({required this.httpClient});
 
+  // Future<ApiResponse> getAllReports() async {
+  //   try {
+  //     final response = await http.get(Uri.parse('$baseUrl/all'));
+  //     if (response.statusCode == 200) {
+  //       List<dynamic> data = jsonDecode(response.body)['data']['reports'];
+  //       List<ReportModel> reports = data.map((item) => ReportModel.fromJson(item)).toList();
+  //       return ApiResponse(successful: true, message: 'Reports fetched successfully.', data: reports);
+  //     } else {
+  //       return ApiResponse(successful: false, message: 'Failed to fetch reports.');
+  //     }
+  //   } catch (e) {
+  //     return ApiResponse(successful: false, message: 'Error: $e');
+  //   }
+  // }
+
   Future<ApiResponse> getAllReports() async {
     try {
       final response = await http.get(Uri.parse('$baseUrl/all'));
+      print('Response Status Code: ${response.statusCode}');
+      print('Response Body: ${response.body}');
+
       if (response.statusCode == 200) {
-        List<dynamic> data = jsonDecode(response.body)['data']['reports'];
-        List<ReportModel> reports = data.map((item) => ReportModel.fromJson(item)).toList();
-        return ApiResponse(successful: true, message: 'Reports fetched successfully.', data: reports);
+        final decoded = jsonDecode(response.body);
+        if (decoded['data'] != null && decoded['data']['reports'] != null) {
+          List<dynamic> data = decoded['data']['reports'];
+          List<ReportModel> reports = data.map((item) => ReportModel.fromJson(item)).toList();
+          return ApiResponse(successful: true, message: 'Reports fetched successfully.', data: reports);
+        } else {
+          return ApiResponse(successful: false, message: 'Invalid response structure.');
+        }
       } else {
-        return ApiResponse(successful: false, message: 'Failed to fetch reports.');
+        return ApiResponse(successful: false, message: 'Failed to fetch reports. HTTP ${response.statusCode}');
       }
     } catch (e) {
+      print('Error occurred: $e');
       return ApiResponse(successful: false, message: 'Error: $e');
     }
   }
+
 
   Future<ApiResponse> createReport(ReportModel report) async {
     try {
@@ -81,7 +106,7 @@ class ReportService {
     try {
       final response = await http.get(Uri.parse('$baseUrl/$id'));
       if (response.statusCode == 200) {
-        var data = jsonDecode(response.body)['data']['report'];
+        var data = jsonDecode(response.body)['data']['reports'];
         ReportModel report = ReportModel.fromJson(data);
         return ApiResponse(successful: true, message: 'Report fetched successfully.', data: report);
       } else {

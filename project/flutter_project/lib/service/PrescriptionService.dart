@@ -11,8 +11,6 @@ class PrescriptionService {
 
   PrescriptionService({required this.httpClient});
 
-  // final String baseUrl = APIUrls.baseURL;
-
   Future<ApiResponse> getAllPrescriptions() async {
     final response = await http.get(Uri.parse('$baseUrl/all'));
     return _handleResponse(response);
