@@ -10,21 +10,6 @@ class ReportService {
 
   ReportService({required this.httpClient});
 
-  // Future<ApiResponse> getAllReports() async {
-  //   try {
-  //     final response = await http.get(Uri.parse('$baseUrl/all'));
-  //     if (response.statusCode == 200) {
-  //       List<dynamic> data = jsonDecode(response.body)['data']['reports'];
-  //       List<ReportModel> reports = data.map((item) => ReportModel.fromJson(item)).toList();
-  //       return ApiResponse(successful: true, message: 'Reports fetched successfully.', data: reports);
-  //     } else {
-  //       return ApiResponse(successful: false, message: 'Failed to fetch reports.');
-  //     }
-  //   } catch (e) {
-  //     return ApiResponse(successful: false, message: 'Error: $e');
-  //   }
-  // }
-
   Future<ApiResponse> getAllReports() async {
     try {
       final response = await http.get(Uri.parse('$baseUrl/all'));

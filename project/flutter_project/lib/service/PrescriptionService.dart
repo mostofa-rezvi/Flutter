@@ -16,17 +16,22 @@ class PrescriptionService {
     return _handleResponse(response);
   }
 
-  Future<PrescriptionModel> createPrescription(PrescriptionModel prescription) async {
-    final response = await http.post(
-      Uri.parse('$baseUrl/create'),
-      headers: {'Content-Type': 'application/json'},
-      body: json.encode(prescription.toJson()),
-    );
-
-    if (response.statusCode == 201) {
-      return PrescriptionModel.fromJson(json.decode(response.body));
-    } else {
-      throw Exception('Failed to create prescription');
+  Future<ApiResponse> createPrescription(PrescriptionModel prescription) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/create'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(prescription.toJson()),
+      );
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body)['data']['prescription'];
+        PrescriptionModel createdPrescription = PrescriptionModel.fromJson(data);
+        return ApiResponse(successful: true, message: 'Report created successfully.', data: createdPrescription);
+      } else {
+        return ApiResponse(successful: false, message: 'Failed to create report.');
+      }
+    } catch (e) {
+      return ApiResponse(successful: false, message: 'Error: $e');
     }
   }
 

@@ -98,7 +98,7 @@ class _MedicineBillPageState extends State<MedicineBillPage> {
       return;
     }
 
-    bill.medicineIds = selectedMedicines.map((medicine) => medicine!.id).cast<int>().toList();
+    bill.medicineIds = selectedMedicines.map((medicine) => medicine!.id) as int?;
     try {
       var response = await BillService(httpClient: http.Client()).createBill(bill);
       if (response != null) {

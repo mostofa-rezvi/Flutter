@@ -174,7 +174,7 @@ class _LoginPageState extends State<LoginPage> {
         Role role = Role.values.byName(user['role']);
         if (role == Role.ADMIN) {
           Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => DoctorMainPage()),
+            MaterialPageRoute(builder: (context) => PharmacistMainPage()),
           );
         } else if (role == Role.LAB) {
           Navigator.of(context).pushReplacement(
@@ -186,7 +186,7 @@ class _LoginPageState extends State<LoginPage> {
           );
         } else if (role == Role.DOCTOR) {
           Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => DoctorMainPage()),
+            MaterialPageRoute(builder: (context) => DoctorMainPage()), // done
           );
         } else if (role == Role.RECEPTIONIST) {
           Navigator.of(context).pushReplacement(

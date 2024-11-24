@@ -9,10 +9,10 @@ class PrescriptionModel {
   DateTime? createdAt;
   DateTime? updatedAt;
 
-  TestModel? test;
-  MedicineModel? medicines;
-  UserModel? issuedBy;
-  UserModel? patient;
+  List<TestModel>? test;
+  List<MedicineModel>? medicineName;
+  List<UserModel>? issuedBy;
+  List<UserModel>? patient;
 
   PrescriptionModel({
     this.id,
@@ -21,7 +21,7 @@ class PrescriptionModel {
     this.createdAt,
     this.updatedAt,
     this.test,
-    this.medicines,
+    this.medicineName,
     this.issuedBy,
     this.patient,
   });
@@ -40,16 +40,24 @@ class PrescriptionModel {
           ? DateTime.parse(json['updatedAt'])
           : null,
       test: json['test'] != null
-          ? TestModel.fromJson(json['test'])
+          ? (json['test'] as List)
+          .map((item) => TestModel.fromJson(item))
+          .toList()
           : null,
-      medicines: json['medicines'] != null
-          ? MedicineModel.fromJson(json['medicines'])
+      medicineName: json['medicines'] != null
+          ? (json['medicines'] as List)
+          .map((item) => MedicineModel.fromJson(item))
+          .toList()
           : null,
       issuedBy: json['issuedBy'] != null
-          ? UserModel.fromJson(json['issuedBy'])
+          ? (json['issuedBy'] as List)
+          .map((item) => UserModel.fromJson(item))
+          .toList()
           : null,
       patient: json['patient'] != null
-          ? UserModel.fromJson(json['patient'])
+          ? (json['patient'] as List)
+          .map((item) => UserModel.fromJson(item))
+          .toList()
           : null,
     );
   }
@@ -61,11 +69,10 @@ class PrescriptionModel {
       'notes': notes,
       'createdAt': createdAt?.toIso8601String(),
       'updatedAt': updatedAt?.toIso8601String(),
-      'test': test?.toJson(),
-      'medicines': medicines?.toJson(),
-      'issuedBy': issuedBy?.toJson(),
-      'patient': patient?.toJson(),
+      'test': test?.map((item) => item.toJson()).toList(),
+      'medicines': medicineName?.map((item) => item.toJson()).toList(),
+      'issuedBy': issuedBy?.map((item) => item.toJson()).toList(),
+      'patient': patient?.map((item) => item.toJson()).toList(),
     };
   }
-
 }

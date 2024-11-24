@@ -5,6 +5,8 @@ import 'package:flutter_project/util/ApiResponse.dart';
 import 'package:http/http.dart' as http;
 
 class MedicineBillListPage extends StatefulWidget {
+  const MedicineBillListPage({Key? key}) : super(key: key);
+
   @override
   _MedicineBillListPageState createState() => _MedicineBillListPageState();
 }
@@ -24,20 +26,32 @@ class _MedicineBillListPageState extends State<MedicineBillListPage> {
     setState(() {
       isLoading = true;
     });
+
     try {
+      // Fetch bills from the service
       ApiResponse apiResponse = await _billService.getAllBills();
+
+      // Log response for debugging
+      debugPrint('API Response: ${apiResponse.data}');
+
       if (apiResponse.successful) {
-        final List<BillModel> loadedBills = (apiResponse.data['bills'] as List)
-            .map((e) => BillModel.fromJson(e))
-            .toList();
-        setState(() {
-          bills = loadedBills;
-        });
+        // Check if data contains bills and parse correctly
+        final List<dynamic> rawData = apiResponse.data;
+        if (rawData.isNotEmpty) {
+          final loadedBills = rawData.map((e) => BillModel.fromJson(e)).toList();
+          setState(() {
+            bills = loadedBills;
+          });
+        } else {
+          _showSnackbar('No bills found.', Colors.orange);
+        }
       } else {
-        _showError('No bills found.');
+        _showSnackbar('Failed to load bills: ${apiResponse.message}', Colors.red);
       }
     } catch (e) {
-      _showError('Error loading bills: $e');
+      // Catch and log errors
+      debugPrint('Error loading bills: $e');
+      _showSnackbar('Error loading bills: $e', Colors.red);
     } finally {
       setState(() {
         isLoading = false;
@@ -45,59 +59,98 @@ class _MedicineBillListPageState extends State<MedicineBillListPage> {
     }
   }
 
-  void _showError(String message) {
+  void _showSnackbar(String message, Color color) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
-        backgroundColor: Colors.red,
+        backgroundColor: color,
       ),
     );
   }
 
-  void _onBillTap(BillModel bill) {
-    Navigator.pushNamed(
-      context,
-      '/medicine-bill-details',
-      arguments: bill,
+  void _showBillDetails(BuildContext context, BillModel bill) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(bill.name ?? 'Unnamed Bill'),
+          content: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Phone: ${bill.phone ?? 'N/A'}'),
+                Text('Email: ${bill.email ?? 'N/A'}'),
+                Text('Address: ${bill.address ?? 'N/A'}'),
+                const SizedBox(height: 8),
+                Text('Invoice Date: ${bill.invoiceDate ?? 'N/A'}'),
+                Text('Total Amount: \$${bill.totalAmount?.toStringAsFixed(2) ?? '0.00'}'),
+                Text('Amount Paid: \$${bill.amountPaid?.toStringAsFixed(2) ?? '0.00'}'),
+                Text('Balance: \$${bill.balance?.toStringAsFixed(2) ?? '0.00'}'),
+                Text('Status: ${bill.status ?? 'N/A'}'),
+                const SizedBox(height: 8),
+                if (bill.medicineIds != null)
+                  Text('Medicines: ${bill.medicineIds}'),
+                Text('Created At: ${bill.createdAt ?? 'N/A'}'),
+                if (bill.updatedAt != null)
+                  Text('Updated At: ${bill.updatedAt}'),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Close'),
+            ),
+          ],
+        );
+      },
     );
+  }
+
+  void _navigateToCreateBill() {
+    Navigator.pushNamed(context, '/create-medicine-bill');
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Medicine Bills')),
+      appBar: AppBar(
+        title: const Text('Medicine Bills'),
+      ),
       body: isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : bills.isEmpty
-          ? Center(child: Text('No bills available.'))
+          ? const Center(child: Text('No bills available.'))
           : ListView.builder(
         itemCount: bills.length,
         itemBuilder: (context, index) {
           final bill = bills[index];
           return Card(
-            margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+            margin: const EdgeInsets.symmetric(
+                horizontal: 16.0, vertical: 8.0),
             child: ListTile(
-              title: Text(bill.name ?? 'Unnamed Patient'),
+              title: Text(bill.name ?? 'Unnamed Bill'),
               subtitle: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text('Phone: ${bill.phone ?? 'N/A'}'),
-                  Text('Total: \$${bill.totalAmount?.toStringAsFixed(2) ?? '0.00'}'),
-                  Text('Paid: \$${bill.amountPaid?.toStringAsFixed(2) ?? '0.00'}'),
-                  Text('Due: \$${(bill.totalAmount! - (bill.amountPaid ?? 0.0)).toStringAsFixed(2)}'),
+                  Text(
+                      'Total: \$${bill.totalAmount?.toStringAsFixed(2) ?? '0.00'}'),
+                  Text(
+                      'Paid: \$${bill.amountPaid?.toStringAsFixed(2) ?? '0.00'}'),
+                  Text(
+                      'Due: \$${(bill.totalAmount ?? 0 - (bill.amountPaid ?? 0)).toStringAsFixed(2)}'),
                 ],
               ),
-              trailing: Icon(Icons.arrow_forward),
-              onTap: () => _onBillTap(bill),
+              trailing: const Icon(Icons.arrow_forward),
+              onTap: () => _showBillDetails(context, bill),
             ),
           );
         },
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.pushNamed(context, '/create-medicine-bill');
-        },
-        child: Icon(Icons.add),
+        onPressed: _navigateToCreateBill,
+        child: const Icon(Icons.add),
         tooltip: 'Create New Bill',
       ),
     );

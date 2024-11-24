@@ -25,8 +25,10 @@ class _ReportCreatePageState extends State<ReportCreatePage> {
 
   bool _isLoading = false;
   String _errorMessage = '';
+
   List<ReportModel> _testList = [];
   late List<UserModel> _userList = [];
+
   ReportModel? _selectedTest;
   UserModel? _selectedUser;
 
@@ -65,6 +67,7 @@ class _ReportCreatePageState extends State<ReportCreatePage> {
     });
 
     _userList = await _userService.getAllUsers();
+
     setState(() {
       _isLoading = false;
     });

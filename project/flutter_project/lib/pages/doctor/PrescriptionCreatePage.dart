@@ -7,6 +7,7 @@ import 'package:flutter_project/service/MedicineService.dart';
 import 'package:flutter_project/service/PrescriptionService.dart';
 import 'package:flutter_project/service/TestService.dart';
 import 'package:flutter_project/service/UserService.dart';
+import 'package:flutter_project/util/ApiResponse.dart';
 import 'package:http/http.dart' as http;
 
 class PrescriptionCreatePage extends StatefulWidget {
@@ -17,18 +18,27 @@ class PrescriptionCreatePage extends StatefulWidget {
 class _PrescriptionCreatePageState extends State<PrescriptionCreatePage> {
   final _formKey = GlobalKey<FormState>();
 
-  final _descriptionController = TextEditingController();
+  final _issuedController = TextEditingController();
   final _notesController = TextEditingController();
 
   bool _isLoading = false;
   String _errorMessage = '';
+
   List<TestModel> _testList = [];
   List<MedicineModel> _medicineList = [];
   List<UserModel> _userList = [];
+
+  PrescriptionModel? _selectedUser;
+  PrescriptionModel? _selectedMedicine;
+  PrescriptionModel? _selectedTest;
+
+  UserModel? _selectUser;
+  MedicineModel? _selectMedicine;
+
   List<MedicineModel> _selectedMedicines = [];
   List<TestModel> _selectedTests = [];
-  UserModel? _selectedDoctor;
-  UserModel? _selectedPatient;
+  List<UserModel> _selectedDoctors = [];
+  List<UserModel> _selectedPatients = [];
 
   late TestService _testService;
   late MedicineService _medicineService;
@@ -44,7 +54,19 @@ class _PrescriptionCreatePageState extends State<PrescriptionCreatePage> {
     _testService = TestService(httpClient: http.Client());
     _fetchTests();
     _fetchUsers();
-    _fetchMedicines(); // Fetch medicines as well
+    _fetchMedicines();
+  }
+
+  void _onUserSelected(UserModel? user) {
+    setState(() {
+      _selectedUser = user as PrescriptionModel?;
+    });
+  }
+
+  void _onMedicineSelected(MedicineModel? medicine) {
+    setState(() {
+      _selectedMedicine = medicine as PrescriptionModel?;
+    });
   }
 
   Future<void> _fetchTests() async {
@@ -69,9 +91,15 @@ class _PrescriptionCreatePageState extends State<PrescriptionCreatePage> {
       _isLoading = true;
     });
 
-    _userList = await _userService.getAllUsers();
+    final response = await _userService.getAllUsers();
+
     setState(() {
       _isLoading = false;
+      if (response.isNotEmpty) {
+        _userList = response;
+      } else {
+        _errorMessage = 'Failed to load users.';
+      }
     });
   }
 
@@ -108,156 +136,181 @@ class _PrescriptionCreatePageState extends State<PrescriptionCreatePage> {
     });
   }
 
-  void _createPrescription() async {
+  void _removeMedicine(int index) {
+    setState(() {
+      _selectedMedicines.removeAt(index);
+    });
+  }
+
+  void _removeTest(int index) {
+    setState(() {
+      _selectedTests.removeAt(index);
+    });
+  }
+
+  void _removePatient(int index) {
+    setState(() {
+      _selectedPatients.removeAt(index);
+    });
+  }
+
+  Future<void> _createPrescription() async {
     if (!_formKey.currentState!.validate()) {
-      return;
-    }
-    _formKey.currentState!.save();
+      setState(() {
+        _isLoading = true;
+      });
 
-    PrescriptionModel prescription = PrescriptionModel(
-      // description: _descriptionController.text,
-      medicines: _selectedMedicines.isNotEmpty ? _selectedMedicines[0] : null,
-      test: _selectedTests.isNotEmpty ? _selectedTests[0] : null,
-      issuedBy: _selectedDoctor,
-      patient: _selectedPatient,
-      notes: _notesController.text,
-    );
+      PrescriptionModel prescription = PrescriptionModel(
+        issuedBy: _selectedDoctors,
+        patient: _selectedUser?.patient,
+        medicineName: _selectedMedicine?.medicineName,
+        test: _selectedTest?.test,
+        notes: _notesController.text,
+      );
 
-    try {
-      await _prescriptionService.createPrescription(prescription);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Prescription created successfully')),
-      );
-      Navigator.of(context).pop();
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to create prescription: $e')),
-      );
+      ApiResponse response =
+          await _prescriptionService.createPrescription(prescription);
+
+      setState(() {
+        _isLoading = false;
+        if (response.successful) {
+          Navigator.of(context).pop();
+        } else {
+          _errorMessage = response.message ?? 'Failed to create prescription.';
+        }
+      });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_isLoading) {
-      return Scaffold(
-        appBar: AppBar(title: Text('Create Prescription')),
-        body: Center(child: CircularProgressIndicator()),
-      );
-    }
-
     return Scaffold(
-      appBar: AppBar(title: Text('Create Prescription')),
-      body: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: ListView(
-            children: [
-              // Doctor Dropdown
-              DropdownButtonFormField<UserModel>(
-                decoration: InputDecoration(labelText: 'Issued By (Doctor)'),
-                items: _userList
-                    .where((user) => user.role == 'DOCTOR')
-                    .map((doctor) {
-                  return DropdownMenuItem(
-                    value: doctor,
-                    child: Text(doctor.name ?? ''),
-                  );
-                }).toList(),
-                onChanged: (value) => setState(() => _selectedDoctor = value),
-                validator: (value) =>
-                    value == null ? 'Please select a doctor' : null,
-              ),
-
-              // Patient Dropdown
-              DropdownButtonFormField<UserModel>(
-                decoration: InputDecoration(labelText: 'Patient Name'),
-                items: _userList
-                    .where((user) => user.role == 'PATIENT')
-                    .map((patient) {
-                  return DropdownMenuItem(
-                    value: patient,
-                    child: Text(patient.name ?? ''),
-                  );
-                }).toList(),
-                onChanged: (value) => setState(() => _selectedPatient = value),
-                validator: (value) =>
-                    value == null ? 'Please select a patient' : null,
-              ),
-
-              // Medicine Dropdown
-              DropdownButtonFormField<MedicineModel>(
-                decoration: InputDecoration(labelText: 'Select Medicine'),
-                items: _medicineList.map((medicine) {
-                  return DropdownMenuItem(
-                    value: medicine,
-                    child: Text(medicine.medicineName ?? ''),
-                  );
-                }).toList(),
-                onChanged: (value) => _addMedicine(value!),
-              ),
-
-              ListView.builder(
-                shrinkWrap: true,
-                itemCount: _selectedMedicines.length,
-                itemBuilder: (context, index) {
-                  return ListTile(
-                    title: Text('${_selectedMedicines[index].medicineName}'),
-                    trailing: IconButton(
-                      icon: Icon(Icons.remove_circle, color: Colors.red),
-                      onPressed: () => setState(() {
-                        _selectedMedicines.removeAt(index);
-                      }),
-                    ),
-                  );
-                },
-              ),
-
-              // Test Dropdown
-              DropdownButtonFormField<TestModel>(
-                decoration: InputDecoration(labelText: 'Select Test'),
-                items: _testList.map((test) {
-                  return DropdownMenuItem(
-                    value: test,
-                    child: Text(test.testName ?? ''),
-                  );
-                }).toList(),
-                onChanged: (value) => _addTest(value!),
-              ),
-
-              ListView.builder(
-                shrinkWrap: true,
-                itemCount: _selectedTests.length,
-                itemBuilder: (context, index) {
-                  return ListTile(
-                    title: Text(_selectedTests[index].testName ?? ''),
-                    trailing: IconButton(
-                      icon: Icon(Icons.remove_circle, color: Colors.red),
-                      onPressed: () => setState(() {
-                        _selectedTests.removeAt(index);
-                      }),
-                    ),
-                  );
-                },
-              ),
-
-              // Notes
-              TextFormField(
-                decoration: InputDecoration(labelText: 'Notes'),
-                controller: _notesController,
-                maxLines: 3,
-              ),
-
-              SizedBox(height: 20),
-
-              ElevatedButton(
-                onPressed: _createPrescription,
-                child: Text('Create Prescription'),
-              ),
-            ],
-          ),
-        ),
+      appBar: AppBar(
+        title: const Text('Create Prescription'),
       ),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Form(
+                key: _formKey,
+                child: ListView(
+                  children: [
+                    // Doctor Dropdown
+                    TextFormField(
+                      controller: _issuedController,
+                      decoration: const InputDecoration(
+                        labelText: 'Issued By',
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Patient Dropdown
+                    DropdownButtonFormField<UserModel>(
+                      value: _selectUser,
+                      onChanged: _onUserSelected,
+                      decoration: const InputDecoration(
+                        labelText: 'Patient Name',
+                        border: OutlineInputBorder(),
+                      ),
+                      items: _userList.map((UserModel user) {
+                        return DropdownMenuItem<UserModel>(
+                          value: user,
+                          child: Text(user.name ?? 'Unknown'),
+                        );
+                      }).toList(),
+                      validator: (value) {
+                        if (value == null) {
+                          return 'Please select a test';
+                        }
+                        return null;
+                      },
+                    ),
+                    Wrap(
+                      children: _selectedPatients
+                          .asMap()
+                          .entries
+                          .map((entry) => Chip(
+                                label: Text(entry.value.name ?? ''),
+                                onDeleted: () => _removePatient(entry.key),
+                              ))
+                          .toList(),
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Medicine Dropdown
+                    DropdownButtonFormField<MedicineModel>(
+                      value: _selectMedicine,
+                      onChanged: _onMedicineSelected,
+                      decoration: const InputDecoration(
+                        labelText: 'Select Medicine',
+                        border: OutlineInputBorder(),
+                      ),
+                      items: _medicineList.map((MedicineModel medicine) {
+                        return DropdownMenuItem<MedicineModel>(
+                          value: medicine,
+                          child: Text(medicine.medicineName ?? 'Unknown'),
+                        );
+                      }).toList(),
+                    ),
+                    Wrap(
+                      children: _selectedPatients
+                          .asMap()
+                          .entries
+                          .map((entry) => Chip(
+                        label: Text(entry.value.name ?? ''),
+                        onDeleted: () => _removePatient(entry.key),
+                      ))
+                          .toList(),
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Test Dropdown
+                    DropdownButtonFormField<TestModel>(
+                      decoration: const InputDecoration(
+                        labelText: 'Select Test',
+                        border: OutlineInputBorder(),
+                      ),
+                      items: _testList.map((test) {
+                        return DropdownMenuItem(
+                          value: test,
+                          child: Text(test.testName ?? ''),
+                        );
+                      }).toList(),
+                      onChanged: (value) => _addTest(value!),
+                    ),
+                    Wrap(
+                      children: _selectedTests
+                          .asMap()
+                          .entries
+                          .map((entry) => Chip(
+                                label: Text(entry.value.testName ?? ''),
+                                onDeleted: () => _removeTest(entry.key),
+                              ))
+                          .toList(),
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Notes
+                    TextFormField(
+                      controller: _notesController,
+                      decoration: const InputDecoration(
+                        labelText: 'Notes',
+                        border: OutlineInputBorder(),
+                      ),
+                      maxLines: 3,
+                    ),
+                    const SizedBox(height: 16),
+
+                    ElevatedButton(
+                      onPressed: _createPrescription,
+                      child: const Text('Create Prescription'),
+                    ),
+                  ],
+                ),
+              ),
+            ),
     );
   }
 }

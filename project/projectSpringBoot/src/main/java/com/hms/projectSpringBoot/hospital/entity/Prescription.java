@@ -23,7 +23,9 @@ public class Prescription {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    @Temporal(TemporalType.DATE)
     private Date prescriptionDate;
+
     private String notes;
 
     @Temporal(TemporalType.DATE)

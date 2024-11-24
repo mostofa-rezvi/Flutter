@@ -13,7 +13,7 @@ class BillModel {
   int? patientId;
   int? doctorId;
   int? pharmacistId;
-  List<int>? medicineIds;
+  int? medicineIds;
   String? createdAt;
   String? updatedAt;
 
@@ -53,9 +53,7 @@ class BillModel {
       patientId: map['patient']['id'],
       doctorId: map['doctor']['id'],
       pharmacistId: map['pharmacist']['id'],
-      medicineIds: (map['medicineList'] as List?)
-          ?.map((item) => item['id'] as int)
-          .toList(),
+      medicineIds: map['medicineList']['id'],
       createdAt: map['createdAt'],
       updatedAt: map['updatedAt'],
     );
@@ -77,7 +75,7 @@ class BillModel {
       'patient': {'id': patientId},
       'doctor': {'id': doctorId},
       'pharmacist': {'id': pharmacistId},
-      'medicineList': medicineIds?.map((id) => {'id': id}).toList(),
+      'medicineList': {'id': medicineIds},
       'createdAt': createdAt,
       'updatedAt': updatedAt,
     };

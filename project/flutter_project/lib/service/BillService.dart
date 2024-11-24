@@ -15,8 +15,7 @@ class BillService {
       final response = await http.get(Uri.parse('$baseUrl/all'));
       if (response.statusCode == 200) {
         List<dynamic> data = jsonDecode(response.body)['data']['bills'];
-        List<BillModel> bills =
-            data.map((item) => BillModel.fromJson(item)).toList();
+        List<BillModel> bills = data.map((item) => BillModel.fromJson(item)).toList();
         return ApiResponse(
             successful: true,
             message: 'Bills fetched successfully.',
