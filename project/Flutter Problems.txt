@@ -7,8 +7,9 @@
 3. Role - Receptionist (recep@gmail.com)
    Payslip -> PDF
 
-4. Role - Pharmacist
-   MedicineBillPage -> do not create bills
-
 5. Role - Pharmacist
    MedicineBillListPage -> do not load this
+
+
+
+https://github.com/NSnirjash/RMS_Flutter/blob/main/rms_flutter/lib/page/BillDetailsPage.dart

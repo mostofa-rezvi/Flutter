@@ -88,22 +88,23 @@ class _MedicineBillPageState extends State<MedicineBillPage> {
   }
 
   void _onSubmit() async {
-    // Validate form inputs
     if (bill.name == null || bill.name!.isEmpty) {
       _showError("Patient name is required.");
       return;
     }
+
     if (selectedMedicines.isEmpty) {
       _showError("Please select at least one medicine.");
       return;
     }
+// problems
+    bill.medicineIds = List<int>.from(selectedMedicines.map((medicine) => medicine!.id));
 
-    bill.medicineIds = selectedMedicines.map((medicine) => medicine!.id) as int?;
     try {
-      var response = await BillService(httpClient: http.Client()).createBill(bill);
-      if (response != null) {
+      ApiResponse response = await BillService(httpClient: http.Client()).createBill(bill);
+
+      if (response != null && response.successful) {
         _showSuccess("Bill created successfully!");
-        Navigator.pushNamed(context, '/medicine-bill-list');
       } else {
         _showError('Failed to create bill.');
       }

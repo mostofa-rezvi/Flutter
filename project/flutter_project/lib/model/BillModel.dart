@@ -4,7 +4,7 @@ class BillModel {
   int? phone;
   String? email;
   String? address;
-  String? invoiceDate;
+  String? invoiceDate; // It could be DateTime if you want to handle dates more efficiently.
   int? totalAmount;
   int? amountPaid;
   int? balance;
@@ -13,8 +13,8 @@ class BillModel {
   int? patientId;
   int? doctorId;
   int? pharmacistId;
-  int? medicineIds;
-  String? createdAt;
+  List<int>? medicineIds;  // This should be a List of IDs.
+  String? createdAt;  // This could be DateTime if you need to convert it to a DateTime.
   String? updatedAt;
 
   BillModel({
@@ -50,10 +50,12 @@ class BillModel {
       balance: map['balance'],
       status: map['status'],
       description: map['description'],
-      patientId: map['patient']['id'],
-      doctorId: map['doctor']['id'],
-      pharmacistId: map['pharmacist']['id'],
-      medicineIds: map['medicineList']['id'],
+      patientId: map['patient'] != null ? map['patient']['id'] : null,
+      doctorId: map['doctor'] != null ? map['doctor']['id'] : null,
+      pharmacistId: map['pharmacist'] != null ? map['pharmacist']['id'] : null,
+      medicineIds: map['medicineList'] != null
+          ? List<int>.from(map['medicineList'].map((x) => x['id']))
+          : null, // Assuming the medicine list is a list of objects that contain 'id'.
       createdAt: map['createdAt'],
       updatedAt: map['updatedAt'],
     );
@@ -75,7 +77,7 @@ class BillModel {
       'patient': {'id': patientId},
       'doctor': {'id': doctorId},
       'pharmacist': {'id': pharmacistId},
-      'medicineList': {'id': medicineIds},
+      'medicineList': medicineIds?.map((id) => {'id': id}).toList(), // Mapping medicineIds to objects with 'id'.
       'createdAt': createdAt,
       'updatedAt': updatedAt,
     };
