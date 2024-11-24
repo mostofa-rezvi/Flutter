@@ -7,15 +7,17 @@ child@gmail.com
 Doctor:
 raju@gmail.com
 
-
 *Pharmacist:
 pha@gmail.com
 
-*Lab:
-rblannk@gmail.com
+*Nurse:
+
 
 *Admin:
 admin@gmail.com
+
+*Laboratorist:
+rblannk@gmail.com
 
 
 Common Password: 123

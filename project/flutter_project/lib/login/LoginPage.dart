@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_project/pages/DemoPage.dart';
 import 'package:flutter_project/pages/doctor/DoctorPage.dart';
 import 'package:flutter_project/pages/laboratorist/LaboratoristPage.dart';
 import 'package:flutter_project/pages/nurse/NursePage.dart';
@@ -174,7 +175,7 @@ class _LoginPageState extends State<LoginPage> {
         Role role = Role.values.byName(user['role']);
         if (role == Role.ADMIN) {
           Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => PharmacistMainPage()),
+            MaterialPageRoute(builder: (context) => DemoPage()),
           );
         } else if (role == Role.LAB) {
           Navigator.of(context).pushReplacement(
