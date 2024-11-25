@@ -108,14 +108,17 @@ class _PrescriptionCreatePageState extends State<PrescriptionCreatePage> {
       _isLoading = true;
     });
 
-    final response = await _medicineService.getAllMedicines();
+    final apiResponse = await _medicineService.getAllMedicines();
+    final List<MedicineModel> loadMedicines = (apiResponse.data['medicines'] as List)
+        .map((e) => MedicineModel.fromJson(e))
+        .toList();
 
     setState(() {
       _isLoading = false;
-      if (response.successful) {
-        _medicineList = response.data ?? [];
+      if (apiResponse.successful) {
+        _medicineList = loadMedicines;
       } else {
-        _errorMessage = response.message ?? 'Failed to load medicines.';
+        _errorMessage = apiResponse.message ?? 'Failed to load medicines.';
       }
     });
   }

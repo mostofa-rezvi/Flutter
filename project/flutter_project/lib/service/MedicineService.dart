@@ -12,7 +12,7 @@ class MedicineService {
 
   Future<ApiResponse> getAllMedicines() async {
     final response = await http.get(Uri.parse('$baseUrl/all'));
-    return _processResponse(response);
+    return ApiResponse.fromJson(jsonDecode(response.body));
   }
 
   Future<ApiResponse> addMedicine(MedicineModel medicine) async {
@@ -21,7 +21,7 @@ class MedicineService {
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode(medicine.toJson()),
     );
-    return _processResponse(response);
+    return ApiResponse.fromJson(jsonDecode(response.body));
   }
 
   Future<ApiResponse> updateMedicine(int id, MedicineModel medicine) async {
@@ -30,49 +30,42 @@ class MedicineService {
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode(medicine.toJson()),
     );
-    return _processResponse(response);
+    return ApiResponse.fromJson(jsonDecode(response.body));
   }
 
   Future<ApiResponse> deleteMedicine(int id) async {
     final response = await http.delete(Uri.parse('$baseUrl/delete/$id'));
-    return _processResponse(response);
+    return ApiResponse.fromJson(jsonDecode(response.body));
   }
-
 
   Future<ApiResponse> getMedicineById(int id) async {
     final response = await http.get(Uri.parse('$baseUrl/$id'));
-    return _processResponse(response);
+    return ApiResponse.fromJson(jsonDecode(response.body));
   }
 
   Future<ApiResponse> getMedicinesByManufacturer(int manufacturerId) async {
-    final response = await http.get(Uri.parse('$baseUrl/manufacturer/$manufacturerId'));
-    return _processResponse(response);
+    final response =
+        await http.get(Uri.parse('$baseUrl/manufacturer/$manufacturerId'));
+    return ApiResponse.fromJson(jsonDecode(response.body));
   }
 
   Future<ApiResponse> addStock(int id, int quantity) async {
     final response = await http.put(
       Uri.parse('$baseUrl/$id/add-stock?quantity=$quantity'),
     );
-    return _processResponse(response);
+    return ApiResponse.fromJson(jsonDecode(response.body));
   }
 
   Future<ApiResponse> subtractStock(int id, int quantity) async {
     final response = await http.put(
       Uri.parse('$baseUrl/$id/subtract-stock?quantity=$quantity'),
     );
-    return _processResponse(response);
+    return ApiResponse.fromJson(jsonDecode(response.body));
   }
 
   Future<ApiResponse> searchMedicinesByName(String name) async {
-    final response = await http.get(Uri.parse('$baseUrl/searchByName?name=$name'));
-    return _processResponse(response);
-  }
-
-  ApiResponse _processResponse(http.Response response) {
-    if (response.statusCode == 200) {
-      return ApiResponse.fromJson(json.decode(response.body));
-    } else {
-      return ApiResponse(successful: false, message: 'Error: ${response.statusCode}');
-    }
+    final response =
+        await http.get(Uri.parse('$baseUrl/searchByName?name=$name'));
+    return ApiResponse.fromJson(jsonDecode(response.body));
   }
 }

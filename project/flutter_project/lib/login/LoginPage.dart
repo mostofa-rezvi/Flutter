@@ -175,7 +175,11 @@ class _LoginPageState extends State<LoginPage> {
         Role role = Role.values.byName(user['role']);
         if (role == Role.ADMIN) {
           Navigator.of(context).pushReplacement(
+<<<<<<< Updated upstream
             MaterialPageRoute(builder: (context) => DemoPage()),
+=======
+            MaterialPageRoute(builder: (context) => DoctorMainPage()),
+>>>>>>> Stashed changes
           );
         } else if (role == Role.LAB) {
           Navigator.of(context).pushReplacement(
