@@ -22,7 +22,7 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _emailController = TextEditingController()..text = 'admin@gmail.com';
+  final TextEditingController _emailController = TextEditingController()..text = 'pha@gmail.com';
   final TextEditingController _passwordController = TextEditingController()..text = '123';
   String? _errorMessage;
 
@@ -175,11 +175,7 @@ class _LoginPageState extends State<LoginPage> {
         Role role = Role.values.byName(user['role']);
         if (role == Role.ADMIN) {
           Navigator.of(context).pushReplacement(
-<<<<<<< Updated upstream
-            MaterialPageRoute(builder: (context) => DemoPage()),
-=======
             MaterialPageRoute(builder: (context) => DoctorMainPage()),
->>>>>>> Stashed changes
           );
         } else if (role == Role.LAB) {
           Navigator.of(context).pushReplacement(
@@ -187,7 +183,7 @@ class _LoginPageState extends State<LoginPage> {
           );
         } else if (role == Role.PHARMACIST) {
           Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => PharmacistMainPage()),
+            MaterialPageRoute(builder: (context) => PharmacistMainPage()), // done
           );
         } else if (role == Role.DOCTOR) {
           Navigator.of(context).pushReplacement(
