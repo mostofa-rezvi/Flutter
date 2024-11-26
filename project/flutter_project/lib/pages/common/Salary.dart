@@ -68,17 +68,16 @@ class _SalarySettingsPageState extends State<SalarySettingsPage> {
             children: [
               const Text(
                 'Salary Settings',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 26, fontWeight: FontWeight.w600),
               ),
-              const SizedBox(height: 20),
-
+              const SizedBox(height: 16),
+              _buildSectionHeader('Basic Salary Details'),
               _buildTextField(
                 label: 'Basic Salary',
                 controller: _basicSalaryController,
                 onChanged: (value) => _calculateSalary(),
               ),
-              const SizedBox(height: 20),
-
+              const SizedBox(height: 16),
               Row(
                 children: [
                   Expanded(
@@ -98,19 +97,13 @@ class _SalarySettingsPageState extends State<SalarySettingsPage> {
                   ),
                 ],
               ),
-              const SizedBox(height: 30),
-
-              const Text(
-                'Provident Fund Settings',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 20),
-
+              const SizedBox(height: 24),
+              _buildSectionHeader('Provident Fund Settings'),
               Row(
                 children: [
                   Expanded(
                     child: _buildTextField(
-                      label: 'LPR Share (%)',
+                      label: 'Employee Share (%)',
                       controller: _pfEmployeeShareController,
                       onChanged: (value) => _calculateSalary(),
                     ),
@@ -118,21 +111,15 @@ class _SalarySettingsPageState extends State<SalarySettingsPage> {
                   const SizedBox(width: 16),
                   Expanded(
                     child: _buildTextField(
-                      label: 'Provident Share (%)',
+                      label: 'Organization Share (%)',
                       controller: _pfOrgShareController,
                       onChanged: (value) => _calculateSalary(),
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 30),
-
-              const Text(
-                'ESI Settings',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 20),
-
+              const SizedBox(height: 24),
+              _buildSectionHeader('ESI Settings'),
               Row(
                 children: [
                   Expanded(
@@ -153,16 +140,19 @@ class _SalarySettingsPageState extends State<SalarySettingsPage> {
                 ],
               ),
               const SizedBox(height: 30),
-
               Center(
-                child: Text(
-                  'Net Salary: \$${_netSalary.toStringAsFixed(2)}',
-                  style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.blueAccent,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+                  child: Text(
+                    'Net Salary: \$${_netSalary.toStringAsFixed(2)}',
+                    style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
+                  ),
                 ),
               ),
-              const SizedBox(height: 40),
-
-
             ],
           ),
         ),
@@ -175,17 +165,27 @@ class _SalarySettingsPageState extends State<SalarySettingsPage> {
     required TextEditingController controller,
     required ValueChanged<String> onChanged,
   }) {
-    return TextField(
+    return TextFormField(
       controller: controller,
       decoration: InputDecoration(
         labelText: label,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(12),
         ),
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       ),
       keyboardType: TextInputType.number,
       onChanged: onChanged,
+    );
+  }
+
+  Widget _buildSectionHeader(String title) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Text(
+        title,
+        style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w500, color: Colors.grey),
+      ),
     );
   }
 }

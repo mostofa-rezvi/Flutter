@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
+import 'package:flutter/foundation.dart' show Uint8List, kIsWeb;
+import 'package:image_picker_web/image_picker_web.dart';
+import 'package:http_parser/http_parser.dart';
 import 'dart:convert';
 import 'dart:io';
 
@@ -22,12 +25,27 @@ class _RegistrationPageState extends State<RegistrationPage> {
   String? _gender;
   File? _selectedImage;
 
+  XFile? selectedImage;
+  Uint8List? webImage;
+
   final ImagePicker _picker = ImagePicker();
 
   Future<void> _pickImage() async {
-    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
-      setState(() => _selectedImage = File(pickedFile.path));
+    if (kIsWeb) {
+      var pickedImage = await ImagePickerWeb.getImageAsBytes();
+      if (pickedImage != null) {
+        setState(() {
+          webImage = pickedImage;
+        });
+      }
+    } else {
+      final XFile? pickedImage =
+      await ImagePicker().pickImage(source: ImageSource.gallery);
+      if (pickedImage != null) {
+        setState(() {
+          selectedImage = pickedImage;
+        });
+      }
     }
   }
 
@@ -39,7 +57,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
         "password": _passwordController.text,
         "cell": _cellController.text,
         "age": int.parse(_ageController.text),
-        "gender": _gender,
+        "gender": _gender ?? 'Others',
         "birthday": _birthday?.toIso8601String(),
         "address": _addressController.text,
         "role": "PATIENT",
@@ -49,13 +67,18 @@ class _RegistrationPageState extends State<RegistrationPage> {
       final request = http.MultipartRequest("POST", uri)
         ..fields['user'] = jsonEncode(userData);
 
-      if (_selectedImage != null) {
-        request.files.add(
-          await http.MultipartFile.fromPath(
-            'image',
-            _selectedImage!.path,
-          ),
-        );
+      if (kIsWeb && webImage != null) {
+        request.files.add(http.MultipartFile.fromBytes(
+          'image',
+          webImage!,
+          filename: 'upload.jpg',
+          contentType: MediaType('image', 'jpeg'),
+        ));
+      } else if (selectedImage != null) {
+        request.files.add(await http.MultipartFile.fromPath(
+          'image',
+          selectedImage!.path,
+        ));
       }
 
       final response = await request.send();
@@ -231,3 +254,4 @@ class _RegistrationPageState extends State<RegistrationPage> {
     );
   }
 }
+

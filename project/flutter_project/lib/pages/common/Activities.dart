@@ -28,7 +28,8 @@ class ActivityList extends StatelessWidget {
       physics: NeverScrollableScrollPhysics(),
       children: [
         ActivityItem(
-          avatar: Image.asset('assets/img/user.jpg'),
+          // avatar: Image.asset('assets/img/user.jpg'),
+          avatar: Text('L'),
           name: 'Lesley Grauer',
           action: 'added new task',
           task: 'Hospital Administration',
