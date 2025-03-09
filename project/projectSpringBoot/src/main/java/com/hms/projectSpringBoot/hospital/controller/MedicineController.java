@@ -17,9 +17,23 @@ public class MedicineController {
     @Autowired
     private MedicineService medicineService;
 
-    @GetMapping("/")
+    @GetMapping("/all")
     public ApiResponse getAllMedicines() {
         return medicineService.getAllMedicines();
+    }
+    @PostMapping("/create")
+    public ApiResponse createMedicine(@RequestBody Medicine medicine) {
+        return medicineService.saveMedicine(medicine);
+    }
+
+    @PutMapping("/update/{id}")
+    public ApiResponse updateMedicine(@PathVariable Long id, @RequestBody Medicine medicine) {
+        return medicineService.updateMedicine(id, medicine);
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ApiResponse deleteMedicine(@PathVariable Long id) {
+        return medicineService.deleteMedicine(id);
     }
 
     @GetMapping("/{id}")
@@ -27,29 +41,9 @@ public class MedicineController {
         return medicineService.getMedicineById(id);
     }
 
-    @PostMapping("/")
-    public ApiResponse createMedicine(@RequestBody Medicine medicine) {
-        return medicineService.saveMedicine(medicine);
-    }
-
-    @PutMapping("/{id}")
-    public ApiResponse updateMedicine(@PathVariable Long id, @RequestBody Medicine medicine) {
-        return medicineService.updateMedicine(id, medicine);
-    }
-
-    @DeleteMapping("/{id}")
-    public ApiResponse deleteMedicine(@PathVariable Long id) {
-        return medicineService.deleteMedicine(id);
-    }
-
     @GetMapping("/manufacturer/{manufacturerId}")
     public ApiResponse getMedicinesByManufacturer(@PathVariable Long manufacturerId) {
         return medicineService.getMedicinesByManufacturer(manufacturerId);
-    }
-
-    @GetMapping("/search")
-    public ApiResponse searchMedicinesByName(@RequestParam String name) {
-        return medicineService.searchMedicinesByName(name);
     }
 
     @PutMapping("/{id}/add-stock")
@@ -62,4 +56,8 @@ public class MedicineController {
         return medicineService.subtractStock(id, quantity);
     }
 
+    @GetMapping("/searchByName")
+    public ApiResponse searchMedicinesByName(@RequestParam String name) {
+        return medicineService.searchMedicinesByName(name);
+    }
 }

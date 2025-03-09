@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_project/pages/LoginPage.dart';
-import 'package:flutter_project/service/AuthService.dart';
+import 'package:flutter_project/login/LoginPage.dart';
+import 'package:flutter_project/auth/AuthService.dart';
+import 'package:flutter_project/pages/MainPage.dart';
+import 'package:flutter_project/service/AppointmentService.dart';
 import 'package:provider/provider.dart';
+import 'package:http/http.dart' as http;
+
 
 void main() {
   runApp(
@@ -10,11 +14,15 @@ void main() {
         Provider<AuthService>(
           create: (_) => AuthService(),
         ),
+        Provider<AppointmentService>(
+          create: (_) => AppointmentService(httpClient: http.Client()),
+        ),
       ],
       child: MyApp(),
     ),
   );
 }
+
 
 class MyApp extends StatelessWidget {
   @override
@@ -25,7 +33,11 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: LoginPage(),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => LoginPage(),
+        '/main': (context) => MainPage(),
+      },
     );
   }
 }

@@ -1,0 +1,22 @@
+Manufacturers:
+
+Base Url:
+http://localhost:8080/api/manufacturers
+
+
+getAllManufacturers:
+http://localhost:8080/api/manufacturers/all
+
+createManufacturer:
+http://localhost:8080/api/manufacturers/create
+
+updateManufacturer:
+http://localhost:8080/api/manufacturers/update/{id}
+
+deleteManufacturer:
+http://localhost:8080/api/manufacturers/delete/{id}
+
+
+getManufacturerById:
+http://localhost:8080/api/manufacturers/{id}
+

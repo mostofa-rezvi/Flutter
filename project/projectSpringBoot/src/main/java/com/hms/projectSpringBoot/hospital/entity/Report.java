@@ -6,8 +6,11 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.Date;
 
 @Entity
 @Getter
@@ -35,8 +38,12 @@ public class Report {
     @JoinColumn(name = "test_id")
     private TestEntity testEntity;
 
-    private LocalDateTime testDate;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    @Temporal(TemporalType.DATE)
+    private Date testDate;
+    @Temporal(TemporalType.DATE)
+    private Date createdAt;
+    @Temporal(TemporalType.DATE)
+    private Date updatedAt;
+
 
 }

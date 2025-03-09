@@ -1,0 +1,15 @@
+1. Role - Doctor (raju@gmail.com)
+   Prescerption Create -> Load Medicine List?
+
+2. Role - User
+   Registration Failed
+
+3. Role - Receptionist (recep@gmail.com)
+   Payslip -> PDF
+
+5. Role - Pharmacist
+   MedicineBillListPage -> do not load this
+
+
+
+https://github.com/NSnirjash/RMS_Flutter/blob/main/rms_flutter/lib/page/BillDetailsPage.dart

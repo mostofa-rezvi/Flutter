@@ -14,9 +14,24 @@ public class DepartmentController {
     @Autowired
     private DepartmentService departmentService;
 
-    @GetMapping("/")
+    @GetMapping("/all")
     public ApiResponse getAllDepartments() {
         return departmentService.getAllDepartments();
+    }
+
+    @PostMapping("/create")
+    public ApiResponse createDepartment(@RequestBody Department department) {
+        return departmentService.createDepartment(department);
+    }
+
+    @PutMapping("/update/{id}")
+    public ApiResponse updateDepartment(@PathVariable int id, @RequestBody Department updatedDepartment) {
+        return departmentService.updateDepartment(id, updatedDepartment);
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ApiResponse deleteDepartment(@PathVariable int id) {
+        return departmentService.deleteDepartment(id);
     }
 
     @GetMapping("/{id}")
@@ -24,22 +39,7 @@ public class DepartmentController {
         return departmentService.getDepartmentById(id);
     }
 
-    @PostMapping
-    public ApiResponse createDepartment(@RequestBody Department department) {
-        return departmentService.createDepartment(department);
-    }
-
-    @PutMapping("/{id}")
-    public ApiResponse updateDepartment(@PathVariable int id, @RequestBody Department updatedDepartment) {
-        return departmentService.updateDepartment(id, updatedDepartment);
-    }
-
-    @DeleteMapping("/{id}")
-    public ApiResponse deleteDepartment(@PathVariable int id) {
-        return departmentService.deleteDepartment(id);
-    }
-
-    @GetMapping("/search")
+    @GetMapping("/searchByName")
     public ApiResponse getDepartmentByName(@RequestParam String name) {
         return departmentService.getDepartmentByName(name);
     }

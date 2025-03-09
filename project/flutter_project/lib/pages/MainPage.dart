@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_project/auth/AuthService.dart';
+import 'package:flutter_project/model/UserModel.dart';
+import 'package:flutter_project/login/LoginPage.dart';
 
 class MainPage extends StatefulWidget {
   @override
@@ -7,20 +10,30 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   int _selectedIndex = 0;
+  UserModel? userModel;
 
-  // List of pages for each bottom navigation item
-  static final List<Widget> _pages = <Widget>[
-    HomeScreen(),
-    ProfileScreen(),
-    SettingsScreen(),
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _loadUser();
+  }
 
-  // Handle bottom navigation bar item tap
+  Future<void> _loadUser() async {
+    userModel = await AuthService.getStoredUser();
+    setState(() {});
+  }
+
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
   }
+
+  List<Widget> _pages() => [
+    HomeScreen(userModel: userModel),
+    ProfileScreen(),
+    SettingsScreen(),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +42,7 @@ class _MainPageState extends State<MainPage> {
         title: Text("Main Page"),
         centerTitle: true,
       ),
-      body: _pages[_selectedIndex],
+      body: _pages()[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
@@ -55,11 +68,67 @@ class _MainPageState extends State<MainPage> {
   }
 }
 
-// Dummy pages for the navigation
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
+  final UserModel? userModel;
+
+  HomeScreen({this.userModel});
+
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
-    return Center(child: Text("Home Screen"));
+    return Center(
+      child: Card(
+        margin: EdgeInsets.all(20),
+        elevation: 5,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                'Welcome, ${widget.userModel?.name}!',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blueAccent,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 20),
+              Text(
+                'We’re glad to have you back.',
+                style: TextStyle(fontSize: 16),
+              ),
+              SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () async {
+                  await AuthService.logout();
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (context) => LoginPage()),
+                        (route) => false,
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                child: Text('Logout'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
 

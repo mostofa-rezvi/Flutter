@@ -33,7 +33,8 @@ public class UserController {
 
     @PostMapping("/saveUser")
     public ApiResponse saveUser(@RequestPart("user") User user,
-                            @RequestPart(value = "imageFile", required = false) MultipartFile image) {
+                           // @RequestPart(value = "imageFile", required = false) MultipartFile image) {
+                           @RequestParam(value = "imageFile", required = false) MultipartFile image) {  // for image (flutter)
         return userService.save(user, image);
     }
 
