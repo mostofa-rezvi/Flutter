@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../service/auth_service.dart';
 import '../screens/home_screen.dart';
 import 'registration_screen.dart';
+import '../utils/shared_prefs_helper.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -31,6 +32,10 @@ class _LoginScreenState extends State<LoginScreen> {
     });
 
     if (response.isSuccess) {
+      if (response.data?.token != null) {
+        await SharedPrefsHelper.saveToken(response.data!.token!);
+      }
+
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
@@ -108,23 +113,23 @@ class _LoginScreenState extends State<LoginScreen> {
                       _isLoading
                           ? const CircularProgressIndicator()
                           : SizedBox(
-                              width: double.infinity,
-                              child: ElevatedButton(
-                                onPressed: _login,
-                                style: ElevatedButton.styleFrom(
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 16,
-                                  ),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                ),
-                                child: const Text(
-                                  'Login',
-                                  style: TextStyle(fontSize: 16),
-                                ),
-                              ),
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: _login,
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 16,
                             ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          child: const Text(
+                            'Login',
+                            style: TextStyle(fontSize: 16),
+                          ),
+                        ),
+                      ),
                       const SizedBox(height: 16),
                       TextButton(
                         onPressed: () {

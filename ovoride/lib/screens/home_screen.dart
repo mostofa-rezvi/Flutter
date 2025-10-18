@@ -33,42 +33,43 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _loadData() {
     final token = widget.user.token;
-    if (token != null) {
+    if (token != null && token.isNotEmpty) {
       setState(() {
         _dashboardDataFuture = _fetchDashboardData(token);
         _productsFuture = _fetchProducts(token);
         _categoriesFuture = _fetchCategories(token);
       });
+    } else {
+      _logout();
     }
   }
 
   Future<DashboardData> _fetchDashboardData(String token) async {
     final response = await _homeService.getDashboardData(token);
     if (response.isSuccess) return response.data!;
-    throw Exception(response.error);
+    throw Exception(response.error ?? 'Failed to load dashboard data');
   }
 
   Future<List<Product>> _fetchProducts(String token) async {
     final response = await _homeService.getProducts(token);
     if (response.isSuccess) return response.data!;
-    throw Exception(response.error);
+    throw Exception(response.error ?? 'Failed to load products');
   }
 
   Future<List<Category>> _fetchCategories(String token) async {
     final response = await _homeService.getCategories(token);
     if (response.isSuccess) return response.data!;
-    throw Exception(response.error);
+    throw Exception(response.error ?? 'Failed to load categories');
   }
 
   @override
   Widget build(BuildContext context) {
-    if (widget.user.token == null) {
+    if (widget.user.token == null || widget.user.token!.isEmpty) {
       return Scaffold(
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text("Login Success."),
               const Text("Authentication error. Please log in again."),
               ElevatedButton(
                 onPressed: _logout,
@@ -401,7 +402,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildCategoriesSection() {
     if (widget.user.token == null) {
-      return const SizedBox(); // hide list if not logged in
+      return const SizedBox();
     }
 
     return FutureBuilder<List<Category>>(
@@ -460,7 +461,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildProductsSection() {
     if (widget.user.token == null) {
-      return const SizedBox(); // hide list if not logged in
+      return const SizedBox();
     }
 
     return FutureBuilder<List<Product>>(
@@ -520,12 +521,10 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildDashboardCard(
-    String title,
-    String value,
-    IconData icon,
-    Color color,
-  ) {
+  Widget _buildDashboardCard(String title,
+      String value,
+      IconData icon,
+      Color color,) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -570,11 +569,14 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  void _logout() {
-    Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(builder: (context) => const LoginScreen()),
-      (route) => false,
-    );
+  void _logout() async {
+    await SharedPrefsHelper.removeToken();
+    if (mounted) {
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => const LoginScreen()),
+            (route) => false,
+      );
+    }
   }
 }

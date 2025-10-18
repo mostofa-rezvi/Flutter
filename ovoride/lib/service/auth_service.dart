@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import '../api/api_response.dart';
 import '../api/api_urls.dart';
 import '../models/user.dart';
+import '../utils/shared_prefs_helper.dart';
 
 class AuthService {
   Future<ApiResponse<User>> login(String email, String password) async {
@@ -17,7 +18,9 @@ class AuthService {
 
       if (response.statusCode == 200 && jsonResponse['status'] == 'success') {
         final userData = jsonResponse['data'];
-        return ApiResponse(data: User.fromJson(userData));
+        final user = User.fromJson(userData);
+        await SharedPrefsHelper.saveToken(user.token!);
+        return ApiResponse(data: user);
       } else {
         return ApiResponse(
             error: (jsonResponse['message'] is List)
@@ -41,7 +44,9 @@ class AuthService {
 
       if (response.statusCode == 201) {
         final userData = jsonResponse['data'];
-        return ApiResponse(data: User.fromJson(userData));
+        final registeredUser = User.fromJson(userData);
+        await SharedPrefsHelper.saveToken(registeredUser.token!);
+        return ApiResponse(data: registeredUser);
       } else {
         return ApiResponse(
             error: (jsonResponse['message'] is List)
@@ -53,4 +58,3 @@ class AuthService {
     }
   }
 }
-

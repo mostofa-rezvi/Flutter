@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:ovoride/api/api_response.dart';
 import 'package:ovoride/service/category_service.dart';
 import '../models/category.dart';
-import '../utils/shared_prefs_helper.dart'; // helper to get token
+import '../utils/shared_prefs_helper.dart';
 
 class CategoryScreen extends StatefulWidget {
   const CategoryScreen({super.key});
@@ -17,150 +18,182 @@ class _CategoryScreenState extends State<CategoryScreen> {
   String? _token;
 
   final TextEditingController _nameController = TextEditingController();
+  int? _editingId;
 
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   _loadData();
-  // }
-
-  // Future<void> _loadData() async {
-  //   _token = await SharedPrefsHelper.getToken();
-  //   final res = await _service.getCategories(_token!);
-  //   setState(() {
-  //     _loading = false;
-  //     if (res.data != null) _categories = res.data!;
-  //   });
-  // }
+  @override
+  void initState() {
+    super.initState();
+    _loadData();
+  }
 
   Future<void> _loadData() async {
     setState(() => _loading = true);
-
     _token = await SharedPrefsHelper.getToken();
-    if (_token == null) {
+    if (_token == null || _token!.isEmpty) {
       setState(() => _loading = false);
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('User not logged in')));
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('User not logged in or token expired')));
+      }
       return;
     }
 
-    final res = await _service.getCategories(_token);
+    final res = await _service.getCategories(_token!);
     setState(() {
       _loading = false;
-      if (res.data != null) {
-        _categories = res.data!;
-      } else {
-        _categories = [];
-        if (res.error != null) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text(res.error!)));
-        }
-      }
+      _categories = res.data ?? [];
     });
-  }
 
-  Future<void> _createOrUpdateCategory({int? id}) async {
-    final name = _nameController.text.trim();
-    if (name.isEmpty) return;
-    setState(() => _loading = true);
-
-    final res = id == null
-        ? await _service.createCategory(_token!, name)
-        : await _service.updateCategory(_token!, id, name);
-
-    if (res.error == null) {
-      _nameController.clear();
-      _loadData();
-    } else {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(res.error!)));
+    if (res.error != null) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(res.error!)));
+      }
     }
   }
 
-  Future<void> _deleteCategory(int id) async {
-    setState(() => _loading = true);
-    final res = await _service.deleteCategory(_token!, id);
-    if (res.error == null) _loadData();
-  }
-
-  Future<void> _openCategoryModal({int? id}) async {
-    if (id != null) {
-      final c = _categories.firstWhere(
-        (e) => e.id == id,
-        orElse: () => Category(id: id, name: ''),
-      );
-      _nameController.text = c.name;
-    } else {
-      _nameController.clear();
-    }
+  Future<void> _openForm({Category? category}) async {
+    _editingId = category?.id;
+    _nameController.text = category?.name ?? '';
 
     await showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
       builder: (ctx) {
         return Padding(
           padding: EdgeInsets.only(
-            left: 20,
-            right: 20,
-            top: 20,
-            bottom: MediaQuery.of(ctx).viewInsets.bottom + 20,
+            bottom: MediaQuery.of(ctx).viewInsets.bottom,
           ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: Colors.grey[300],
-                  borderRadius: BorderRadius.circular(4),
-                ),
-              ),
-              const SizedBox(height: 16),
-              Text(
-                id == null ? 'Add Category' : 'Edit Category',
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 12),
-              TextField(
-                controller: _nameController,
-                decoration: const InputDecoration(labelText: 'Category Name'),
-              ),
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  Expanded(
-                    child: OutlinedButton(
-                      onPressed: () => Navigator.pop(ctx),
-                      child: const Text('Cancel'),
-                    ),
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  category == null ? 'Add Category' : 'Edit Category',
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
                   ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.pop(ctx);
-                        _createOrUpdateCategory(id: id);
-                      },
-                      child: const Text('Save'),
+                ),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: _nameController,
+                  decoration: const InputDecoration(labelText: 'Name'),
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () => Navigator.pop(ctx),
+                        child: const Text('Cancel'),
+                      ),
                     ),
-                  ),
-                ],
-              ),
-            ],
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.pop(ctx);
+                          _saveCategory();
+                        },
+                        child: const Text('Save'),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         );
       },
     );
+  }
+
+  Future<void> _saveCategory() async {
+    final name = _nameController.text.trim();
+    if (name.isEmpty) return;
+    setState(() => _loading = true);
+
+    _token = await SharedPrefsHelper.getToken();
+    if (_token == null || _token!.isEmpty) {
+      setState(() => _loading = false);
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('User not logged in or token expired')));
+      }
+      return;
+    }
+
+    ApiResponse<Category> res;
+    if (_editingId == null) {
+      res = await _service.createCategory(_token!, name);
+    } else {
+      res = await _service.updateCategory(_token!, _editingId!, name);
+    }
+
+    setState(() => _loading = false);
+
+    if (res.error != null) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(res.error!)));
+      }
+    } else {
+      _nameController.clear();
+      _editingId = null;
+      await _loadData();
+    }
+  }
+
+  Future<void> _confirmDelete(int id) async {
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text('Delete Category'),
+        content: const Text('Are you sure you want to delete this category?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(false as BuildContext),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(true as BuildContext),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
+    if (ok != true) return;
+
+    setState(() => _loading = true);
+    _token = await SharedPrefsHelper.getToken();
+    if (_token == null || _token!.isEmpty) {
+      setState(() => _loading = false);
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('User not logged in or token expired')));
+      }
+      return;
+    }
+
+    final res = await _service.deleteCategory(_token!, id);
+    setState(() => _loading = false);
+
+    if (res.error != null) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(res.error!)));
+      }
+    } else {
+      await _loadData();
+    }
   }
 
   @override
@@ -168,101 +201,55 @@ class _CategoryScreenState extends State<CategoryScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Categories'),
-        elevation: 1,
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black87,
+        actions: [
+          IconButton(onPressed: _loadData, icon: const Icon(Icons.refresh)),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => _openForm(),
+        child: const Icon(Icons.add),
       ),
       body: _loading
-          ? Center(
-              child: Column(
+          ? const Center(child: CircularProgressIndicator())
+          : RefreshIndicator(
+        onRefresh: _loadData,
+        child: _categories.isEmpty
+            ? ListView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          children: const [
+            SizedBox(height: 60),
+            Center(
+              child: Text('No categories yet. Tap + to create.'),
+            ),
+          ],
+        )
+            : ListView.separated(
+          padding: const EdgeInsets.all(12),
+          itemCount: _categories.length,
+          separatorBuilder: (_, __) => const SizedBox(height: 8),
+          itemBuilder: (context, i) {
+            final c = _categories[i];
+            return ListTile(
+              title: Text(c.name),
+              trailing: Row(
                 mainAxisSize: MainAxisSize.min,
-                children: const [
-                  CircularProgressIndicator(),
-                  SizedBox(height: 12),
-                  Text('Loading categories...'),
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.edit),
+                    onPressed: () => _openForm(category: c),
+                  ),
+                  IconButton(
+                    icon: const Icon(
+                      Icons.delete,
+                      color: Colors.red,
+                    ),
+                    onPressed: () => _confirmDelete(c.id),
+                  ),
                 ],
               ),
-            )
-          : RefreshIndicator(
-              onRefresh: _loadData,
-              child: SingleChildScrollView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    // Header card
-                    Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.08),
-                            blurRadius: 8,
-                          ),
-                        ],
-                      ),
-                      child: Row(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              color: Colors.teal.withOpacity(0.12),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: const Icon(
-                              Icons.category,
-                              color: Colors.teal,
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text(
-                                  'Categories',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                const SizedBox(height: 6),
-                                Text(
-                                  '${_categories.length} items',
-                                  style: const TextStyle(color: Colors.black54),
-                                ),
-                              ],
-                            ),
-                          ),
-                          ElevatedButton.icon(
-                            onPressed: () => _openCategoryModal(),
-                            icon: const Icon(Icons.add),
-                            label: const Text('Add'),
-                            style: ElevatedButton.styleFrom(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 12,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    const SizedBox(height: 20),
-                  ],
-                ),
-              ),
-            ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => _openCategoryModal(),
-        child: const Icon(Icons.add),
+            );
+          },
+        ),
       ),
     );
   }

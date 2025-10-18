@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../service/auth_service.dart';
 import '../models/user.dart';
 import '../screens/home_screen.dart';
+import '../utils/shared_prefs_helper.dart';
 
 class RegistrationScreen extends StatefulWidget {
   const RegistrationScreen({super.key});
@@ -40,6 +41,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     });
 
     if (response.isSuccess) {
+      if (response.data?.token != null) {
+        await SharedPrefsHelper.saveToken(response.data!.token!);
+      }
+
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(

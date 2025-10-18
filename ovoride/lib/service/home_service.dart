@@ -18,13 +18,27 @@ class HomeService {
     );
   }
 
+  Map<String, dynamic> _safeDecode(String body) {
+    try {
+      if (body.trim().isEmpty) return {};
+      return jsonDecode(body) as Map<String, dynamic>;
+    } catch (_) {
+      return {};
+    }
+  }
+
   Future<ApiResponse<DashboardData>> getDashboardData(String token) async {
     try {
       final response = await _makeAuthenticatedGetRequest(APIUrls.dashboard, token);
-      final jsonResponse = jsonDecode(response.body);
+      final jsonResponse = _safeDecode(response.body);
 
       if (response.statusCode == 200) {
-        return ApiResponse(data: DashboardData.fromJson(jsonResponse['data']));
+        final data = jsonResponse['data'];
+        if (data != null) {
+          return ApiResponse(data: DashboardData.fromJson(data));
+        } else {
+          return ApiResponse(error: 'Dashboard data is null');
+        }
       } else {
         return ApiResponse(error: jsonResponse['message'] ?? 'Failed to load dashboard data');
       }
@@ -36,10 +50,13 @@ class HomeService {
   Future<ApiResponse<List<Product>>> getProducts(String token) async {
     try {
       final response = await _makeAuthenticatedGetRequest(APIUrls.product, token);
-      final jsonResponse = jsonDecode(response.body);
+      final jsonResponse = _safeDecode(response.body);
 
       if (response.statusCode == 200) {
-        final productsJson = jsonResponse['data']['data'] as List;
+        final data = jsonResponse['data'];
+        final List<dynamic> productsJson = (data is Map && data['data'] is List)
+            ? data['data']
+            : [];
         final products = productsJson.map((p) => Product.fromJson(p)).toList();
         return ApiResponse(data: products);
       } else {
@@ -53,10 +70,13 @@ class HomeService {
   Future<ApiResponse<List<Category>>> getCategories(String token) async {
     try {
       final response = await _makeAuthenticatedGetRequest(APIUrls.category, token);
-      final jsonResponse = jsonDecode(response.body);
+      final jsonResponse = _safeDecode(response.body);
 
       if (response.statusCode == 200) {
-        final categoriesJson = jsonResponse['data']['data'] as List;
+        final data = jsonResponse['data'];
+        final List<dynamic> categoriesJson = (data is Map && data['data'] is List)
+            ? data['data']
+            : [];
         final categories = categoriesJson.map((c) => Category.fromJson(c)).toList();
         return ApiResponse(data: categories);
       } else {
