@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ovoride/screens/category_screen.dart';
+import 'package:ovoride/screens/order_list_screen.dart';
 import 'package:ovoride/screens/product_screen.dart';
 import 'package:ovoride/utils/shared_prefs_helper.dart';
 import '../service/home_service.dart';
@@ -177,6 +178,28 @@ class _HomeScreenState extends State<HomeScreen> {
                         context,
                         MaterialPageRoute(
                           builder: (_) => const ProductScreen(),
+                        ),
+                      );
+                    },
+                  ),
+
+                  ListTile(
+                    leading: const Icon(Icons.sell_outlined),
+                    title: const Text('Orders'),
+                    onTap: () {
+                      if (widget.user.token == null ||
+                          widget.user.token!.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('User is not logged in'),
+                          ),
+                        );
+                        return;
+                      }
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const OrderListScreen(),
                         ),
                       );
                     },

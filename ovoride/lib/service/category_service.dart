@@ -15,7 +15,9 @@ class CategoryService {
   }
 
   Future<ApiResponse<List<Category>>> getCategories(String token) async {
-    if (token.isEmpty) return ApiResponse(error: 'No token provided');
+    if (token.isEmpty) {
+      return ApiResponse(error: 'No token provided for getCategories');
+    }
     try {
       final response = await http.get(
         Uri.parse(APIUrls.category),
@@ -24,12 +26,25 @@ class CategoryService {
       final jsonResponse = _safeDecode(response.body);
 
       if (response.statusCode == 200) {
-        final data = jsonResponse['data'];
-        final List<dynamic> list = (data is Map && data['data'] != null)
-            ? data['data']
-            : (data is List)
-            ? data
-            : [];
+        // Ensure 'data' exists and is a Map or List
+        final dynamic responseData = jsonResponse['data'];
+
+        if (responseData == null) {
+          return ApiResponse(error: 'No data found in categories response');
+        }
+
+        List<dynamic> list;
+        if (responseData is Map && responseData['data'] is List) {
+          // Case: { "data": { "data": [...] } } - common in Laravel pagination
+          list = responseData['data'] as List<dynamic>;
+        } else if (responseData is List) {
+          // Case: { "data": [...] }
+          list = responseData;
+        } else {
+          // Unexpected data structure
+          return ApiResponse(error: 'Unexpected data format for categories');
+        }
+
         final categories = list
             .map((e) => Category.fromJson(Map<String, dynamic>.from(e)))
             .toList();
@@ -40,15 +55,19 @@ class CategoryService {
         );
       }
     } catch (e) {
+      // It's good practice to log the full error for debugging
+      print('Error fetching categories: $e');
       return ApiResponse(error: 'Error fetching categories: $e');
     }
   }
 
   Future<ApiResponse<Category>> createCategory(
-      String token,
-      String name,
-      ) async {
-    if (token.isEmpty) return ApiResponse(error: 'No token provided');
+    String token,
+    String name,
+  ) async {
+    if (token.isEmpty) {
+      return ApiResponse(error: 'No token provided for createCategory');
+    }
     try {
       final response = await http.post(
         Uri.parse(APIUrls.categoryCreate),
@@ -58,16 +77,18 @@ class CategoryService {
       final jsonResponse = _safeDecode(response.body);
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        final data = jsonResponse['data'] ?? jsonResponse;
+        final data =
+            jsonResponse['data'] ??
+            jsonResponse;
         return ApiResponse(
           data: Category.fromJson(Map<String, dynamic>.from(data)),
         );
       } else {
-        return ApiResponse(
-          error: (jsonResponse['message'] is List)
-              ? jsonResponse['message'][0]
-              : jsonResponse['message'] ?? 'Category creation failed',
-        );
+        // Provide more specific error message from backend if available
+        final errorMessage = (jsonResponse['errors'] is Map)
+            ? (jsonResponse['errors']['name']?.first ?? jsonResponse['message'])
+            : jsonResponse['message'];
+        return ApiResponse(error: errorMessage ?? 'Category creation failed');
       }
     } catch (e) {
       return ApiResponse(error: 'Error creating category: $e');
@@ -75,18 +96,20 @@ class CategoryService {
   }
 
   Future<ApiResponse<Category>> updateCategory(
-      String token,
-      int id,
-      String name,
-      ) async {
+    String token,
+    int id,
+    String name,
+  ) async {
     if (token.isEmpty) return ApiResponse(error: 'No token provided');
+
     try {
-      final url = APIUrls.categoryUpdateOrDelete.replaceAll('id', '$id');
+      final url = APIUrls.categoryUpdateOrDelete.replaceAll('{id}', '$id');
       final response = await http.put(
         Uri.parse(url),
         headers: await _headers(token),
         body: jsonEncode({'name': name}),
       );
+
       final jsonResponse = _safeDecode(response.body);
 
       if (response.statusCode == 200) {
@@ -95,10 +118,10 @@ class CategoryService {
           data: Category.fromJson(Map<String, dynamic>.from(data)),
         );
       } else {
-        return ApiResponse(
-            error: (jsonResponse['message'] is List)
-                ? jsonResponse['message'][0]
-                : jsonResponse['message'] ?? 'Update failed');
+        final errorMessage = (jsonResponse['errors'] is Map)
+            ? (jsonResponse['errors']['name']?.first ?? jsonResponse['message'])
+            : jsonResponse['message'];
+        return ApiResponse(error: errorMessage ?? 'Update failed');
       }
     } catch (e) {
       return ApiResponse(error: 'Error updating category: $e');
@@ -107,20 +130,34 @@ class CategoryService {
 
   Future<ApiResponse<void>> deleteCategory(String token, int id) async {
     if (token.isEmpty) return ApiResponse(error: 'No token provided');
+
     try {
-      final url = APIUrls.categoryUpdateOrDelete.replaceAll('id', '$id');
+      final url = APIUrls.categoryUpdateOrDelete.replaceAll('{id}', '$id');
       final response = await http.delete(
         Uri.parse(url),
         headers: await _headers(token),
       );
-      final jsonResponse = _safeDecode(response.body);
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 || response.statusCode == 204) {
         return ApiResponse(data: null);
       } else {
-        return ApiResponse(error: jsonResponse['message'] ?? 'Delete failed');
+        final jsonResponse = _safeDecode(response.body);
+        String? errorMessage;
+
+        // Check if 'message' is a List (e.g., ["message 1", "message 2"])
+        if (jsonResponse['message'] is List) {
+          errorMessage = (jsonResponse['message'] as List).join(
+            ', ',
+          ); // Join list elements into a single string
+        } else {
+          errorMessage =
+              jsonResponse['message']; // Assume it's already a String or null
+        }
+
+        return ApiResponse(error: errorMessage ?? 'Delete failed');
       }
     } catch (e) {
+      print('Error deleting category: $e'); // Log the error
       return ApiResponse(error: 'Error deleting category: $e');
     }
   }
@@ -130,7 +167,7 @@ class CategoryService {
       if (body.trim().isEmpty) return {};
       return jsonDecode(body) as Map<String, dynamic>;
     } catch (_) {
-      return {};
+      return {'message': 'Invalid JSON response from server'};
     }
   }
 }

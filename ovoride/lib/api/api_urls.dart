@@ -9,10 +9,14 @@ class APIUrls {
   // Product
   static const String product = '${baseURL}products';
   static const String productCreate = '${baseURL}products';
-  static const String productUpdateOrDelete = '${baseURL}product/id';
+  static const String productUpdateOrDelete = '${baseURL}products/{id}';
 
   // Category
   static const String category = '${baseURL}categories';
   static const String categoryCreate = '${baseURL}categories';
-  static const String categoryUpdateOrDelete = '${baseURL}categories/id';
+  static const String categoryUpdateOrDelete = '${baseURL}categories/{id}';
+
+  // Orders
+  static const String orders = '${baseURL}orders';
+
 }
