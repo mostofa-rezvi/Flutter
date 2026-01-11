@@ -16,29 +16,29 @@ public class PrescriptionController {
     @Autowired
     private PrescriptionService prescriptionService;
 
-    @GetMapping
+    @GetMapping("/all")
     public ApiResponse getAllPrescriptions() {
         return prescriptionService.getAllPrescriptions();
+    }
+
+    @PostMapping("/create")
+    public ApiResponse createPrescription(@RequestBody Prescription prescription) {
+        return prescriptionService.createPrescription(prescription);
+    }
+
+    @PutMapping("/update/{id}")
+    public ApiResponse updatePrescription(@PathVariable Long id, @RequestBody Prescription updatedPrescription) {
+        return prescriptionService.updatePrescription(id, updatedPrescription);
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ApiResponse deletePrescription(@PathVariable Long id) {
+        return prescriptionService.deletePrescription(id);
     }
 
     @GetMapping("/{id}")
     public ApiResponse getPrescriptionById(@PathVariable Long id) {
         return prescriptionService.getPrescriptionById(id);
-    }
-
-    @PostMapping
-    public ApiResponse createPrescription(@RequestBody Prescription prescription) {
-        return prescriptionService.createPrescription(prescription);
-    }
-
-    @PutMapping("/{id}")
-    public ApiResponse updatePrescription(@PathVariable Long id, @RequestBody Prescription updatedPrescription) {
-        return prescriptionService.updatePrescription(id, updatedPrescription);
-    }
-
-    @DeleteMapping("/{id}")
-    public ApiResponse deletePrescription(@PathVariable Long id) {
-        return prescriptionService.deletePrescription(id);
     }
 
     @GetMapping("/doctor/{doctorId}")

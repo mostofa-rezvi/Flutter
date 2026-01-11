@@ -25,7 +25,7 @@ DROP TABLE IF EXISTS `appointments`;
 CREATE TABLE `appointments` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `age` varchar(255) DEFAULT NULL,
-  `birthday` date DEFAULT NULL,
+  `birthday` datetime(6) DEFAULT NULL,
   `date` date DEFAULT NULL,
   `email` varchar(255) DEFAULT NULL,
   `gender` varchar(255) DEFAULT NULL,
@@ -40,7 +40,7 @@ CREATE TABLE `appointments` (
   KEY `FK886ced1atxgvnf1o3oxtj5m4s` (`user_id`),
   CONSTRAINT `FK6u6s6egu60m2cbdjno44jbipa` FOREIGN KEY (`doctor_id`) REFERENCES `users` (`id`),
   CONSTRAINT `FK886ced1atxgvnf1o3oxtj5m4s` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -49,7 +49,7 @@ CREATE TABLE `appointments` (
 
 LOCK TABLES `appointments` WRITE;
 /*!40000 ALTER TABLE `appointments` DISABLE KEYS */;
-INSERT INTO `appointments` VALUES (1,'24','2024-09-12','2024-09-25','sabab239.1@gmail.com','Male','Shabab Ahmed','TEST','01710295968','10:00:00.000000',13,1),(2,'24','2024-09-04','2024-09-25','sabab239.1@gmail.com','Male','Shabab Ahmed','TEST','01710295968','09:30:00.000000',4,NULL),(3,'25','2024-09-01','2024-10-04','rezvi@gmail.com','Male','Rezvi','Test','01819325077 ','10:00:00.000000',13,NULL),(18,'23','2024-09-26','2024-10-04','rezvi@mail.com','Male','rezvi','TEST','01819325077','10:00:00.000000',NULL,15);
+INSERT INTO `appointments` VALUES (1,'24','2024-09-12 00:00:00.000000','2024-09-25','sabab239.1@gmail.com','Male','Shabab Ahmed','TEST','01710295968','10:00:00.000000',13,1),(2,'24','2024-09-04 00:00:00.000000','2024-09-25','sabab239.1@gmail.com','Male','Shabab Ahmed','TEST','01710295968','09:30:00.000000',4,NULL),(3,'25','2024-09-01 00:00:00.000000','2024-10-04','rezvi@gmail.com','Male','Rezvi','Test','01819325077 ','10:00:00.000000',13,NULL),(18,'23','2024-09-26 00:00:00.000000','2024-10-04','rezvi@mail.com','Male','rezvi','TEST','01819325077','10:00:00.000000',NULL,15),(19,'23','2001-10-10 06:00:00.000000','2024-11-20','demo@gmail.com','Male','Demo','Dwmo','123123123','10:30:00.000000',NULL,1);
 /*!40000 ALTER TABLE `appointments` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -293,7 +293,7 @@ CREATE TABLE `prescriptions` (
   KEY `FK7sia9wnwh9j5hwrta9k8q0rbq` (`patient_id`),
   CONSTRAINT `FK2hdpvkpjjx3plf21194oxjskt` FOREIGN KEY (`doctor_id`) REFERENCES `users` (`id`),
   CONSTRAINT `FK7sia9wnwh9j5hwrta9k8q0rbq` FOREIGN KEY (`patient_id`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -302,7 +302,7 @@ CREATE TABLE `prescriptions` (
 
 LOCK TABLES `prescriptions` WRITE;
 /*!40000 ALTER TABLE `prescriptions` DISABLE KEYS */;
-INSERT INTO `prescriptions` VALUES (1,NULL,'Okay',NULL,NULL,NULL,NULL),(2,'2024-10-02 14:55:59.732961','No notes provided.','2024-10-02 14:55:59.680000','2024-10-02 08:55:59.680000',NULL,NULL);
+INSERT INTO `prescriptions` VALUES (1,'2024-09-07 18:10:34.229701','Okay','2024-09-06 14:55:59.680000','2024-09-07 08:55:59.680000',4,2),(2,'2024-10-02 14:55:59.732961','Notes','2024-10-02 14:55:59.680000','2024-10-02 08:55:59.680000',4,7),(3,'2024-11-17 18:10:34.229701','DEMO','2024-11-08 14:55:59.680000','2024-11-09 08:55:59.680000',4,8);
 /*!40000 ALTER TABLE `prescriptions` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -430,4 +430,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-10-02 16:12:56
+-- Dump completed on 2024-11-19 15:03:11

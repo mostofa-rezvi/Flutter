@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
+import 'package:flutter/foundation.dart' show Uint8List, kIsWeb;
+import 'package:image_picker_web/image_picker_web.dart';
+import 'package:http_parser/http_parser.dart';
 import 'dart:convert';
 import 'dart:io';
 
@@ -22,12 +25,27 @@ class _RegistrationPageState extends State<RegistrationPage> {
   String? _gender;
   File? _selectedImage;
 
+  XFile? selectedImage;
+  Uint8List? webImage;
+
   final ImagePicker _picker = ImagePicker();
 
   Future<void> _pickImage() async {
-    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
-      setState(() => _selectedImage = File(pickedFile.path));
+    if (kIsWeb) {
+      var pickedImage = await ImagePickerWeb.getImageAsBytes();
+      if (pickedImage != null) {
+        setState(() {
+          webImage = pickedImage;
+        });
+      }
+    } else {
+      final XFile? pickedImage =
+      await ImagePicker().pickImage(source: ImageSource.gallery);
+      if (pickedImage != null) {
+        setState(() {
+          selectedImage = pickedImage;
+        });
+      }
     }
   }
 
@@ -39,7 +57,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
         "password": _passwordController.text,
         "cell": _cellController.text,
         "age": int.parse(_ageController.text),
-        "gender": _gender,
+        "gender": _gender ?? 'Others',
         "birthday": _birthday?.toIso8601String(),
         "address": _addressController.text,
         "role": "PATIENT",
@@ -49,13 +67,18 @@ class _RegistrationPageState extends State<RegistrationPage> {
       final request = http.MultipartRequest("POST", uri)
         ..fields['user'] = jsonEncode(userData);
 
-      if (_selectedImage != null) {
-        request.files.add(
-          await http.MultipartFile.fromPath(
-            'image',
-            _selectedImage!.path,
-          ),
-        );
+      if (kIsWeb && webImage != null) {
+        request.files.add(http.MultipartFile.fromBytes(
+          'image',
+          webImage!,
+          filename: 'upload.jpg',
+          contentType: MediaType('image', 'jpeg'),
+        ));
+      } else if (selectedImage != null) {
+        request.files.add(await http.MultipartFile.fromPath(
+          'image',
+          selectedImage!.path,
+        ));
       }
 
       final response = await request.send();
@@ -73,7 +96,8 @@ class _RegistrationPageState extends State<RegistrationPage> {
     }
   }
 
-  Widget _buildTextField(String label, TextEditingController controller, TextInputType keyboardType, {bool obscureText = false, String? Function(String?)? validator}) {
+  Widget _buildTextField(String label, TextEditingController controller, TextInputType keyboardType,
+      {bool obscureText = false, String? Function(String?)? validator}) {
     return TextFormField(
       controller: controller,
       keyboardType: keyboardType,
@@ -102,11 +126,10 @@ class _RegistrationPageState extends State<RegistrationPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Name Field
+
               _buildTextField("Name", _nameController, TextInputType.name),
               SizedBox(height: 16.0),
 
-              // Email Field
               _buildTextField("Email", _emailController, TextInputType.emailAddress, validator: (value) {
                 if (value == null || value.isEmpty) {
                   return "Please enter your email";
@@ -117,19 +140,15 @@ class _RegistrationPageState extends State<RegistrationPage> {
               }),
               SizedBox(height: 16.0),
 
-              // Password Field
               _buildTextField("Password", _passwordController, TextInputType.text, obscureText: true),
               SizedBox(height: 16.0),
 
-              // Cell Field
               _buildTextField("Cell", _cellController, TextInputType.phone),
               SizedBox(height: 16.0),
 
-              // Age Field
               _buildTextField("Age", _ageController, TextInputType.number),
               SizedBox(height: 16.0),
 
-              // Gender Dropdown Field
               DropdownButtonFormField<String>(
                 value: _gender,
                 decoration: InputDecoration(
@@ -149,12 +168,13 @@ class _RegistrationPageState extends State<RegistrationPage> {
               ),
               SizedBox(height: 16.0),
 
-              // Birthday Picker
               TextFormField(
                 readOnly: true,
                 decoration: InputDecoration(
                   labelText: "Birthday",
-                  hintText: _birthday == null ? "Select your birthday" : "${_birthday!.year}-${_birthday!.month}-${_birthday!.day}",
+                  hintText: _birthday == null
+                      ? "Select your birthday"
+                      : "${_birthday!.year}-${_birthday!.month}-${_birthday!.day}",
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12.0),
                   ),
@@ -173,7 +193,6 @@ class _RegistrationPageState extends State<RegistrationPage> {
               ),
               SizedBox(height: 16.0),
 
-              // Address Field
               TextFormField(
                 controller: _addressController,
                 decoration: InputDecoration(
@@ -186,7 +205,6 @@ class _RegistrationPageState extends State<RegistrationPage> {
               ),
               SizedBox(height: 16.0),
 
-              // Profile Image Picker
               Row(
                 children: [
                   Text("Profile Image:", style: TextStyle(fontSize: 16)),
@@ -216,25 +234,15 @@ class _RegistrationPageState extends State<RegistrationPage> {
                 ),
               SizedBox(height: 24.0),
 
-              // Submit Button
-              Center(
-                child: SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: _submitForm,
-                    style: ElevatedButton.styleFrom(
-                      padding: EdgeInsets.symmetric(vertical: 16.0),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12.0),
-                      ),
-                      backgroundColor: Colors.blueAccent,
-                    ),
-                    child: Text(
-                      "Register",
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: Colors.white,
-                      ),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: _submitForm,
+                  child: Text("Register"),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blueAccent,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12.0),
                     ),
                   ),
                 ),
@@ -246,3 +254,4 @@ class _RegistrationPageState extends State<RegistrationPage> {
     );
   }
 }
+

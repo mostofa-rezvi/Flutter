@@ -17,29 +17,29 @@ public class AppointmentController {
     @Autowired
     private AppointmentService appointmentService;
 
-    @GetMapping("/")
+    @GetMapping("/all")
     public ApiResponse getAllAppointments() {
         return appointmentService.getAllAppointments();
+    }
+
+    @PostMapping("/create")
+    public ApiResponse createAppointment(@RequestBody Appointment appointment) {
+        return appointmentService.createAppointment(appointment);
+    }
+
+    @PutMapping("/update/{id}")
+    public ApiResponse updateAppointment(@RequestBody Appointment appointment) {
+        return appointmentService.updateAppointment(appointment);
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ApiResponse deleteAppointment(@PathVariable Long id) {
+        return appointmentService.deleteAppointment(id);
     }
 
     @GetMapping("/{id}")
     public ApiResponse getAppointmentById(@PathVariable Long id) {
         return appointmentService.getAppointmentById(id);
-    }
-
-    @PostMapping("/save")
-    public ApiResponse createAppointment(@RequestBody Appointment appointment) {
-        return appointmentService.createAppointment(appointment);
-    }
-
-    @PutMapping("/update")
-    public ApiResponse updateAppointment(@RequestBody Appointment appointment) {
-        return appointmentService.updateAppointment(appointment);
-    }
-
-    @DeleteMapping("/{id}")
-    public ApiResponse deleteAppointment(@PathVariable Long id) {
-        return appointmentService.deleteAppointment(id);
     }
 
     @GetMapping("/getAppointmentsByUserId")

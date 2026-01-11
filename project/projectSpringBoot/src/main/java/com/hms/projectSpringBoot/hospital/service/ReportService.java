@@ -6,7 +6,9 @@ import com.hms.projectSpringBoot.util.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -51,8 +53,8 @@ public class ReportService {
     public ApiResponse createReport(Report report) {
         ApiResponse apiResponse = new ApiResponse(false);
         try {
-            report.setCreatedAt(LocalDateTime.now());
-            report.setUpdatedAt(LocalDateTime.now());
+            report.setCreatedAt(new Date());
+            report.setUpdatedAt(new Date());
             Report createdReport = reportRepository.save(report);
             apiResponse.setSuccessful(true);
             apiResponse.setMessage("Report created successfully.");
@@ -78,7 +80,7 @@ public class ReportService {
                 existingReport.setPatient(updatedReport.getPatient());
                 existingReport.setTestEntity(updatedReport.getTestEntity()); // Added test entity
                 existingReport.setTestDate(updatedReport.getTestDate()); // Added test date
-                existingReport.setUpdatedAt(LocalDateTime.now());
+                existingReport.setUpdatedAt(Date.from(Instant.ofEpochSecond(System.currentTimeMillis())));
 
                 reportRepository.save(existingReport);
                 apiResponse.setSuccessful(true);
@@ -111,7 +113,7 @@ public class ReportService {
         }
     }
 
-    public List<Report> getReportsByTestEntityId(Long testId) {
+    public List<Report> getReportsByTestId(Long testId) {
         return reportRepository.findByTestEntityId(testId);
     }
 

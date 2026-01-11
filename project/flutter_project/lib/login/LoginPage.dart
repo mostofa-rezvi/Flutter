@@ -1,11 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_project/pages/ForgetPasswordPage.dart';
+import 'package:flutter_project/pages/DemoPage.dart';
+import 'package:flutter_project/pages/doctor/DoctorPage.dart';
+import 'package:flutter_project/pages/laboratorist/LaboratoristPage.dart';
+import 'package:flutter_project/pages/nurse/NursePage.dart';
+import 'package:flutter_project/pages/patient/PatientPage.dart';
+import 'package:flutter_project/pages/pharmacist/PharmacistPage.dart';
+import 'package:flutter_project/pages/receptionist/ReceptionistMainPage.dart';
+import 'package:flutter_project/login/ForgetPasswordPage.dart';
 import 'package:flutter_project/pages/MainPage.dart';
-import 'package:flutter_project/pages/RegistrationPage.dart';
+import 'package:flutter_project/login/RegistrationPage.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_project/service/AuthService.dart';
-// import 'package:flutter_project/pages/AdminPage.dart'; // Import different role pages
-// import 'package:flutter_project/pages/DoctorPage.dart'; // Import different role pages
+import 'package:flutter_project/auth/AuthService.dart';
+
+import '../model/UserModel.dart';
+import '../util/ApiResponse.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -14,8 +22,8 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController()..text = 'pha@gmail.com';
+  final TextEditingController _passwordController = TextEditingController()..text = '123';
   String? _errorMessage;
 
   @override
@@ -32,7 +40,7 @@ class _LoginPageState extends State<LoginPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // Logo
+
                   Padding(
                     padding: const EdgeInsets.only(bottom: 24.0),
                     child: Image.asset(
@@ -40,7 +48,7 @@ class _LoginPageState extends State<LoginPage> {
                       height: 100,
                     ),
                   ),
-                  // Email Field
+
                   TextFormField(
                     controller: _emailController,
                     decoration: InputDecoration(
@@ -60,7 +68,7 @@ class _LoginPageState extends State<LoginPage> {
                     },
                   ),
                   SizedBox(height: 16.0),
-                  // Password Field
+
                   TextFormField(
                     controller: _passwordController,
                     decoration: InputDecoration(
@@ -76,7 +84,7 @@ class _LoginPageState extends State<LoginPage> {
                     },
                   ),
                   SizedBox(height: 16.0),
-                  // Error Message
+
                   if (_errorMessage != null) ...[
                     Text(
                       _errorMessage!,
@@ -84,7 +92,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     SizedBox(height: 16.0),
                   ],
-                  // Forgot Password Link
+
                   Align(
                     alignment: Alignment.centerRight,
                     child: TextButton(
@@ -158,28 +166,49 @@ class _LoginPageState extends State<LoginPage> {
       final password = _passwordController.text.trim();
 
       // Attempt to log in the user
-      bool loginSuccess = await authService.login(email, password);
+      ApiResponse apiResponse = await AuthService.login(email, password);
 
-      if (loginSuccess) {
-        // Get user role to navigate to the appropriate page
-        String? role = await authService.getUserRole();
+      if (apiResponse.successful) {
+        AuthService.initSession(apiResponse);
 
-        if (role == 'ADMIN') {
+        final user = apiResponse.data['user'];
+        Role role = Role.values.byName(user['role']);
+        if (role == Role.ADMIN) {
           Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => MainPage()), // Admin page
+            MaterialPageRoute(builder: (context) => DoctorMainPage()),
           );
-        } else if (role == 'DOCTOR') {
+        } else if (role == Role.LAB) {
           Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => MainPage()), // Doctor page
+            MaterialPageRoute(builder: (context) => LaboratoristPage()), // done
+          );
+        } else if (role == Role.PHARMACIST) {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => PharmacistMainPage()), // done
+          );
+        } else if (role == Role.DOCTOR) {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => DoctorMainPage()), // done
+          );
+        } else if (role == Role.RECEPTIONIST) {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => ReceptionistMainPage()), // done
+          );
+        } else if (role == Role.PATIENT) {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => PatientMainPage()), // Okay
+          );
+        } else if (role == Role.NURSE) {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => NursePage()), // Okay
           );
         } else {
           Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => MainPage()), // Main page (default)
+            MaterialPageRoute(builder: (context) => MainPage()), // No need
           );
         }
-      } else {
+            } else {
         setState(() {
-          _errorMessage = 'Login failed. Please check your credentials.';
+          _errorMessage = apiResponse.message ?? 'Login failed. Please check your credentials.';
         });
       }
     } else {
@@ -188,4 +217,5 @@ class _LoginPageState extends State<LoginPage> {
       });
     }
   }
+
 }

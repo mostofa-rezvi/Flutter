@@ -1,0 +1,19 @@
+Doctor
+   Prescription
+
+Pharmacist
+   Medicine
+   Medicine Bill
+
+---------------------
+Receptionist
+   Appointment
+Laboratorist
+   Report
+   Test
+---------------------
+Nurse
+Patient
+admin
+   Department
+   Manufacturer

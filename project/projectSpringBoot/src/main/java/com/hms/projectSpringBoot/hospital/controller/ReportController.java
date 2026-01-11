@@ -15,9 +15,24 @@ public class ReportController {
     @Autowired
     private ReportService reportService;
 
-    @GetMapping
+    @GetMapping("/all")
     public ApiResponse getAllReports() {
         return reportService.getAllReports();
+    }
+
+    @PostMapping("/create")
+    public ApiResponse createReport(@RequestBody Report report) {
+        return reportService.createReport(report);
+    }
+
+    @PutMapping("/update/{id}")
+    public ApiResponse updateReport(@PathVariable Long id, @RequestBody Report updatedReport) {
+        return reportService.updateReport(id, updatedReport);
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ApiResponse deleteReport(@PathVariable Long id) {
+        return reportService.deleteReport(id);
     }
 
     @GetMapping("/{id}")
@@ -25,24 +40,9 @@ public class ReportController {
         return reportService.getReportById(id);
     }
 
-    @PostMapping
-    public ApiResponse createReport(@RequestBody Report report) {
-        return reportService.createReport(report);
-    }
-
-    @PutMapping("/{id}")
-    public ApiResponse updateReport(@PathVariable Long id, @RequestBody Report updatedReport) {
-        return reportService.updateReport(id, updatedReport);
-    }
-
-    @DeleteMapping("/{id}")
-    public ApiResponse deleteReport(@PathVariable Long id) {
-        return reportService.deleteReport(id);
-    }
-
     @GetMapping("/test/{testId}")
-    public List<Report> getReportsByTestEntityId(@PathVariable Long testId) {
-        return reportService.getReportsByTestEntityId(testId);
+    public List<Report> getReportsByTestId(@PathVariable Long testId) {
+        return reportService.getReportsByTestId(testId);
     }
 
     @GetMapping("/patient/{patientId}")

@@ -1,0 +1,24 @@
+Departments:
+
+Base Url:
+http://localhost:8080/api/departments
+
+
+getAllDepartments:
+http://localhost:8080/api/departments/all
+
+createDepartment:
+http://localhost:8080/api/departments/create
+
+updateDepartment:
+http://localhost:8080/api/departments/update/{id}
+
+deleteDepartment:
+http://localhost:8080/api/departments/delete/{id}
+
+
+getDepartmentById:
+http://localhost:8080/api/departments/{id}
+
+getDepartmentByName:
+http://localhost:8080/api/departments/searchByName

@@ -16,29 +16,29 @@ public class DiagnosticsController {
     @Autowired
     private DiagnosticsService diagnosticsService;
 
-    @GetMapping
+    @GetMapping("/all")
     public ApiResponse getAllDiagnostics() {
         return diagnosticsService.getAllDiagnostics();
+    }
+
+    @PostMapping("/create")
+    public ApiResponse createDiagnostics(@RequestBody Diagnostics diagnostics) {
+        return diagnosticsService.createDiagnostics(diagnostics);
+    }
+
+    @PutMapping("/update/{id}")
+    public ApiResponse updateDiagnostics(@PathVariable Long id, @RequestBody Diagnostics updatedDiagnostics) {
+        return diagnosticsService.updateDiagnostics(id, updatedDiagnostics);
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ApiResponse deleteDiagnostics(@PathVariable Long id) {
+        return diagnosticsService.deleteDiagnostics(id);
     }
 
     @GetMapping("/{id}")
     public ApiResponse getDiagnosticsById(@PathVariable Long id) {
         return diagnosticsService.getDiagnosticsById(id);
-    }
-
-    @PostMapping
-    public ApiResponse createDiagnostics(@RequestBody Diagnostics diagnostics) {
-        return diagnosticsService.createDiagnostics(diagnostics);
-    }
-
-    @PutMapping("/{id}")
-    public ApiResponse updateDiagnostics(@PathVariable Long id, @RequestBody Diagnostics updatedDiagnostics) {
-        return diagnosticsService.updateDiagnostics(id, updatedDiagnostics);
-    }
-
-    @DeleteMapping("/{id}")
-    public ApiResponse deleteDiagnostics(@PathVariable Long id) {
-        return diagnosticsService.deleteDiagnostics(id);
     }
 
     @GetMapping("/patient/{patientId}")

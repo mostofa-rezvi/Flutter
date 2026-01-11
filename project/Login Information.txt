@@ -1,12 +1,3 @@
-*Pharmacist:
-pha@gmail.com
-
-*Lab:
-rblannk@gmail.com
-
-*Admin:
-admin@gmail.com
-
 *Receptionist:
 recep@gmail.com
 
@@ -16,5 +7,22 @@ child@gmail.com
 Doctor:
 raju@gmail.com
 
+*Pharmacist:
+pha@gmail.com
+
+*Nurse:
+
+
+*Admin:
+admin@gmail.com
+
+*Laboratorist:
+rblannk@gmail.com
+
 
 Common Password: 123
+
+
+01688132317
+
+Need Spring Boot ready!

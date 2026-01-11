@@ -50,7 +50,7 @@ public class PrescriptionService {
     public ApiResponse createPrescription(Prescription prescription) {
         ApiResponse apiResponse = new ApiResponse(false);
         try {
-            prescription.setCreatedAt(LocalDateTime.now());
+            prescription.setCreatedAt(new Date());
             Prescription createdPrescription = prescriptionRepository.save(prescription);
             apiResponse.setSuccessful(true);
             apiResponse.setMessage("Prescription created successfully.");
@@ -74,7 +74,7 @@ public class PrescriptionService {
             prescription.setDoctor(updatedPrescription.getDoctor());
             prescription.setPatient(updatedPrescription.getPatient());
             prescription.setMedicines(updatedPrescription.getMedicines());
-            prescription.setUpdatedAt(LocalDateTime.now());
+            prescription.setUpdatedAt(new Date());
             Prescription savedPrescription = prescriptionRepository.save(prescription);
             apiResponse.setSuccessful(true);
             apiResponse.setMessage("Prescription updated successfully.");

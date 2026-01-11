@@ -1,0 +1,27 @@
+Diagnostics:
+
+Base Url:
+http://localhost:8080/api/diagnostics
+
+
+getAllDiagnostics:
+http://localhost:8080/api/diagnostics/all
+
+createDiagnostics:
+http://localhost:8080/api/diagnostics/create
+
+updateDiagnostics:
+http://localhost:8080/api/diagnostics/update/{id}
+
+deleteDiagnostics:
+http://localhost:8080/api/diagnostics/delete/{id}
+
+
+getDiagnosticsById:
+http://localhost:8080/api/diagnostics/{id}
+
+getDiagnosticsByPatientId:
+http://localhost:8080/api/diagnostics/patient/{patientId}
+
+getDiagnosticsByDoctorId:
+http://localhost:8080/api/diagnostics/doctor/{doctorId}

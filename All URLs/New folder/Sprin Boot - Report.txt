@@ -1,0 +1,27 @@
+Report:
+
+Base Url:
+http://localhost:8080/api/reports
+
+
+getAllReports:
+/all
+
+createReport:
+/create
+
+updateReport:
+/update/{id}
+
+deleteReport:
+/delete/{id}
+
+
+getReportById:
+/{id}
+
+getReportsByTestId:
+/test/{testId}
+
+getReportsByPatientId:
+/patient/{patientId}
